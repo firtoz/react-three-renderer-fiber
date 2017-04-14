@@ -1,5 +1,5 @@
-import Simple from './Simple';
+import Experiment  from './Experiment';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(<Simple />, document.getElementById("root"));
+ReactDOM.render(<Experiment />, document.getElementById("root"));

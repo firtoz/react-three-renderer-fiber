@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import * as THREE from 'three';
 import React3 from './React3';
 
-class Simple extends Component {
+// A modification of the 'Simple' example of ReactThreeRenderer
+class Experiment extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -82,7 +83,6 @@ class Simple extends Component {
           ref={this.sceneRef}
         >
           <perspectiveCamera
-            name="camera"
             fov={75}
             aspect={width / height}
             near={0.1}
@@ -110,4 +110,4 @@ class Simple extends Component {
   }
 }
 
-export default Simple;
+export default Experiment;

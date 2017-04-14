@@ -17,10 +17,18 @@ class React3 extends PureComponent {
     this.fakeDOMContainerInfo = {
       tagName: 'react-three-renderer-fake-container',
       removeChild(child) {
-        // Doing nothing here
+        // Doing nothing here but still need to have a stub
       },
-      appendChild: (child) => {
-        // it's safe to render into R3R here :D
+      appendChild: () => {
+        // the child is fake, but...
+        // for unknown reasons, this seems to be the best spot to render into r3r here.
+
+        // I'll need to study to find out why exactly.
+        // Until then, assume fiber sorcery.
+
+        // Also, priority hack to ensure lifecycle guarantees.. ( not sure if necessary?, to be confirmed )
+        // Basically doing this worked before and I just kept it.
+        // TODO try to remove priority elevation and see what happens.
         R3R.rendererInternal.performWithPriority(1, () => {
           R3R.render(this.props.children, this.canvas);
         });
@@ -45,7 +53,7 @@ class React3 extends PureComponent {
     // Create a fake element that will keep remounting every render.
     // Whenever it gets remounted, we can use that as an opportunity to render into R3R context
     // I am guessing that should be solved by the `implementation` property?
-    // I.e. I'd love a moment to be able to call `R3R.render`.
+    // I.e. I'd love to get a callback for a moment to be able to call `R3R.render`.
 
     const implementation = null;
 

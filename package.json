@@ -8,6 +8,10 @@
     "react": "16.0.0-alpha.5",
     "three": "^0.84.0"
   },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^6.4.1",

@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
   entry: './app/index.jsx',
@@ -17,25 +17,12 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.jsx$/,
+        test: /\.jsx?$/,
         loader: "babel-loader",
         exclude: /node_modules/,
-        query: {
+        options: {
           "presets": [
             "react",
-            "env"
-          ],
-          "plugins": [
-            "transform-class-properties"
-          ]
-        }
-      },
-      {
-        test: /\.js$/,
-        loader: "babel-loader",
-        exclude: /node_modules/,
-        query: {
-          "presets": [
             "env"
           ],
           "plugins": [
