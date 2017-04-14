@@ -4,7 +4,7 @@ import ReactFiberReconciler from 'react-dom/lib/ReactFiberReconciler';
 import ReactDOMFrameScheduling from 'react-dom/lib/ReactDOMFrameScheduling';
 
 const r3rRootContainerSymbol = Symbol('r3r-root');
-const r3rInstanceSymbol = Symbol('r3r-root');
+const r3rInstanceSymbol = Symbol('r3r-instance');
 
 function applyInitialPropUpdates(type, createdInstance, props) {
   switch (type) {
