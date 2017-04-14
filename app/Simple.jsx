@@ -49,24 +49,22 @@ class Simple extends Component {
   componentDidMount() {
     this.renderer.render(this.scene, this.camera);
 
+    let frameRequested = false;
+
     setInterval(() => {
       this._onAnimate(() => {
-        requestAnimationFrame(renderFunction);
+        if (!frameRequested) {
+          frameRequested = true;
+          requestAnimationFrame(renderFunction);
+        }
       });
     }, 20);
 
     const renderFunction = () => {
       this.renderer.render(this.scene, this.camera);
 
-      // requestAnimationFrame(renderFunction);
+      frameRequested = false;
     };
-
-    // this._onAnimate(() => {
-    //   requestAnimationFrame(() => {
-    //     this.renderer.render(this.scene, this.camera);
-    //   });
-    // });
-
   }
 
   render() {
@@ -75,12 +73,10 @@ class Simple extends Component {
 
     return (<React3>
       <webglRenderer
-        mainCamera="camera" // this points to the perspectiveCamera which has the name set to "camera" below
+        ref={this.rendererRef}
 
         width={width}
         height={height}
-
-        ref={this.rendererRef}
       >
         <scene
           ref={this.sceneRef}
