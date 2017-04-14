@@ -1,13 +1,9 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import ReactPortal from 'react-dom/lib/ReactPortal';
-import * as THREE from 'three';
 
 import R3R from '../core/index';
 
-// import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
-// import ReactFiberReconciler from 'react-dom/lib/ReactFiberReconciler';
-
-class React3 extends Component {
+class React3 extends PureComponent {
   constructor(...args) {
     super(...args);
 
@@ -63,23 +59,19 @@ class React3 extends Component {
         // ReactDOM.render(<div>test</div>, child);
         //
         R3R.rendererInternal.performWithPriority(1, () => {
-          R3R.render(this.props.children, this.createdCanvas, () => {
-            console.log('wut');
-
-            // R3R.render(<canvas b="c" />, document.getElementById('r3r-root'));
-          });
+          R3R.render(this.props.children, this.createdCanvas);
         });
 
         // this.container = child;
       },
       removeChild: (child) => {
-        console.log('remove that child');
+        // console.log('remove that child');
       },
       ownerDocument: {
         createElement: (name) => {
           // debugger;
 
-          console.log('proxy create element', name);
+          // console.log('proxy create element', name);
 
           if (name === 'react-three-renderer-proxy') {
             return {
@@ -98,7 +90,7 @@ class React3 extends Component {
           createdElement.appendChild = (child) => {
             // debugger;
 
-            console.log('fake append child');
+            // console.log('fake append child');
 
 
             // R3R.rendererInternal.performWithPriority(1, () => {
@@ -111,125 +103,25 @@ class React3 extends Component {
           };
 
           createdElement.removeChild = () => {
-            console.log('fake remove child');
+            // console.log('fake remove child');
           };
 
           return createdElement;
         }
       },
     };
-
-    // this.otherContainerInfo = {
-    //   // test: "test",
-    //   tagName: 'other',
-    //   // react3Component,
-    //   // ReactDOM,
-    //   appendChild: (child) => {
-    //     // console.log('append that OTHER child', child);
-    //     // debugger;
-    //
-    //     // ReactDOM.render(<div>test</div>, child);
-    //     // R3R.render(<react3 a="b" />, child, () => {
-    //     //   console.log('wut');
-    //     //
-    //     //   // R3R.render(<canvas b="c" />, document.getElementById('r3r-root'));
-    //     // });
-    //
-    //     // this.createdCanvas = child;
-    //   },
-    //   ownerDocument: {
-    //     createElement(name) {
-    //       // console.log('createElement', name);
-    //       return null;
-    //
-    //       // return {
-    //       //   type: name,
-    //       //   appendChild(child) {
-    //       //     console.log(`${name} appending `, child);
-    //       //   }
-    //       // };
-    //     }
-    //   },
-    // };
   }
 
-  componentWillUpdate() {
-    console.log('>>>> React3 will update');
-
-    // R3R.rendererInternal.unbatchedUpdates(() => {
-    // });
-    // requestAnimationFrame(() => {
-    //   R3R.render(this.props.children, this.createdCanvas, () => {
-    //     console.log('wut');
-    //
-    //     // R3R.render(<canvas b="c" />, document.getElementById('r3r-root'));
-    //   });
-    // })
-  }
-
-  componentDidUpdate() {
-    console.log('>>>> React3 did update');
-
-    // R3R.rendererInternal.performWithPriority(1, () => {
-    //   R3R.render(this.props.children, this.createdCanvas, () => {
-    //     console.log('wut');
-    //
-    //     // R3R.render(<canvas b="c" />, document.getElementById('r3r-root'));
-    //   });
-    // });
-  }
-
-  componentWillMount() {
-    console.log('>>>> React3 will mount');
-  }
 
   componentDidMount() {
-    console.log('>>>> React3 did mount');
-
-    // debugger;
-
-    // const domNode = ReactDOM.findDOMNode(this);
-
     this.div.appendChild(this.createdCanvas);
-    //
-    // this.setState({
-    //   mounted: true,
-    // });
   }
-
 
   divRef = (div) => {
     this.div = div;
   };
 
   render() {
-    // const {
-    //   mounted
-    // } = this.state;
-    //
-    // if (!mounted) {
-    //   return <canvas
-    //     ref={this.canvasRef}
-    //   />;
-    // }
-    //
-    // const {
-    //   test,
-    // } = this.props;
-    //
-    // if (test) {
-    //   debugger;
-    // }
-
-    // const react3Component = this;
-
-    // const something = {};
-
-    // console.log(ReactInstanceMap.get(this));
-
-    // if (this.createdCanvas) {
-    // }
-
     this.renderCount++;
 
     return <div ref={this.divRef}>{

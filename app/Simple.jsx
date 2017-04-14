@@ -6,6 +6,10 @@ class Simple extends Component {
   constructor(props, context) {
     super(props, context);
 
+    this.renderer = null;
+    this.scene = null;
+    this.camera = null;
+
     // construct the position vector here, because if we use 'new' within render,
     // React will think that things have changed when they have not.
     this.cameraPosition = new THREE.Vector3(0, 0, 5);
@@ -14,7 +18,7 @@ class Simple extends Component {
       cubeRotation: new THREE.Euler(),
     };
 
-    this._onAnimate = () => {
+    this._onAnimate = (callback) => {
       // we will get this callback every frame
 
       // pretend cubeRotation is immutable.
@@ -26,8 +30,43 @@ class Simple extends Component {
           this.state.cubeRotation.y + 0.1,
           0
         ),
-      });
+      }, callback);
     };
+  }
+
+  rendererRef = (renderer) => {
+    this.renderer = renderer;
+  };
+
+  sceneRef = (scene) => {
+    this.scene = scene;
+  };
+
+  cameraRef = (camera) => {
+    this.camera = camera;
+  };
+
+  componentDidMount() {
+    this.renderer.render(this.scene, this.camera);
+
+    setInterval(() => {
+      this._onAnimate(() => {
+        requestAnimationFrame(renderFunction);
+      });
+    }, 20);
+
+    const renderFunction = () => {
+      this.renderer.render(this.scene, this.camera);
+
+      // requestAnimationFrame(renderFunction);
+    };
+
+    // this._onAnimate(() => {
+    //   requestAnimationFrame(() => {
+    //     this.renderer.render(this.scene, this.camera);
+    //   });
+    // });
+
   }
 
   render() {
@@ -40,8 +79,12 @@ class Simple extends Component {
 
         width={width}
         height={height}
+
+        ref={this.rendererRef}
       >
-        <scene>
+        <scene
+          ref={this.sceneRef}
+        >
           <perspectiveCamera
             name="camera"
             fov={75}
@@ -50,6 +93,8 @@ class Simple extends Component {
             far={1000}
 
             position={this.cameraPosition}
+
+            ref={this.cameraRef}
           />
           <mesh
             rotation={this.state.cubeRotation}
