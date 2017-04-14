@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import * as THREE from 'three';
 import React3 from './React3';
 
+import ColorCube from './ColorCube';
+
 // A modification of the 'Simple' example of ReactThreeRenderer
 class Experiment extends Component {
   constructor(props, context) {
@@ -92,18 +94,7 @@ class Experiment extends Component {
 
             ref={this.cameraRef}
           />
-          <mesh
-            rotation={this.state.cubeRotation}
-          >
-            <boxGeometry
-              width={1}
-              height={1}
-              depth={1}
-            />
-            <meshBasicMaterial
-              color={0x00ff00}
-            />
-          </mesh>
+          <ColorCube rotation={this.state.cubeRotation} />
         </scene>
       </webglRenderer>
     </React3>);

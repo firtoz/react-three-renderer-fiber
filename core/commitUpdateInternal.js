@@ -6,6 +6,16 @@ export default function commitUpdateInternal(updatePayload, type, instance) {
     const newValue = updatePayload[i + 1];
 
     switch (type) {
+      case 'meshBasicMaterial':
+        switch (propName) {
+          case 'color':
+            instance.color.set(newValue);
+            break;
+          default:
+            throw new Error('Cannot update prop ' + propName + ' for ' + type);
+        }
+
+        break;
       case 'mesh':
         switch (propName) {
           case 'rotation':
