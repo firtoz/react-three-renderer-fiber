@@ -1,96 +1,17 @@
-import * as THREE from 'three';
-
 import ReactFiberReconciler from 'react-dom/lib/ReactFiberReconciler';
 import ReactDOMFrameScheduling from 'react-dom/lib/ReactDOMFrameScheduling';
 
-const r3rRootContainerSymbol = Symbol('r3r-root');
-const r3rInstanceSymbol = Symbol('r3r-instance');
+import applyInitialPropUpdates from './applyInitialPropUpdates';
+import diffProperties from './diffProperties';
+import createInstanceInternal from './createInstanceInternal';
+import commitUpdateInternal from './commitUpdateInternal';
+import appendInitialChildInternal from './appendInitialChildInternal';
 
-function applyInitialPropUpdates(type, createdInstance, props) {
-  switch (type) {
-    case 'boxGeometry':
-    case 'meshBasicMaterial':
-    case 'scene':
-      break;
-    case 'webglRenderer': {
-      const {
-        width,
-        height,
-      } = props;
-
-      createdInstance.setSize(width, height);
-
-      break;
-    }
-    case 'mesh':
-      const {
-        rotation,
-      } = props;
-
-      createdInstance.rotation.copy(rotation);
-
-      break;
-    case 'perspectiveCamera':
-      const {
-        name,
-        position,
-      } = props;
-
-      createdInstance.position.copy(position);
-      createdInstance.name = name;
-
-      break;
-    default:
-      throw new Error('cannot apply props for this type yet: ' + type);
-  }
-}
+import r3rRootContainerSymbol from './r3rRootContainerSymbol';
+import r3rInstanceSymbol from './r3rInstanceSymbol';
 
 function precacheInstance(internalInstance, threeElement) {
   threeElement[r3rInstanceSymbol] = internalInstance;
-}
-
-// see ReactDOMFiberComponent.diffProperties
-function diffProperties(lastProps, nextProps) {
-  // if (process.env.NODE_ENV !== 'production') {
-  //   validatePropertiesInDevelopment(tag, nextRawProps); // TODO
-  // }
-
-  let updatePayload = null;
-
-  const lastPropsKeys = Object.keys(lastProps);
-
-  for (let i = 0; i < lastPropsKeys.length; ++i) {
-    const propKey = lastPropsKeys[i];
-
-    if (nextProps.hasOwnProperty(propKey) || !lastProps.hasOwnProperty(propKey) || lastProps[propKey] == null) {
-      continue;
-    }
-    (updatePayload = updatePayload || []).push(propKey, null);
-  }
-
-  const nextPropsKeys = Object.keys(nextProps);
-
-  const hasLastProps = !!lastProps;
-
-  for (let i = 0; i < nextPropsKeys.length; ++i) {
-    const propKey = nextPropsKeys[i];
-
-    const nextProp = nextProps[propKey];
-    const lastProp = hasLastProps ? lastProps[propKey] : undefined;
-    if (!nextProps.hasOwnProperty(propKey) || nextProp === lastProp || (!nextProp) && (!lastProp)) {
-      continue;
-    }
-
-    if (propKey === 'children') {
-      if (lastProp !== nextProp && (typeof nextProp === 'string' || typeof nextProp === 'number')) {
-        (updatePayload = updatePayload || []).push(propKey, '' + nextProp);
-      }
-    } else {
-      (updatePayload = updatePayload || []).push(propKey, nextProp);
-    }
-  }
-
-  return updatePayload;
 }
 
 const R3Renderer = ReactFiberReconciler({
@@ -113,59 +34,7 @@ const R3Renderer = ReactFiberReconciler({
   createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
     let createdInstance = {};
 
-    switch (type) {
-      default:
-        throw new Error('cannot create this type yet: ' + type);
-      case 'webglRenderer': {
-        createdInstance = new THREE.WebGLRenderer({
-          canvas: rootContainerInstance,
-        });
-        break;
-      }
-      case 'scene':
-        createdInstance = new THREE.Scene();
-
-        break;
-      case 'mesh':
-        createdInstance = new THREE.Mesh();
-        break;
-      case 'meshBasicMaterial':
-        const {
-          color,
-        } = props;
-
-        createdInstance = new THREE.MeshBasicMaterial({
-          color,
-        });
-
-        break;
-      case 'boxGeometry':
-        const {
-          width,
-          height,
-          depth,
-        } = props;
-
-        createdInstance = new THREE.BoxGeometry(width, height, depth);
-
-        break;
-      case 'perspectiveCamera':
-        const {
-          fov,
-          aspect,
-          near,
-          far,
-        } = props;
-
-        createdInstance = new THREE.PerspectiveCamera(
-          fov,
-          aspect,
-          near,
-          far
-        );
-
-        break;
-    }
+    createdInstance = createInstanceInternal(type, createdInstance, rootContainerInstance, props);
 
     precacheInstance(internalInstanceHandle, createdInstance);
     applyInitialPropUpdates(type, createdInstance, props);
@@ -190,54 +59,7 @@ const R3Renderer = ReactFiberReconciler({
     );
   },
   commitUpdate(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
-    let sizeUpdates = null;
-
-    for (let i = 0; i < updatePayload.length; i += 2) {
-      const propName = updatePayload[i];
-      const newValue = updatePayload[i + 1];
-
-      switch (type) {
-        case 'mesh':
-          switch (propName) {
-            case 'rotation':
-              instance.rotation.copy(newValue);
-              break;
-            default:
-              throw new Error('Cannot update prop ' + propName + ' for ' + type);
-          }
-
-          break;
-        case 'perspectiveCamera':
-
-          switch (propName) {
-            case 'aspect':
-              instance.aspect = newValue;
-              instance.updateProjectionMatrix();
-              break;
-            default:
-              throw new Error('Cannot update prop ' + propName + ' for ' + type);
-          }
-          break;
-        case 'webglRenderer':
-          if (propName === 'width' || propName === 'height') {
-            if (!sizeUpdates) {
-              sizeUpdates = {};
-            }
-
-            sizeUpdates[propName] = newValue;
-          }
-
-          break;
-        default:
-          throw new Error('Cannot update prop ' + propName + ' for ' + type);
-      }
-    }
-
-    if (type === 'webglRenderer' && sizeUpdates) {
-      const newSize = Object.assign({}, instance.getSize(), sizeUpdates);
-
-      instance.setSize(newSize.width, newSize.height);
-    }
+    commitUpdateInternal(updatePayload, type, instance);
   },
   appendChild(parentInstance, child) {
     const parentInternalInstance = parentInstance[r3rInstanceSymbol];
@@ -258,45 +80,7 @@ const R3Renderer = ReactFiberReconciler({
     }
   },
   appendInitialChild(parentInstance, child) {
-    const parentInternalInstance = parentInstance[r3rInstanceSymbol];
-    const childInternalInstance = child[r3rInstanceSymbol];
-
-    const parentType = parentInternalInstance.type;
-    const childType = childInternalInstance.type;
-
-    switch (parentType) {
-      case 'mesh':
-        if (child instanceof THREE.Geometry) {
-          parentInstance.geometry = child;
-        } else if (child instanceof THREE.Material) {
-          parentInstance.material = child;
-        } else {
-          throw new Error('cannot add ' + childType + ' as a child to ' + parentType);
-        }
-        break;
-      case 'scene':
-        if (child instanceof THREE.Object3D) {
-          parentInstance.add(child);
-        } else {
-          throw new Error('cannot add ' + childType + ' as a child to ' + parentType);
-        }
-        break;
-      case 'webglRenderer':
-        if (!parentInstance.userData) {
-          parentInstance.userData = {};
-        }
-
-        if (child instanceof THREE.Scene) {
-          parentInstance.userData._scene = child;
-        } else {
-          throw new Error('cannot add ' + childType + ' as a child to ' + parentType);
-        }
-
-        break;
-      default:
-        throw new Error('cannot add ' + childType + ' as a child to ' + parentType);
-        break;
-    }
+    appendInitialChildInternal(parentInstance, child);
   },
   getPublicInstance(instance) {
     return instance;
