@@ -1,19 +1,9 @@
 import {BundleType} from "./DevtoolsHelpers";
 
-window.__DEV__ = process.env.NODE_ENV !== "production";
-
-import ReactFiberReconciler = require('react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconciler');
-import ReactDOMFrameScheduling = require('react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling');
-
 import r3rRootContainerSymbol from './r3rRootContainerSymbol';
 import fiberSymbol from './r3rFiberSymbol';
 
-import {
-  injectInternals,
-} from 'react-fiber-export/lib/renderers/shared/fiber/ReactFiberDevToolsHook';
-
-const R3RVersion = require('../../package.json').version;
-
+import {injectInternals,} from 'react-fiber-export/lib/renderers/shared/fiber/ReactFiberDevToolsHook';
 import appendChild from './renderer/appendChild';
 import appendChildToContainer from './renderer/appendChildToContainer';
 import appendInitialChild from './renderer/appendInitialChild';
@@ -36,6 +26,13 @@ import shouldDeprioritizeSubtree from './renderer/shouldDeprioritizeSubtree';
 import getRootHostContext from './renderer/getRootHostContext';
 import getChildHostContext from './renderer/getChildHostContext';
 import shouldSetTextContent from './renderer/shouldSetTextContent';
+
+window.__DEV__ = process.env.NODE_ENV !== "production";
+
+import ReactFiberReconciler = require('react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconciler');
+import ReactDOMFrameScheduling = require('react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling');
+
+const R3RVersion = require('../../package.json').version;
 
 const R3Renderer = ReactFiberReconciler({
   appendChild,
@@ -64,7 +61,7 @@ const R3Renderer = ReactFiberReconciler({
   useSyncScheduling: true,
 });
 
-function renderSubtreeIntoContainer(parentComponent: React.Component<any, any>,
+function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> | null,
                                     children: any,
                                     container: any,
                                     forceHydrate: boolean,
@@ -209,12 +206,14 @@ if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_REACT_ADDON_HOOK
     // };
 
     let reactDevtoolsRendererId: number;
-    let rendererListenerCleanup: Function;
+    let rendererListenerCleanup: Function | null;
 
     const rendererListener = (info: ReactDevtools.RendererInfo) => {
       reactDevtoolsRendererId = info.id;
 
-      rendererListenerCleanup();
+      if (rendererListenerCleanup != null) {
+        rendererListenerCleanup();
+      }
 
       rendererListenerCleanup = null;
     };

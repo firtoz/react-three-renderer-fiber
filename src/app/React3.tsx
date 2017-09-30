@@ -1,11 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import {PureComponent} from 'react';
-import ReactPortal = require('react-fiber-export/lib/renderers/shared/fiber/isomorphic/ReactPortal');
 
 import R3R from '../core/r3r';
-
-// import r3rFiberSymbol from "../core/r3rFiberSymbol";
+import ReactPortal = require('react-fiber-export/lib/renderers/shared/fiber/isomorphic/ReactPortal');
 
 class React3 extends PureComponent<any, any> {
   private renderCount: number;
