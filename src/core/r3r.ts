@@ -12,7 +12,7 @@ import commitUpdateInternal from './commitUpdateInternal';
 import appendInitialChildInternal from './appendInitialChildInternal';
 
 import r3rRootContainerSymbol from './r3rRootContainerSymbol';
-import r3rInstanceSymbol from './r3rInstanceSymbol';
+import fiberSymbol from './r3rFiberSymbol';
 
 import {
   injectInternals,
@@ -20,39 +20,21 @@ import {
 
 const R3RVersion = require('../../package.json').version;
 
-function precacheInstance(internalInstance: IReactInstanceHandle, threeElement: any) {
-  threeElement[r3rInstanceSymbol] = internalInstance;
-}
-
-interface IReactInstanceHandle {
-  alternate: any,
-  child: any,
-  effectTag: number,
-  firstEffect: any,
-  memoizedProps: any,
-  memoizedState: any,
-  nextEffect: any,
-  pendingProps: any,
-  pendingWorkPriority: any,
-  ref: React.Ref<any>,
-  'return': any,
-  sibling: any,
-  stateNode: any,
-  tag: number,
-  type: string,
-  updateQueue: any,
+function precacheInstance(fiber: ReactFiber.Fiber, threeElement: any) {
+  threeElement[fiberSymbol] = fiber;
 }
 
 const emptyObject = {};
 
 const R3Renderer = ReactFiberReconciler({
   appendChild(parentInstance, child) {
-    // debugger;
-    const parentInternalInstance = parentInstance[r3rInstanceSymbol];
-    const childInternalInstance = child[r3rInstanceSymbol];
+    const parentFiber = parentInstance[fiberSymbol];
+    const childFiber = child[fiberSymbol];
 
-    const parentType = parentInternalInstance.type;
-    const childType = childInternalInstance.type;
+    debugger;
+
+    const parentType = parentFiber.type;
+    const childType = childFiber.type;
 
     if (parentInstance instanceof HTMLCanvasElement) {
       // party time!
@@ -96,12 +78,12 @@ const R3Renderer = ReactFiberReconciler({
   commitUpdate(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
     commitUpdateInternal(updatePayload, type, instance);
   },
-  createInstance(type: string, props: any, rootContainerInstance: HTMLCanvasElement, hostContext: any, internalInstanceHandle: IReactInstanceHandle) {
+  createInstance(type: string, props: any, rootContainerInstance: HTMLCanvasElement, hostContext: any, fiber: ReactFiber.Fiber) {
     let createdInstance = {};
 
     createdInstance = createInstanceInternal(type, createdInstance, rootContainerInstance, props);
 
-    precacheInstance(internalInstanceHandle, createdInstance);
+    precacheInstance(fiber, createdInstance);
     applyInitialPropUpdates(type, createdInstance, props);
 
     return createdInstance;
@@ -137,7 +119,7 @@ const R3Renderer = ReactFiberReconciler({
     );
   },
   removeChild(currentParent: any, child): any {
-    const parentInstance = currentParent[r3rInstanceSymbol];
+    const parentInstance = currentParent[fiberSymbol];
     switch (parentInstance.type) {
       case 'scene':
         currentParent.remove(child);
@@ -172,7 +154,7 @@ const R3Renderer = ReactFiberReconciler({
     return false;
   },
   getRootHostContext(rootContainerInstance: any) {
-    console.log('getRootHostContext', rootContainerInstance);
+    // console.log('getRootHostContext', rootContainerInstance);
     // try to copy from the parents somehow if they're from ReactDOM?
 
     return emptyObject;
@@ -195,7 +177,7 @@ function renderSubtreeIntoContainer(parentComponent: any, children: any, contain
     const newRoot = R3Renderer.createContainer(containerNode);
 
     containerNode[r3rRootContainerSymbol] = newRoot;
-    containerNode[r3rInstanceSymbol] = newRoot;
+    containerNode[fiberSymbol] = newRoot;
 
     root = newRoot;
 

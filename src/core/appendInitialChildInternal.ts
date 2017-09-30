@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 // import * as React from 'react';
 
-import r3rInstanceSymbol from './r3rInstanceSymbol';
+import r3rFiberSymbol from './r3rFiberSymbol';
 //
 // const abc: symbol = Symbol('asdf');
 //
@@ -15,8 +15,8 @@ import r3rInstanceSymbol from './r3rInstanceSymbol';
 // }
 
 export default function appendInitialChildInternal(parentInstance: any, child: any) {
-  const parentInternalInstance = parentInstance[r3rInstanceSymbol];
-  const childInternalInstance = child[r3rInstanceSymbol];
+  const parentInternalInstance = parentInstance[r3rFiberSymbol];
+  const childInternalInstance = child[r3rFiberSymbol];
 
   const parentType = parentInternalInstance.type;
   const childType = childInternalInstance.type;

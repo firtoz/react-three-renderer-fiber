@@ -1,5 +1,7 @@
 /// <reference path="../../node_modules/@types/react/index.d.ts"/>
 declare module ReactFiber {
+
+
   export interface ReactFiberRendererConfig {
     getRootHostContext(rootContainerInstance: any): any,
 
