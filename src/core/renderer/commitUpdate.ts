@@ -1,5 +1,5 @@
-export default function commitUpdateInternal(updatePayload, type, instance) {
-  let sizeUpdates = null;
+export default function commitUpdateInternal(instance: any, updatePayload: any, type: any, oldProps: any, newProps: any, internalInstanceHandle: any) {
+  let sizeUpdates: any = null;
 
   for (let i = 0; i < updatePayload.length; i += 2) {
     const propName = updatePayload[i];
