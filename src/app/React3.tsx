@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {PureComponent} from 'react';
 
-import R3R from '../core/r3r';
-import ReactPortal = require('react-fiber-export/lib/renderers/shared/fiber/isomorphic/ReactPortal');
+import ReactThreeRenderer from '../core/renderer/reactThreeRenderer';
+import * as ReactDOM from 'react-dom';
 
 class React3 extends PureComponent<any, any> {
   private renderCount: number;
@@ -24,6 +24,7 @@ class React3 extends PureComponent<any, any> {
 
     this.fakeDOMContainerInfo = {
       tagName: 'react-three-renderer-fake-container',
+      nodeType: document.ELEMENT_NODE,
       removeChild(child: any) {
         // Doing nothing here but still need to have a stub
       },
@@ -54,7 +55,7 @@ class React3 extends PureComponent<any, any> {
             // console.log('set attribute: ', ...args);
 
             if (this.div) {
-              R3R.render(this.props.children, this.canvas);
+              ReactThreeRenderer.render(this.props.children, this.canvas);
             }
           }
         }) // fake element gets created here
@@ -78,18 +79,11 @@ class React3 extends PureComponent<any, any> {
   componentDidMount() {
     this.div.appendChild(this.canvas);
 
-    (this.canvas as any)['boooo'] = this.div;
-    (this.canvas as any)['component'] = this;
-
-    // debugger;
-
-    R3R.render(this.props.children, this.canvas);
-
-    // ReactDOM.render(<div>Test</div>, this.secondDiv);
+    ReactThreeRenderer.render(this.props.children, this.canvas);
   }
 
   componentWillUnmount() {
-    R3R.unmountComponentAtNode(this.canvas);
+    ReactThreeRenderer.unmountComponentAtNode(this.canvas);
     console.log('aaaah');
   }
 
@@ -106,7 +100,7 @@ class React3 extends PureComponent<any, any> {
     return (<div>
       <div ref={this.divRef}>{
         [
-          ReactPortal.createPortal(
+          (ReactDOM as any).createPortal(
             <react-three-renderer-proxy testProps={this.renderCount} />,
             this.fakeDOMContainerInfo,
             implementation,

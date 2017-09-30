@@ -1,4 +1,4 @@
-import fiberSymbol from "../r3rFiberSymbol";
+import fiberSymbol from "../../r3rFiberSymbol";
 
 export default function removeChild(currentParent: any, child: any): any {
   const parentInstance = currentParent[fiberSymbol];

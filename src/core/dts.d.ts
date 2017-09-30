@@ -247,14 +247,6 @@ declare module 'react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconcil
   export = ReactFiberReconciler;
 }
 
-declare module 'react-fiber-export/lib/renderers/shared/fiber/isomorphic/ReactPortal' {
-  class ReactDOMFrameScheduling {
-    static createPortal(a: any, b: any, c: any): any;
-  }
-
-  export = ReactDOMFrameScheduling;
-}
-
 declare module 'react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling' {
   class ReactDOMFrameScheduling {
     static rIC(): number;

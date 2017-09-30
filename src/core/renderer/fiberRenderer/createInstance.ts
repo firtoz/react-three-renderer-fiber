@@ -1,7 +1,7 @@
-import applyInitialPropUpdates from "../applyInitialPropUpdates";
-import fiberSymbol from "../r3rFiberSymbol";
+import applyInitialPropUpdates from "../../applyInitialPropUpdates";
+import fiberSymbol from "../../r3rFiberSymbol";
 
-import nativeTypes from '../nativeTypes';
+import nativeTypes from '../../nativeTypes/index';
 
 function createInstanceInternal(type: string,
                                 rootContainerInstance: HTMLCanvasElement,
