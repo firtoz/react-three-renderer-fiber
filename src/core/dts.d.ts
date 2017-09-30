@@ -316,7 +316,3 @@ interface Process {
 declare const process: Process;
 
 declare const __REACT_DEVTOOLS_GLOBAL_HOOK__: ReactDevtools.GlobalHook;
-
-interface Window {
-  __DEV__: Boolean,
-}

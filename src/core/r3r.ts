@@ -1,5 +1,3 @@
-window.__DEV__ = process.env.NODE_ENV !== "production";
-
 import {BundleType} from "./DevtoolsHelpers";
 
 import r3rRootContainerSymbol from './r3rRootContainerSymbol';
