@@ -1,8 +1,20 @@
 import * as THREE from 'three';
+// import * as React from 'react';
 
 import r3rInstanceSymbol from './r3rInstanceSymbol';
+//
+// const abc: symbol = Symbol('asdf');
+//
+// interface THREEElement extends React.ReactElement<any> {
+// }
+//
+// interface InternalInstance {
+//   // [index: string]: THREEElement;
+//
+//   // geometry: THREE.Geometry;
+// }
 
-export default function appendInitialChildInternal(parentInstance, child) {
+export default function appendInitialChildInternal(parentInstance: any, child: any) {
   const parentInternalInstance = parentInstance[r3rInstanceSymbol];
   const childInternalInstance = child[r3rInstanceSymbol];
 
@@ -40,6 +52,5 @@ export default function appendInitialChildInternal(parentInstance, child) {
       break;
     default:
       throw new Error('cannot add ' + childType + ' as a child to ' + parentType);
-      break;
   }
 }

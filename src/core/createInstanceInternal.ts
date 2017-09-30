@@ -1,6 +1,18 @@
 import * as THREE from 'three';
 
-export default function createInstanceInternal(type, createdInstance, rootContainerInstance, props) {
+interface R3RElementCreator<TProps, TType> {
+  createInstance(props: TProps, rootContainerInstance: HTMLCanvasElement): TType;
+}
+
+class WebGLRendererCreator implements R3RElementCreator<THREE.WebGLRendererParameters, THREE.WebGLRenderer> {
+  createInstance(props: THREE.WebGLRendererParameters, rootContainerInstance: HTMLCanvasElement): THREE.WebGLRenderer {
+    return new THREE.WebGLRenderer({
+      canvas: rootContainerInstance,
+    });
+  }
+}
+
+export default function createInstanceInternal(type: string, createdInstance: any, rootContainerInstance: HTMLCanvasElement, props: any) {
   switch (type) {
     default:
       throw new Error('cannot create this type yet: ' + type);

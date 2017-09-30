@@ -1,4 +1,4 @@
-export default function applyInitialPropUpdates(type, createdInstance, props) {
+export default function applyInitialPropUpdates(type: string, createdInstance: any, props: any) {
   switch (type) {
     case 'boxGeometry':
     case 'meshBasicMaterial':
