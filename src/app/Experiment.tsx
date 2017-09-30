@@ -30,6 +30,8 @@ class Experiment extends Component {
   private camera: any;
   private cameraPosition: any;
   private _onAnimate: (callback: any) => any;
+  private rafRequest: number;
+  private animateInterval: number;
 
   public state: {
     cubeRotation: any,
@@ -42,6 +44,7 @@ class Experiment extends Component {
     this.renderer = null;
     this.scene = null;
     this.camera = null;
+    this.rafRequest = 0;
 
     // construct the position vector here, because if we use 'new' within render,
     // React will think that things have changed when they have not.
@@ -86,13 +89,10 @@ class Experiment extends Component {
 
     this.renderer.render(this.scene, this.camera);
 
-    let frameRequested = false;
-
-    setInterval(() => {
+    this.animateInterval = setInterval(() => {
       this._onAnimate(() => {
-        if (!frameRequested) {
-          frameRequested = true;
-          requestAnimationFrame(renderFunction);
+        if (this.rafRequest === 0) {
+          this.rafRequest = requestAnimationFrame(renderFunction);
         }
       });
     }, 20);
@@ -100,11 +100,36 @@ class Experiment extends Component {
     const renderFunction = () => {
       this.renderer.render(this.scene, this.camera);
 
-      frameRequested = false;
+      this.rafRequest = 0;
     };
   }
 
   _onClick = () => {
+    if (!this.state.wantsResult) {
+      clearInterval(this.animateInterval);
+
+      if (this.rafRequest !== 0) {
+        console.log('about to go!');
+        cancelAnimationFrame(this.rafRequest);
+
+        this.rafRequest = 0;
+      }
+    } else {
+      const renderFunction = () => {
+        this.renderer.render(this.scene, this.camera);
+
+        this.rafRequest = 0;
+      };
+
+      this.animateInterval = setInterval(() => {
+        this._onAnimate(() => {
+          if (this.rafRequest === 0) {
+            this.rafRequest = requestAnimationFrame(renderFunction);
+          }
+        });
+      }, 20);
+    }
+
     this.setState({
       wantsResult: !this.state.wantsResult,
     });
@@ -116,10 +141,37 @@ class Experiment extends Component {
 
     let testResult = null;
     let cube = null;
+    let react3 = null;
+
+    cube = <ColorCube rotation={this.state.cubeRotation} />;
 
     if (this.state.wantsResult) {
       testResult = <div key="result">Yay</div>;
-      cube = <ColorCube rotation={this.state.cubeRotation} />;
+    } else {
+      react3 = <React3>
+        <webglRenderer
+          ref={this.rendererRef}
+
+          width={width}
+          height={height}
+        >
+          <scene
+            ref={this.sceneRef}
+          >
+            <perspectiveCamera
+              fov={75}
+              aspect={width / height}
+              near={0.1}
+              far={1000}
+
+              position={this.cameraPosition}
+
+              ref={this.cameraRef}
+            />
+            {cube}
+          </scene>
+        </webglRenderer>
+      </React3>;
     }
 
     return (<div>
@@ -128,30 +180,7 @@ class Experiment extends Component {
         {testResult}
       </div>
       <div key="renderer">
-        <React3>
-          <webglRenderer
-            ref={this.rendererRef}
-
-            width={width}
-            height={height}
-          >
-            <scene
-              ref={this.sceneRef}
-            >
-              <perspectiveCamera
-                fov={75}
-                aspect={width / height}
-                near={0.1}
-                far={1000}
-
-                position={this.cameraPosition}
-
-                ref={this.cameraRef}
-              />
-              {cube}
-            </scene>
-          </webglRenderer>
-        </React3>
+        {react3}
       </div>
     </div>);
   }

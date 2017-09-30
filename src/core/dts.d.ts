@@ -49,7 +49,7 @@ declare module ReactFiber {
 
     removeChild(parent: any, child: any): any,
 
-    removeChildFromContainer(): any,
+    removeChildFromContainer(container: any, child: any): void;
   }
 
 
@@ -316,7 +316,8 @@ interface Process {
 
 declare const process: Process;
 
+declare const __REACT_DEVTOOLS_GLOBAL_HOOK__: ReactDevtools.GlobalHook;
+
 interface Window {
   __DEV__: Boolean,
-  __REACT_DEVTOOLS_GLOBAL_HOOK__: ReactDevtools.GlobalHook,
 }

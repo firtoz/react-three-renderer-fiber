@@ -4,7 +4,7 @@ export default function appendChild(parentInstance: any, childInstance: any): vo
   const parentFiber = parentInstance[fiberSymbol];
   const childFiber = childInstance[fiberSymbol];
 
-  debugger;
+  // debugger;
 
   const parentType = parentFiber.type;
   const childType = childFiber.type;

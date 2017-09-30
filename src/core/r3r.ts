@@ -64,23 +64,26 @@ const R3Renderer = ReactFiberReconciler({
   useSyncScheduling: true,
 });
 
-function renderSubtreeIntoContainer(parentComponent: any, children: any, containerNode: any, callback: any) {
-  let root = containerNode[r3rRootContainerSymbol];
+function renderSubtreeIntoContainer(parentComponent: React.Component<any, any>,
+                                    children: any,
+                                    container: any,
+                                    forceHydrate: boolean,
+                                    callback: Function,) {
+  let root = container[r3rRootContainerSymbol];
 
   if (!root) {
-    const newRoot = R3Renderer.createContainer(containerNode);
+    const newRoot = R3Renderer.createContainer(container);
 
-    containerNode[r3rRootContainerSymbol] = newRoot;
-    containerNode[fiberSymbol] = newRoot;
+    container[r3rRootContainerSymbol] = newRoot;
+    container[fiberSymbol] = newRoot;
 
     root = newRoot;
 
     console.log('rooot', root);
 
-    // needed to do increase priority to ensure the updates happen ASAP so that getPublicRootInstance will see us
-    // R3Renderer.performWithPriority(1, () => {
-    R3Renderer.updateContainer(children, newRoot, parentComponent, callback);
-    // });
+    R3Renderer.unbatchedUpdates(function () {
+      R3Renderer.updateContainer(children, newRoot, parentComponent, callback);
+    });
   } else {
     R3Renderer.updateContainer(children, root, parentComponent, callback);
   }
@@ -88,10 +91,59 @@ function renderSubtreeIntoContainer(parentComponent: any, children: any, contain
   return R3Renderer.getPublicRootInstance(root);
 }
 
-
 class R3R {
   static render(element: any, container: any, callback?: any) {
-    return renderSubtreeIntoContainer(null, element, container, callback);
+    return renderSubtreeIntoContainer(null, element, container, false, callback);
+  }
+
+  static unmountComponentAtNode(container: any): any {
+    if (container[r3rRootContainerSymbol]) {
+      // if (__DEV__) {
+      //   const rootEl = getReactRootElementInContainer(container);
+      //   const renderedByDifferentReact =
+      //     rootEl && !ReactDOMComponentTree.getInstanceFromNode(rootEl);
+      //   warning(
+      //     !renderedByDifferentReact,
+      //     "unmountComponentAtNode(): The node you're attempting to unmount " +
+      //     'was rendered by another copy of React.',
+      //   );
+      // }
+
+      // Unmount should not be batched.
+      R3Renderer.unbatchedUpdates(() => {
+        renderSubtreeIntoContainer(null, null, container, false, () => {
+          container[r3rRootContainerSymbol] = null;
+        });
+      });
+      // If you call unmountComponentAtNode twice in quick succession, you'll
+      // get `true` twice. That's probably fine?
+      return true;
+    } else {
+      // if (__DEV__) {
+      //   const rootEl = getReactRootElementInContainer(container);
+      //   const hasNonRootReactChild = !!(rootEl &&
+      //     ReactDOMComponentTree.getInstanceFromNode(rootEl));
+      //
+      //   // Check if the container itself is a React root node.
+      //   const isContainerReactRoot =
+      //     container.nodeType === 1 &&
+      //     isValidContainer(container.parentNode) &&
+      //     !!container.parentNode._reactRootContainer;
+      //
+      //   warning(
+      //     !hasNonRootReactChild,
+      //     "unmountComponentAtNode(): The node you're attempting to unmount " +
+      //     'was rendered by React and is not a top-level container. %s',
+      //     isContainerReactRoot
+      //       ? 'You may have accidentally passed in a React root node instead ' +
+      //       'of its container.'
+      //       : 'Instead, have the parent component update its state and ' +
+      //       'rerender in order to remove this component.',
+      //   );
+      // }
+
+      return false;
+    }
   }
 
   // TODO unmount :D
@@ -127,7 +179,7 @@ if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_REACT_ADDON_HOOK
     }
   };
 
-  const globalDevtoolsHook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+  const globalDevtoolsHook = __REACT_DEVTOOLS_GLOBAL_HOOK__;
 
   // Inject the runtime into a devtools global hook regardless of browser.
   // Allows for debugging when the hook is injected on the page.
