@@ -264,7 +264,6 @@ declare module 'react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling'
 }
 
 declare module 'react-fiber-export/lib/renderers/shared/fiber/ReactFiberDevToolsHook' {
-
   export function injectInternals(internals: ReactDevtools.HookConfig): any;
 
   export function onCommitRoot(root: ReactFiber.FiberRoot): any;
