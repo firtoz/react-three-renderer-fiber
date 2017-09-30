@@ -29,6 +29,8 @@ declare module ReactFiber {
 
     scheduleDeferredCallback: any,
 
+    createTextInstance(text: string, rootContainerInstance: any, internalInstanceHandle: any): any,
+
     useSyncScheduling: boolean,
 
     commitMount(): any,

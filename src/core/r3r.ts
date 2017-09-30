@@ -43,55 +43,9 @@ interface IReactInstanceHandle {
   updateQueue: any,
 }
 
+const emptyObject = {};
+
 const R3Renderer = ReactFiberReconciler({
-  useSyncScheduling: true,
-  getRootHostContext(rootContainerInstance: any) {
-    console.log('getRootHostContext', rootContainerInstance);
-    // try to copy from the parents somehow if they're from ReactDOM?
-
-    return {};
-  },
-  getChildHostContext(parentHostContext: any, type: any) {
-    return parentHostContext;
-  },
-  shouldSetTextContent(props: any) {
-    // TODO
-    return false;
-  },
-  shouldDeprioritizeSubtree(type, props) {
-    // TODO vis check
-    return false;
-  },
-  createInstance(type: string, props: any, rootContainerInstance: HTMLCanvasElement, hostContext: any, internalInstanceHandle: IReactInstanceHandle) {
-    let createdInstance = {};
-
-    createdInstance = createInstanceInternal(type, createdInstance, rootContainerInstance, props);
-
-    precacheInstance(internalInstanceHandle, createdInstance);
-    applyInitialPropUpdates(type, createdInstance, props);
-
-    return createdInstance;
-  },
-  finalizeInitialChildren(r3rElement, type, props, rootContainerInstance) {
-    // TODO ?
-
-    return false;
-  },
-  prepareForCommit() {
-    // TODO ?
-  },
-  resetAfterCommit() {
-    // TODO ?
-  },
-  prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance, hostContext) {
-    return diffProperties(
-      oldProps,
-      newProps,
-    );
-  },
-  commitUpdate(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
-    commitUpdateInternal(updatePayload, type, instance);
-  },
   appendChild(parentInstance, child) {
     // debugger;
     const parentInternalInstance = parentInstance[r3rInstanceSymbol];
@@ -115,29 +69,6 @@ const R3Renderer = ReactFiberReconciler({
       // break;
     }
   },
-  appendInitialChild(parentInstance, child) {
-    appendInitialChildInternal(parentInstance, child);
-  },
-  getPublicInstance(instance) {
-    return instance;
-  },
-  scheduleDeferredCallback: ReactDOMFrameScheduling.rIC,
-
-  commitMount(): any {
-    console.log('commitMount');
-    throw new Error('commitMount');
-    // return false;
-  },
-  resetTextContent(): any {
-    console.log('resetTextContent');
-    throw new Error('resetTextContent');
-    // return false;
-  },
-  commitTextUpdate(): any {
-    console.log('commitTextUpdate');
-    throw new Error('commitTextUpdate');
-    // return false;
-  },
   appendChildToContainer(parentInstance: any, child: any): any {
     console.log('appendChildToContainer');
 
@@ -149,6 +80,43 @@ const R3Renderer = ReactFiberReconciler({
     throw new Error('appendChildToContainer');
     // return false;
   },
+  appendInitialChild(parentInstance, child) {
+    appendInitialChildInternal(parentInstance, child);
+  },
+  commitTextUpdate(): any {
+    console.log('commitTextUpdate');
+    throw new Error('commitTextUpdate');
+    // return false;
+  },
+  commitMount(): any {
+    console.log('commitMount');
+    throw new Error('commitMount');
+    // return false;
+  },
+  commitUpdate(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
+    commitUpdateInternal(updatePayload, type, instance);
+  },
+  createInstance(type: string, props: any, rootContainerInstance: HTMLCanvasElement, hostContext: any, internalInstanceHandle: IReactInstanceHandle) {
+    let createdInstance = {};
+
+    createdInstance = createInstanceInternal(type, createdInstance, rootContainerInstance, props);
+
+    precacheInstance(internalInstanceHandle, createdInstance);
+    applyInitialPropUpdates(type, createdInstance, props);
+
+    return createdInstance;
+  },
+  createTextInstance(text: string, rootContainerInstance: any, internalInstanceHandle: any): any {
+    return text;
+  },
+  finalizeInitialChildren(r3rElement, type, props, rootContainerInstance) {
+    // TODO ?
+
+    return false;
+  },
+  getPublicInstance(instance) {
+    return instance;
+  },
   insertBefore(): any {
     console.log('insertBefore');
     throw new Error('insertBefore');
@@ -158,6 +126,15 @@ const R3Renderer = ReactFiberReconciler({
     console.log('insertInContainerBefore');
     throw new Error('insertInContainerBefore');
     // return false;
+  },
+  prepareForCommit() {
+    // TODO ?
+  },
+  prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance, hostContext) {
+    return diffProperties(
+      oldProps,
+      newProps,
+    );
   },
   removeChild(currentParent: any, child): any {
     const parentInstance = currentParent[r3rInstanceSymbol];
@@ -182,6 +159,33 @@ const R3Renderer = ReactFiberReconciler({
     throw new Error('removeChildFromContainer');
     // return false;
   },
+  resetAfterCommit() {
+    // TODO ?
+  },
+  resetTextContent(): any {
+    console.log('resetTextContent');
+    throw new Error('resetTextContent');
+    // return false;
+  },
+  shouldDeprioritizeSubtree(type, props) {
+    // TODO vis check
+    return false;
+  },
+  getRootHostContext(rootContainerInstance: any) {
+    console.log('getRootHostContext', rootContainerInstance);
+    // try to copy from the parents somehow if they're from ReactDOM?
+
+    return emptyObject;
+  },
+  getChildHostContext(parentHostContext: any, type: any) {
+    return parentHostContext;
+  },
+  scheduleDeferredCallback: ReactDOMFrameScheduling.rIC,
+  shouldSetTextContent(props: any) {
+    // TODO
+    return false;
+  },
+  useSyncScheduling: true,
 });
 
 function renderSubtreeIntoContainer(parentComponent: any, children: any, containerNode: any, callback: any) {
