@@ -1,3 +1,5 @@
+window.__DEV__ = process.env.NODE_ENV !== "production";
+
 import {BundleType} from "./DevtoolsHelpers";
 
 import r3rRootContainerSymbol from './r3rRootContainerSymbol';
@@ -26,9 +28,6 @@ import shouldDeprioritizeSubtree from './renderer/shouldDeprioritizeSubtree';
 import getRootHostContext from './renderer/getRootHostContext';
 import getChildHostContext from './renderer/getChildHostContext';
 import shouldSetTextContent from './renderer/shouldSetTextContent';
-
-window.__DEV__ = process.env.NODE_ENV !== "production";
-
 import ReactFiberReconciler = require('react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconciler');
 import ReactDOMFrameScheduling = require('react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling');
 

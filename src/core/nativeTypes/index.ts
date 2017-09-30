@@ -13,5 +13,4 @@ context
     }
   });
 
-
 export default nativeTypes;
