@@ -1,17 +1,14 @@
 import * as THREE from "three";
-import {SimpleR3RNativeElement} from "../common/SimpleR3RNativeElement";
+import {Object3DDescriptorBase, Object3DProps} from "./object3d";
 
-interface MeshProps {
+interface MeshProps extends Object3DProps {
   geometry?: THREE.Geometry,
   material?: THREE.Material,
 }
 
-class MeshCreator extends SimpleR3RNativeElement<MeshProps, THREE.Mesh, THREE.Object3D> {
+class MeshCreator extends Object3DDescriptorBase<MeshProps, THREE.Mesh> {
   createInstance(props: any) {
     return new THREE.Mesh(props.geometry, props.material);
-  }
-
-  removedFromParent(parent: THREE.Object3D): void {
   }
 }
 

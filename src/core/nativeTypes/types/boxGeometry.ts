@@ -10,7 +10,7 @@ interface BoxGeometryProps {
   depthSegments?: number,
 }
 
-class BoxGeometry extends SimpleR3RNativeElement<BoxGeometryProps,
+class BoxGeometryDescriptor extends SimpleR3RNativeElement<BoxGeometryProps,
   THREE.BoxGeometry,
   THREE.Mesh> {
   createInstance(props: BoxGeometryProps) {
@@ -28,6 +28,10 @@ class BoxGeometry extends SimpleR3RNativeElement<BoxGeometryProps,
 
   removedFromParent(parent: THREE.Mesh): void {
   }
+
+  applyInitialPropUpdates(instance: THREE.BoxGeometry, props: BoxGeometryProps): void {
+    // already done by constructor
+  }
 }
 
-export default new BoxGeometry();
+export default new BoxGeometryDescriptor();

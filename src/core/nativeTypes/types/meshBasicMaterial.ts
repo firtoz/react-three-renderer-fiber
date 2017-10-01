@@ -10,6 +10,10 @@ class MeshBasicMaterial extends SimpleR3RNativeElement<THREE.MeshBasicMaterialPa
 
   removedFromParent(parent: THREE.Mesh): void {
   }
+
+  applyInitialPropUpdates(instance: THREE.MeshBasicMaterial, props: THREE.MeshBasicMaterialParameters): void {
+    // already done by constructor
+  }
 }
 
 export default new MeshBasicMaterial();

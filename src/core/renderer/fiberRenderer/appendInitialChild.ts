@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import r3rFiberSymbol from '../../r3rFiberSymbol';
+import r3rFiberSymbol from '../utils/r3rFiberSymbol';
 
 export default function appendInitialChildInternal(parentInstance: any, childInstance: any) {
   const parentInternalInstance = parentInstance[r3rFiberSymbol];

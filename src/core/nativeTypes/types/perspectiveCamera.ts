@@ -1,16 +1,15 @@
 import * as THREE from "three";
-import {SimpleR3RNativeElement} from "../common/SimpleR3RNativeElement";
+import {Object3DDescriptorBase, Object3DProps} from "./object3d";
 
-interface PerspectiveCameraProps {
+interface PerspectiveCameraProps extends Object3DProps {
   fov?: number,
   aspect?: number,
   near?: number,
   far?: number,
 }
 
-class PerspectiveCamera extends SimpleR3RNativeElement<PerspectiveCameraProps,
-  THREE.PerspectiveCamera,
-  THREE.Object3D> {
+class PerspectiveCameraDescriptor extends Object3DDescriptorBase<PerspectiveCameraProps,
+  THREE.PerspectiveCamera> {
   createInstance(props: PerspectiveCameraProps) {
     const {
       fov,
@@ -21,9 +20,6 @@ class PerspectiveCamera extends SimpleR3RNativeElement<PerspectiveCameraProps,
 
     return new THREE.PerspectiveCamera(fov, aspect, near, far);
   }
-
-  removedFromParent(parent: THREE.Object3D): void {
-  }
 }
 
-export default new PerspectiveCamera();
+export default new PerspectiveCameraDescriptor();

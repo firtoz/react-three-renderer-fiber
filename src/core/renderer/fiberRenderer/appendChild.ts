@@ -1,4 +1,4 @@
-import fiberSymbol from "../../r3rFiberSymbol";
+import fiberSymbol from "../utils/r3rFiberSymbol";
 
 export default function appendChild(parentInstance: any, childInstance: any): void {
   const parentFiber = parentInstance[fiberSymbol];

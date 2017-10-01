@@ -1,7 +1,7 @@
-import r3rRootContainerSymbol from '../r3rRootContainerSymbol';
-import fiberSymbol from '../r3rFiberSymbol';
+import r3rRootContainerSymbol from './utils/r3rRootContainerSymbol';
+import fiberSymbol from './utils/r3rFiberSymbol';
 
-import ReactThreeFiberRenderer from "./r3rFiberRenderer";
+import ReactThreeFiberRenderer from "./fiberRenderer";
 import './utils/DevtoolsHelpers';
 
 function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> | null,

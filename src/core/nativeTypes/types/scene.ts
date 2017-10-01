@@ -1,15 +1,12 @@
 import * as THREE from "three";
-import {SimpleR3RNativeElement} from "../common/SimpleR3RNativeElement";
+import {Object3DDescriptorBase, Object3DProps} from "./object3d";
 
 type SceneParents = THREE.Object3D | THREE.WebGLRenderer;
 
-class SceneCreator extends SimpleR3RNativeElement<any, THREE.Scene, SceneParents> {
-  createInstance(props: THREE.WebGLRendererParameters) {
+class SceneDescriptor extends Object3DDescriptorBase<Object3DProps, THREE.Scene, SceneParents> {
+  createInstance(props: Object3DProps) {
     return new THREE.Scene();
-  }
-
-  removedFromParent(parent: SceneParents): void {
   }
 }
 
-export default new SceneCreator();
+export default new SceneDescriptor();

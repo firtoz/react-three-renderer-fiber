@@ -1,11 +1,16 @@
 import * as THREE from "three";
 import {R3RendererNativeElement} from "../common/r3rendererNativeElement";
 
-class WebGLRendererCreator implements R3RendererNativeElement<THREE.WebGLRendererParameters,
+interface WebGLRendererProps extends THREE.WebGLRendererParameters {
+  width: number;
+  height: number;
+}
+
+class WebGLRendererDescriptor implements R3RendererNativeElement<WebGLRendererProps,
   HTMLCanvasElement,
   THREE.WebGLRenderer> {
 
-  createInstance(props: THREE.WebGLRendererParameters, rootContainerInstance: HTMLCanvasElement): THREE.WebGLRenderer {
+  createInstance(props: WebGLRendererProps, rootContainerInstance: HTMLCanvasElement): THREE.WebGLRenderer {
     return new THREE.WebGLRenderer({
       canvas: rootContainerInstance,
     });
@@ -14,6 +19,15 @@ class WebGLRendererCreator implements R3RendererNativeElement<THREE.WebGLRendere
   removedFromParent(parentInstance: HTMLCanvasElement): void {
 
   }
+
+  applyInitialPropUpdates(instance: THREE.WebGLRenderer, props: WebGLRendererProps): void {
+    const {
+      width,
+      height,
+    } = props;
+
+    instance.setSize(width, height);
+  }
 }
 
-export default new WebGLRendererCreator();
+export default new WebGLRendererDescriptor();

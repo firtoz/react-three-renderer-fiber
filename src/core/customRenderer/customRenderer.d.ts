@@ -22,5 +22,7 @@ interface ClassInterface {
 export interface NativeElement<TProps, Parent, T, TRenderer extends CustomReactRenderer<any>> {
   createInstance(props: TProps, rootContainerInstance: HTMLCanvasElement): T;
 
+  applyInitialPropUpdates(instance: T, props: TProps): void;
+
   removedFromParent(parent: Parent): void;
 }

@@ -7,4 +7,6 @@ export abstract class SimpleR3RNativeElement<TProps, T, TParent> implements R3Re
   abstract createInstance(props: TProps): T;
 
   abstract removedFromParent(parent: TParent): void;
+
+  abstract applyInitialPropUpdates(instance: T, props: TProps): void;
 }

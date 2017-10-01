@@ -1,29 +1,23 @@
-import applyInitialPropUpdates from "../../applyInitialPropUpdates";
-import fiberSymbol from "../../r3rFiberSymbol";
+import fiberSymbol from "../utils/r3rFiberSymbol";
 
 import nativeTypes from '../../nativeTypes/index';
-
-function createInstanceInternal(type: string,
-                                rootContainerInstance: HTMLCanvasElement,
-                                props: any) {
-  const creator = nativeTypes[type];
-
-  if (!creator) {
-    throw new Error('cannot create this type yet: ' + type);
-  }
-
-  return creator.createInstance(props, rootContainerInstance);
-}
 
 function precacheInstance(fiber: ReactFiber.Fiber, threeElement: any) {
   threeElement[fiberSymbol] = fiber;
 }
 
 export default function createInstance(type: string, props: any, rootContainerInstance: HTMLCanvasElement, hostContext: any, fiber: ReactFiber.Fiber) {
-  const createdInstance = createInstanceInternal(type, rootContainerInstance, props);
+  const creator = nativeTypes[type];
+
+  if (!creator) {
+    throw new Error('cannot create this type yet: ' + type);
+  }
+
+  const createdInstance = creator.createInstance(props, rootContainerInstance);
 
   precacheInstance(fiber, createdInstance);
-  applyInitialPropUpdates(type, createdInstance, props);
+
+  creator.applyInitialPropUpdates(createdInstance, props);
 
   return createdInstance;
 };
