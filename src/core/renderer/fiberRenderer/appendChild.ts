@@ -1,9 +1,9 @@
-import {ReactFiber} from "../../dts";
+import {IFiber} from "react-fiber-export";
 import fiberSymbol from "../utils/r3rFiberSymbol";
 
 export default function appendChild(parentInstance: any, childInstance: any): void {
-  const parentFiber = parentInstance[fiberSymbol] as ReactFiber.IFiber;
-  const childFiber = childInstance[fiberSymbol] as ReactFiber.IFiber;
+  const parentFiber = parentInstance[fiberSymbol] as IFiber;
+  const childFiber = childInstance[fiberSymbol] as IFiber;
 
   const parentType = parentFiber.type;
   const childType = childFiber.type;

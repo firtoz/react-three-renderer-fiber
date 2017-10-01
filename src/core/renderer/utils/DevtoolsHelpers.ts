@@ -1,9 +1,15 @@
-import {__REACT_DEVTOOLS_GLOBAL_HOOK__, process, ReactDevtools, ReactFiber} from "../../dts";
+import {IFiber, ReactFiberDevToolsHook} from "react-fiber-export";
 
-import "../../ReactFiberDevToolsHook.d.ts";
-
-import {injectInternals} from "react-fiber-export/lib/renderers/shared/fiber/ReactFiberDevToolsHook";
 import r3rFiberSymbol from "./r3rFiberSymbol";
+
+const {injectInternals} = ReactFiberDevToolsHook;
+
+declare const process: {
+  env: {
+    NODE_ENV: string,
+    ENABLE_REACT_ADDON_HOOKS: string;
+  };
+};
 
 if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOKS === "true") {
   /* tslint:disable */
@@ -50,8 +56,7 @@ if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOK
 
   // Inject the runtime into a devtools global hook regardless of browser.
   // Allows for debugging when the hook is injected on the page.
-  if (typeof globalDevtoolsHook !== "undefined"
-    && typeof injectInternals === "function") {
+  if (typeof globalDevtoolsHook !== "undefined") {
     // const devToolsRendererDefinition = {
     //   ComponentTree: {
     //     getClosestInstanceFromNode(node) {
@@ -95,7 +100,7 @@ if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOK
     // import interface Fiber from 'R'
 
     const hookConfig: ReactDevtools.IHookConfig = {
-      findFiberByHostInstance(hostInstance: any): ReactFiber.IFiber {
+      findFiberByHostInstance(hostInstance: any): IFiber {
         // debugger;
         console.log("getClosestInstanceFromNode", hostInstance);
 

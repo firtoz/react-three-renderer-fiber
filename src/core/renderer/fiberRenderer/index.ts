@@ -1,5 +1,5 @@
-import ReactFiberReconciler = require("react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconciler");
-import ReactDOMFrameScheduling = require("react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling");
+import {ReactDOMFrameScheduling, ReactFiberReconciler} from "react-fiber-export";
+
 import appendChild from "./appendChild";
 import appendChildToContainer from "./appendChildToContainer";
 import appendInitialChild from "./appendInitialChild";

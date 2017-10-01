@@ -1,9 +1,9 @@
-import {ReactFiber} from "../../dts";
+import {IFiber} from "react-fiber-export";
 import nativeTypes from "../../nativeTypes/index";
 import r3rFiberSymbol from "../utils/r3rFiberSymbol";
 
 export default function appendInitialChildInternal(parentInstance: any, childInstance: any) {
-  const parentFiber = parentInstance[r3rFiberSymbol] as ReactFiber.IFiber;
+  const parentFiber = parentInstance[r3rFiberSymbol] as IFiber;
 
   const parentType = parentFiber.type;
 
