@@ -1,5 +1,14 @@
+import * as THREE from "three";
 import {Scene, WebGLRenderer, WebGLRendererParameters} from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      webglRenderer: IReactThreeRendererElement<THREE.WebGLRenderer> & IWebGLRendererProps;
+    }
+  }
+}
 
 interface IWebGLRendererProps extends WebGLRendererParameters {
   width: number;

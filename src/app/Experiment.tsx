@@ -9,11 +9,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       "react-three-renderer-proxy": any;
-      webglRenderer: {
-        width: number,
-        ref: any,
-        height: number,
-      };
+      // webglRenderer: IReactThreeRendererElement<THREE.WebGLRenderer> & IWebGLRendererProps;
       scene: any;
       perspectiveCamera: any;
       mesh: any;
