@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3d";
+import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IPerspectiveCameraProps extends IObject3DProps {
   fov?: number;

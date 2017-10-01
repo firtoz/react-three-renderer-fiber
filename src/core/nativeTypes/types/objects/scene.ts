@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3d";
+import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 type SceneParents = THREE.Object3D | THREE.WebGLRenderer;
 

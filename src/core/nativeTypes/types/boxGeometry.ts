@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import {BoxGeometry, Mesh} from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
 interface IBoxGeometryProps {
@@ -11,8 +11,8 @@ interface IBoxGeometryProps {
 }
 
 class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryProps,
-  THREE.BoxGeometry,
-  THREE.Mesh> {
+  BoxGeometry,
+  Mesh> {
   public createInstance(props: IBoxGeometryProps) {
     const {
       width,
@@ -23,7 +23,11 @@ class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryPro
       depthSegments,
     } = props;
 
-    return new THREE.BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
+    return new BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
+  }
+
+  public appendToContainer(instance: BoxGeometry, container: Mesh): void {
+    throw new Error("the world is not ready");
   }
 }
 

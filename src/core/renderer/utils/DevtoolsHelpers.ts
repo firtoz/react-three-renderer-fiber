@@ -52,11 +52,11 @@ if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOK
     }
   };
 
-  const globalDevtoolsHook = __REACT_DEVTOOLS_GLOBAL_HOOK__;
+  // const globalDevtoolsHook = __REACT_DEVTOOLS_GLOBAL_HOOK__;
 
   // Inject the runtime into a devtools global hook regardless of browser.
   // Allows for debugging when the hook is injected on the page.
-  if (typeof globalDevtoolsHook !== "undefined") {
+  if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined") {
     // const devToolsRendererDefinition = {
     //   ComponentTree: {
     //     getClosestInstanceFromNode(node) {
@@ -93,7 +93,7 @@ if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOK
       rendererListenerCleanup = null;
     };
 
-    rendererListenerCleanup = globalDevtoolsHook.sub("renderer", rendererListener);
+    rendererListenerCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__.sub("renderer", rendererListener);
 
     type INativeType = any;
 
@@ -142,12 +142,12 @@ if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOK
       // });
     };
 
-    if (typeof globalDevtoolsHook.reactDevtoolsAgent !== "undefined"
-      && globalDevtoolsHook.reactDevtoolsAgent) {
-      const agent = globalDevtoolsHook.reactDevtoolsAgent;
+    if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent !== "undefined"
+      && __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent) {
+      const agent = __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent;
       hookAgent(agent);
     } else {
-      const devtoolsCallbackCleanup = globalDevtoolsHook
+      const devtoolsCallbackCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__
         .sub("react-devtools", (agent: ReactDevtools.IAgent) => {
           devtoolsCallbackCleanup();
 

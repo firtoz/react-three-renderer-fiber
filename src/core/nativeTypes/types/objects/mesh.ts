@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3d";
+import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IMeshProps extends IObject3DProps {
   geometry?: THREE.Geometry;

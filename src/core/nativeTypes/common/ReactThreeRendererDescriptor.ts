@@ -30,4 +30,6 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   public removeChild(instance: T, child: TChild): void {
     throw new Error("tried to remove a child from " + (instance as any)[r3rFiberSymbol].type);
   }
+
+  public abstract appendToContainer(instance: T, container: TParent): void;
 }

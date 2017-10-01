@@ -1,17 +1,17 @@
-import * as THREE from "three";
+import {Euler, Object3D, Vector3} from "three";
 import r3rFiberSymbol from "../../../renderer/utils/r3rFiberSymbol";
 import {ReactThreeRendererDescriptor} from "../../common/ReactThreeRendererDescriptor";
 
 export interface IObject3DProps {
   name?: string;
-  position?: THREE.Vector3;
-  rotation?: THREE.Euler;
+  position?: Vector3;
+  rotation?: Euler;
 }
 
 export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
-  T extends THREE.Object3D,
-  TChild = THREE.Object3D,
-  TParent = THREE.Object3D>
+  T extends Object3D,
+  TChild = Object3D,
+  TParent = Object3D>
 
   extends ReactThreeRendererDescriptor<TProps,
     T,
@@ -39,7 +39,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 
   public appendInitialChild(instance: T, child: TChild): void {
-    if (child instanceof THREE.Object3D) {
+    if (child instanceof Object3D) {
       instance.add(child);
     } else {
       throw new Error("cannot add " +
@@ -52,7 +52,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   public removeChild(instance: T, child: TChild): void {
     super.removeChild(instance, child);
 
-    if (child instanceof THREE.Object3D) {
+    if (child instanceof Object3D) {
       instance.remove(child);
     } else {
       throw new Error("cannot remove " +
@@ -63,9 +63,14 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 }
 
-class Object3DDescriptor extends Object3DDescriptorBase<IObject3DProps, THREE.Object3D> {
+class Object3DDescriptor extends Object3DDescriptorBase<IObject3DProps, Object3D> {
   public createInstance(props: IObject3DProps) {
-    return new THREE.Object3D();
+    return new Object3D();
+  }
+
+  public appendToContainer(instance: Object3D, container: Object3D): void {
+    console.log("gotta append myself to the parent now?!");
+    container.add(instance);
   }
 }
 
