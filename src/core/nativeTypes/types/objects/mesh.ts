@@ -1,22 +1,30 @@
-import * as THREE from "three";
+import {Geometry, Material, Mesh} from "three";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IMeshProps extends IObject3DProps {
-  geometry?: THREE.Geometry;
-  material?: THREE.Material;
+  geometry?: Geometry;
+  material?: Material;
 }
 
-type MeshChildType = THREE.Geometry | THREE.Material;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      mesh: IReactThreeRendererElement<Mesh> & IMeshProps;
+    }
+  }
+}
 
-class MeshCreator extends Object3DDescriptorBase<IMeshProps, THREE.Mesh, MeshChildType> {
+type MeshChildType = Geometry | Material;
+
+class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   public createInstance(props: any) {
-    return new THREE.Mesh(props.geometry, props.material);
+    return new Mesh(props.geometry, props.material);
   }
 
-  public appendInitialChild(instance: THREE.Mesh, child: MeshChildType): void {
-    if (child instanceof THREE.Geometry) {
+  public appendInitialChild(instance: Mesh, child: MeshChildType): void {
+    if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof THREE.Material) {
+    } else if (child instanceof Material) {
       instance.material = child;
     } else {
       super.appendInitialChild(instance, child);
@@ -24,10 +32,10 @@ class MeshCreator extends Object3DDescriptorBase<IMeshProps, THREE.Mesh, MeshChi
     }
   }
 
-  public removeChild(instance: THREE.Mesh, child: MeshChildType): void {
-    if (child instanceof THREE.Geometry) {
+  public removeChild(instance: Mesh, child: MeshChildType): void {
+    if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof THREE.Material) {
+    } else if (child instanceof Material) {
       instance.material = child;
     } else {
       super.removeChild(instance, child);

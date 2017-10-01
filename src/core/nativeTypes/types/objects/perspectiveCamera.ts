@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import {PerspectiveCamera} from "three";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IPerspectiveCameraProps extends IObject3DProps {
@@ -8,8 +8,16 @@ interface IPerspectiveCameraProps extends IObject3DProps {
   far?: number;
 }
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      perspectiveCamera: IReactThreeRendererElement<PerspectiveCamera> & IPerspectiveCameraProps;
+    }
+  }
+}
+
 class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCameraProps,
-  THREE.PerspectiveCamera> {
+  PerspectiveCamera> {
   public createInstance(props: IPerspectiveCameraProps) {
     const {
       fov,
@@ -18,7 +26,7 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
       far,
     } = props;
 
-    return new THREE.PerspectiveCamera(fov, aspect, near, far);
+    return new PerspectiveCamera(fov, aspect, near, far);
   }
 }
 

@@ -1,11 +1,19 @@
-import * as THREE from "three";
+import {Object3D, Scene, WebGLRenderer} from "three";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
-type SceneParents = THREE.Object3D | THREE.WebGLRenderer;
+type SceneParents = Object3D | WebGLRenderer;
 
-class SceneDescriptor extends Object3DDescriptorBase<IObject3DProps, THREE.Scene, SceneParents> {
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      scene: IReactThreeRendererElement<Scene> & IObject3DProps;
+    }
+  }
+}
+
+class SceneDescriptor extends Object3DDescriptorBase<IObject3DProps, Scene, SceneParents> {
   public createInstance(props: IObject3DProps) {
-    return new THREE.Scene();
+    return new Scene();
   }
 }
 

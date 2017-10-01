@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import {Euler, Object3D, Vector3} from "three";
 import r3rFiberSymbol from "../../../renderer/utils/r3rFiberSymbol";
 import {ReactThreeRendererDescriptor} from "../../common/ReactThreeRendererDescriptor";
@@ -6,6 +7,14 @@ export interface IObject3DProps {
   name?: string;
   position?: Vector3;
   rotation?: Euler;
+}
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      object3D: IReactThreeRendererElement<THREE.Object3D> & IObject3DProps;
+    }
+  }
 }
 
 export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
@@ -61,16 +70,17 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
         (instance as any)[r3rFiberSymbol].type);
     }
   }
+
+  public appendToContainer(instance: T, container: TParent): void {
+    if (container instanceof Object3D && instance instanceof Object3D) {
+      container.add(instance);
+    }
+  }
 }
 
 class Object3DDescriptor extends Object3DDescriptorBase<IObject3DProps, Object3D> {
   public createInstance(props: IObject3DProps) {
     return new Object3D();
-  }
-
-  public appendToContainer(instance: Object3D, container: Object3D): void {
-    console.log("gotta append myself to the parent now?!");
-    container.add(instance);
   }
 }
 

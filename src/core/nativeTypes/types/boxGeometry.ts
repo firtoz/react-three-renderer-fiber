@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import {BoxGeometry, Mesh} from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
@@ -8,6 +9,14 @@ interface IBoxGeometryProps {
   widthSegments?: number;
   heightSegments?: number;
   depthSegments?: number;
+}
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      boxGeometry: IReactThreeRendererElement<THREE.BoxGeometry> & IBoxGeometryProps;
+    }
+  }
 }
 
 class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryProps,

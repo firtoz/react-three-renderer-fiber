@@ -2,6 +2,14 @@ import * as THREE from "three";
 import {Mesh, MeshBasicMaterial} from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      meshBasicMaterial: IReactThreeRendererElement<THREE.MeshBasicMaterial> & THREE.MeshBasicMaterialParameters;
+    }
+  }
+}
+
 class MeshBasicMaterialDescriptor extends ReactThreeRendererDescriptor<THREE.MeshBasicMaterialParameters,
   MeshBasicMaterial,
   Mesh> {
