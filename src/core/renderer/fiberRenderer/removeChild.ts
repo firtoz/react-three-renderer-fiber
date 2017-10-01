@@ -1,5 +1,5 @@
-import fiberSymbol from "../utils/r3rFiberSymbol";
 import nativeTypes from "../../nativeTypes/index";
+import fiberSymbol from "../utils/r3rFiberSymbol";
 
 export default function removeChild(currentParent: any, child: any): any {
   const childType = child[fiberSymbol].type;
@@ -7,7 +7,7 @@ export default function removeChild(currentParent: any, child: any): any {
   const childDescriptor = nativeTypes[childType];
 
   if (!childDescriptor) {
-    throw new Error('cannot remove this type yet: ' + childType);
+    throw new Error("cannot remove this type yet: " + childType);
   }
 
   childDescriptor.willBeRemovedFromParent(child, parent);
@@ -18,7 +18,7 @@ export default function removeChild(currentParent: any, child: any): any {
   const descriptor = nativeTypes[type];
 
   if (!descriptor) {
-    throw new Error('cannot remove children from this type yet: ' + type);
+    throw new Error("cannot remove children from this type yet: " + type);
   }
 
   descriptor.removeChild(currentParent, child);

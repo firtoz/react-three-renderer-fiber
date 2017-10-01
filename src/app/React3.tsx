@@ -1,8 +1,8 @@
-import * as React from 'react';
-import {PureComponent} from 'react';
+import * as React from "react";
+import {PureComponent} from "react";
 
-import ReactThreeRenderer from '../core/renderer/reactThreeRenderer';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from "react-dom";
+import ReactThreeRenderer from "../core/renderer/reactThreeRenderer";
 
 class React3 extends PureComponent<any, any> {
   private renderCount: number;
@@ -18,16 +18,11 @@ class React3 extends PureComponent<any, any> {
     this.secondDiv = null;
 
     // the canvas gets created here so that it can be rendered into even before the component gets mounted.
-    this.canvas = document.createElement('canvas');
+    this.canvas = document.createElement("canvas");
 
     this.renderCount = 0;
 
     this.fakeDOMContainerInfo = {
-      tagName: 'react-three-renderer-fake-container',
-      nodeType: document.ELEMENT_NODE,
-      removeChild(child: any) {
-        // Doing nothing here but still need to have a stub
-      },
       appendChild: () => {
         // the child is fake, but...
         // for unknown reasons, this seems to be the best spot to render into r3r here.
@@ -48,46 +43,51 @@ class React3 extends PureComponent<any, any> {
 
         // });
       },
+      nodeType: document.ELEMENT_NODE,
       ownerDocument: {
         createElement: (name: any) => ({
           name,
-          setAttribute: (...args: any[]) => {
+          setAttribute: (/* ...args: any[] */) => {
             // console.log('set attribute: ', ...args);
 
             if (this.div) {
               ReactThreeRenderer.render(this.props.children, this.canvas);
             }
-          }
-        }) // fake element gets created here
+          },
+        }), // fake element gets created here
       },
       setAttribute: () => {
-        console.log('set attribute now!');
+        console.log("set attribute now!");
 
         // R3R.render(this.props.children, this.canvas);
+      },
+      tagName: "react-three-renderer-fake-container",
+      removeChild(/* child: any */) {
+        // Doing nothing here but still need to have a stub
       },
     };
   }
 
-  divRef = (div: any) => {
+  public divRef = (div: any) => {
     this.div = div;
-  };
+  }
 
-  secondDivRef = (div: any) => {
+  public secondDivRef = (div: any) => {
     this.secondDiv = div;
-  };
+  }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.div.appendChild(this.canvas);
 
     ReactThreeRenderer.render(this.props.children, this.canvas);
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     ReactThreeRenderer.unmountComponentAtNode(this.canvas);
-    console.log('aaaah');
+    console.log("aaaah");
   }
 
-  render() {
+  public render() {
     this.renderCount++;
 
     // Create a fake element that will keep remounting every render.
@@ -104,7 +104,7 @@ class React3 extends PureComponent<any, any> {
             <react-three-renderer-proxy testProps={this.renderCount} />,
             this.fakeDOMContainerInfo,
             implementation,
-          )
+          ),
         ]
       }</div>
       <div ref={this.secondDivRef} />

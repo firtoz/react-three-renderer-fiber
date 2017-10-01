@@ -1,19 +1,19 @@
 import * as THREE from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
-interface BoxGeometryProps {
-  width: number,
-  height: number,
-  depth: number,
-  widthSegments?: number,
-  heightSegments?: number,
-  depthSegments?: number,
+interface IBoxGeometryProps {
+  width: number;
+  height: number;
+  depth: number;
+  widthSegments?: number;
+  heightSegments?: number;
+  depthSegments?: number;
 }
 
-class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<BoxGeometryProps,
+class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryProps,
   THREE.BoxGeometry,
   THREE.Mesh> {
-  createInstance(props: BoxGeometryProps) {
+  public createInstance(props: IBoxGeometryProps) {
     const {
       width,
       height,

@@ -1,14 +1,18 @@
-import r3rRootContainerSymbol from './utils/r3rRootContainerSymbol';
-import fiberSymbol from './utils/r3rFiberSymbol';
+import fiberSymbol from "./utils/r3rFiberSymbol";
+import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import ReactThreeFiberRenderer from "./fiberRenderer";
-import './utils/DevtoolsHelpers';
+import "./utils/DevtoolsHelpers";
 
 function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> | null,
                                     children: any,
                                     container: any,
                                     forceHydrate: boolean,
-                                    callback: Function,) {
+                                    callback: () => void) {
+  if (forceHydrate) {
+    throw new Error("forceHydrate not implemented yet");
+  }
+
   let root = container[r3rRootContainerSymbol];
 
   if (!root) {
@@ -19,9 +23,9 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
 
     root = newRoot;
 
-    console.log('rooot', root);
+    console.log("rooot", root);
 
-    ReactThreeFiberRenderer.unbatchedUpdates(function () {
+    ReactThreeFiberRenderer.unbatchedUpdates(() => {
       ReactThreeFiberRenderer.updateContainer(children, newRoot, parentComponent, callback);
     });
   } else {
@@ -32,11 +36,11 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
 }
 
 class ReactThreeRenderer {
-  static render(element: any, container: any, callback?: any) {
+  public static render(element: any, container: any, callback?: any) {
     return renderSubtreeIntoContainer(null, element, container, false, callback);
   }
 
-  static unmountComponentAtNode(container: any): any {
+  public static unmountComponentAtNode(container: any): any {
     if (container[r3rRootContainerSymbol]) {
       // if (__DEV__) {
       //   const rootEl = getReactRootElementInContainer(container);

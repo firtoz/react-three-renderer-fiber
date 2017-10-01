@@ -1,1 +1,1 @@
-export default Symbol('r3r-root');
+export default Symbol("r3r-root");

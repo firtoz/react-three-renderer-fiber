@@ -1,23 +1,23 @@
 import * as THREE from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
-interface WebGLRendererProps extends THREE.WebGLRendererParameters {
+interface IWebGLRendererProps extends THREE.WebGLRendererParameters {
   width: number;
   height: number;
 }
 
-class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<WebGLRendererProps,
+class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendererProps,
   THREE.WebGLRenderer,
   HTMLCanvasElement,
   THREE.Scene> {
 
-  createInstance(props: WebGLRendererProps, rootContainerInstance: HTMLCanvasElement): THREE.WebGLRenderer {
+  public createInstance(props: IWebGLRendererProps, rootContainerInstance: HTMLCanvasElement): THREE.WebGLRenderer {
     return new THREE.WebGLRenderer({
       canvas: rootContainerInstance,
     });
   }
 
-  applyInitialPropUpdates(instance: THREE.WebGLRenderer, props: WebGLRendererProps): void {
+  public applyInitialPropUpdates(instance: THREE.WebGLRenderer, props: IWebGLRendererProps): void {
     const {
       width,
       height,
@@ -26,12 +26,12 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<WebGLRenderer
     instance.setSize(width, height);
   }
 
-  willBeRemovedFromParent(instance: THREE.WebGLRenderer, parent: HTMLCanvasElement): void {
-    console.log('renderer will be removed...');
+  public willBeRemovedFromParent(instance: THREE.WebGLRenderer, parent: HTMLCanvasElement): void {
+    console.log("renderer will be removed...");
     // super.removedFromParent(parent);
   }
 
-  appendInitialChild(instance: THREE.WebGLRenderer, child: THREE.Scene): void {
+  public appendInitialChild(instance: THREE.WebGLRenderer, child: THREE.Scene): void {
     // if (!instance.userData) {
     //   instance.userData = {};
     // }

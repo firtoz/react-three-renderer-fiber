@@ -4,7 +4,8 @@ import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescript
 class MeshBasicMaterial extends ReactThreeRendererDescriptor<THREE.MeshBasicMaterialParameters,
   THREE.MeshBasicMaterial,
   THREE.Mesh> {
-  createInstance(props: THREE.MeshBasicMaterialParameters) {
+
+  public createInstance(props: THREE.MeshBasicMaterialParameters) {
     return new THREE.MeshBasicMaterial(props);
   }
 }

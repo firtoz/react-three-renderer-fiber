@@ -1,19 +1,19 @@
 import * as THREE from "three";
-import {Object3DDescriptorBase, Object3DProps} from "./object3d";
+import {IObject3DProps, Object3DDescriptorBase} from "./object3d";
 
-interface MeshProps extends Object3DProps {
-  geometry?: THREE.Geometry,
-  material?: THREE.Material,
+interface IMeshProps extends IObject3DProps {
+  geometry?: THREE.Geometry;
+  material?: THREE.Material;
 }
 
 type MeshChildType = THREE.Geometry | THREE.Material;
 
-class MeshCreator extends Object3DDescriptorBase<MeshProps, THREE.Mesh, MeshChildType> {
-  createInstance(props: any) {
+class MeshCreator extends Object3DDescriptorBase<IMeshProps, THREE.Mesh, MeshChildType> {
+  public createInstance(props: any) {
     return new THREE.Mesh(props.geometry, props.material);
   }
 
-  appendInitialChild(instance: THREE.Mesh, child: MeshChildType): void {
+  public appendInitialChild(instance: THREE.Mesh, child: MeshChildType): void {
     if (child instanceof THREE.Geometry) {
       instance.geometry = child;
     } else if (child instanceof THREE.Material) {
@@ -24,7 +24,7 @@ class MeshCreator extends Object3DDescriptorBase<MeshProps, THREE.Mesh, MeshChil
     }
   }
 
-  removeChild(instance: THREE.Mesh, child: MeshChildType): void {
+  public removeChild(instance: THREE.Mesh, child: MeshChildType): void {
     if (child instanceof THREE.Geometry) {
       instance.geometry = child;
     } else if (child instanceof THREE.Material) {

@@ -1,42 +1,42 @@
-import * as React from 'react';
-import {Component} from 'react';
-import * as THREE from 'three';
-import React3 from './React3';
+import * as React from "react";
+import {Component} from "react";
+import * as THREE from "three";
+import React3 from "./React3";
 
-import ColorCube from './ColorCube';
+import ColorCube from "./ColorCube";
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "react-three-renderer-proxy": any,
+      "react-three-renderer-proxy": any;
       webglRenderer: {
         width: number,
         ref: any,
         height: number,
       };
-      scene: any,
-      perspectiveCamera: any,
-      mesh: any,
-      boxGeometry: any,
-      meshBasicMaterial: any,
+      scene: any;
+      perspectiveCamera: any;
+      mesh: any;
+      boxGeometry: any;
+      meshBasicMaterial: any;
     }
   }
 }
 
 // A modification of the 'Simple' example of ReactThreeRenderer
 class Experiment extends Component {
-  private renderer: any;
-  private scene: any;
-  private camera: any;
-  private cameraPosition: any;
-  private _onAnimate: (callback: any) => any;
-  private rafRequest: number;
-  private animateInterval: number;
-
   public state: {
     cubeRotation: any,
     wantsResult: boolean,
   };
+
+  private renderer: any;
+  private scene: any;
+  private camera: any;
+  private cameraPosition: any;
+  private onAnimate: (callback: any) => any;
+  private rafRequest: number;
+  private animateInterval: number;
 
   constructor(props: any, context: any) {
     super(props, context);
@@ -55,7 +55,7 @@ class Experiment extends Component {
       wantsResult: false,
     };
 
-    this._onAnimate = (callback) => {
+    this.onAnimate = (callback) => {
       // we will get this callback every frame
 
       // pretend cubeRotation is immutable.
@@ -65,32 +65,19 @@ class Experiment extends Component {
         cubeRotation: new THREE.Euler(
           this.state.cubeRotation.x + 0.1,
           this.state.cubeRotation.y + 0.1,
-          0
+          0,
         ),
       }, callback);
     };
   }
 
-  rendererRef = (renderer: any) => {
-    console.log('got renderer', renderer);
-    this.renderer = renderer;
-  };
-
-  sceneRef = (scene: any) => {
-    this.scene = scene;
-  };
-
-  cameraRef = (camera: any) => {
-    this.camera = camera;
-  };
-
-  componentDidMount() {
-    console.log('mounted');
+  public componentDidMount() {
+    console.log("mounted");
 
     this.renderer.render(this.scene, this.camera);
 
     this.animateInterval = setInterval(() => {
-      this._onAnimate(() => {
+      this.onAnimate(() => {
         if (this.rafRequest === 0) {
           this.rafRequest = requestAnimationFrame(renderFunction);
         }
@@ -104,38 +91,7 @@ class Experiment extends Component {
     };
   }
 
-  _onClick = () => {
-    if (!this.state.wantsResult) {
-      clearInterval(this.animateInterval);
-
-      if (this.rafRequest !== 0) {
-        console.log('about to go!');
-        cancelAnimationFrame(this.rafRequest);
-
-        this.rafRequest = 0;
-      }
-    } else {
-      const renderFunction = () => {
-        this.renderer.render(this.scene, this.camera);
-
-        this.rafRequest = 0;
-      };
-
-      this.animateInterval = setInterval(() => {
-        this._onAnimate(() => {
-          if (this.rafRequest === 0) {
-            this.rafRequest = requestAnimationFrame(renderFunction);
-          }
-        });
-      }, 20);
-    }
-
-    this.setState({
-      wantsResult: !this.state.wantsResult,
-    });
-  };
-
-  render() {
+  public render() {
     const width = window.innerWidth; // canvas width
     const height = window.innerHeight; // canvas height
 
@@ -176,13 +132,57 @@ class Experiment extends Component {
 
     return (<div>
       <div key="test">
-        <button onClick={this._onClick}>Yay?</button>
+        <button onClick={this.onClick}>Yay?</button>
         {testResult}
       </div>
       <div key="renderer">
         {react3}
       </div>
     </div>);
+  }
+
+  private rendererRef = (renderer: any) => {
+    console.log("got renderer", renderer);
+    this.renderer = renderer;
+  }
+
+  private sceneRef = (scene: any) => {
+    this.scene = scene;
+  }
+
+  private cameraRef = (camera: any) => {
+    this.camera = camera;
+  }
+
+  private onClick = () => {
+    if (!this.state.wantsResult) {
+      clearInterval(this.animateInterval);
+
+      if (this.rafRequest !== 0) {
+        console.log("about to go!");
+        cancelAnimationFrame(this.rafRequest);
+
+        this.rafRequest = 0;
+      }
+    } else {
+      const renderFunction = () => {
+        this.renderer.render(this.scene, this.camera);
+
+        this.rafRequest = 0;
+      };
+
+      this.animateInterval = setInterval(() => {
+        this.onAnimate(() => {
+          if (this.rafRequest === 0) {
+            this.rafRequest = requestAnimationFrame(renderFunction);
+          }
+        });
+      }, 20);
+    }
+
+    this.setState({
+      wantsResult: !this.state.wantsResult,
+    });
   }
 }
 

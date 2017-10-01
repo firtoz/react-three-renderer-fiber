@@ -3,13 +3,11 @@ function diffProperties(lastProps: any, nextProps: any) {
   //   validatePropertiesInDevelopment(tag, nextRawProps); // TODO
   // }
 
-  let updatePayload: (string | null)[] | null = null;
+  let updatePayload: Array<string | null> | null = null;
 
   const lastPropsKeys = Object.keys(lastProps);
 
-  for (let i = 0; i < lastPropsKeys.length; ++i) {
-    const propKey = lastPropsKeys[i];
-
+  for (const propKey of lastPropsKeys) {
     if (nextProps.hasOwnProperty(propKey) || !lastProps.hasOwnProperty(propKey) || lastProps[propKey] == null) {
       continue;
     }
@@ -20,8 +18,8 @@ function diffProperties(lastProps: any, nextProps: any) {
 
   const hasLastProps = !!lastProps;
 
-  for (let i = 0; i < nextPropsKeys.length; ++i) {
-    const propKey = nextPropsKeys[i];
+  for (const propKey of nextPropsKeys) {
+    // const propKey = nextPropsKeys[i];
 
     const nextProp = nextProps[propKey];
     const lastProp = hasLastProps ? lastProps[propKey] : undefined;
@@ -29,9 +27,9 @@ function diffProperties(lastProps: any, nextProps: any) {
       continue;
     }
 
-    if (propKey === 'children') {
-      if (lastProp !== nextProp && (typeof nextProp === 'string' || typeof nextProp === 'number')) {
-        (updatePayload = updatePayload || []).push(propKey, '' + nextProp);
+    if (propKey === "children") {
+      if (lastProp !== nextProp && (typeof nextProp === "string" || typeof nextProp === "number")) {
+        (updatePayload = updatePayload || []).push(propKey, "" + nextProp);
       }
     } else {
       (updatePayload = updatePayload || []).push(propKey, nextProp);
@@ -41,8 +39,12 @@ function diffProperties(lastProps: any, nextProps: any) {
   return updatePayload;
 }
 
-
-export default function prepareUpdate(instance: any, type: any, oldProps: any, newProps: any, rootContainerInstance: any, hostContext: any) {
+export default function prepareUpdate(instance: any,
+                                      type: any,
+                                      oldProps: any,
+                                      newProps: any,
+                                      /* rootContainerInstance: any, */
+                                      /* hostContext: any, */) {
   return diffProperties(
     oldProps,
     newProps,

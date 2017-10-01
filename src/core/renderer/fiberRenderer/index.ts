@@ -1,39 +1,41 @@
 import ReactFiberReconciler = require("react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconciler");
 import ReactDOMFrameScheduling = require("react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling");
-import resetAfterCommit from "./resetAfterCommit";
-import getRootHostContext from "./getRootHostContext";
+import appendChild from "./appendChild";
+import appendChildToContainer from "./appendChildToContainer";
 import appendInitialChild from "./appendInitialChild";
 import commitMount from "./commitMount";
-import commitUpdate from "./commitUpdate";
-import insertBefore from "./insertBefore";
-import prepareForCommit from "./prepareForCommit";
-import removeChildFromContainer from "./removeChildFromContainer";
-import createInstance from "./createInstance";
-import finalizeInitialChildren from "./finalizeInitialChildren";
-import createTextInstance from "./createTextInstance";
-import getChildHostContext from "./getChildHostContext";
-import resetTextContent from "./resetTextContent";
-import prepareUpdate from "./prepareUpdate";
-import shouldDeprioritizeSubtree from "./shouldDeprioritizeSubtree";
-import insertInContainerBefore from "./insertInContainerBefore";
-import appendChild from "./appendChild";
 import commitTextUpdate from "./commitTextUpdate";
-import shouldSetTextContent from "./shouldSetTextContent";
-import removeChild from "./removeChild";
+import commitUpdate from "./commitUpdate";
+import createInstance from "./createInstance";
+import createTextInstance from "./createTextInstance";
+import finalizeInitialChildren from "./finalizeInitialChildren";
+import getChildHostContext from "./getChildHostContext";
 import getPublicInstance from "./getPublicInstance";
-import appendChildToContainer from "./appendChildToContainer";
+import getRootHostContext from "./getRootHostContext";
+import insertBefore from "./insertBefore";
+import insertInContainerBefore from "./insertInContainerBefore";
+import prepareForCommit from "./prepareForCommit";
+import prepareUpdate from "./prepareUpdate";
+import removeChild from "./removeChild";
+import removeChildFromContainer from "./removeChildFromContainer";
+import resetAfterCommit from "./resetAfterCommit";
+import resetTextContent from "./resetTextContent";
+import shouldDeprioritizeSubtree from "./shouldDeprioritizeSubtree";
+import shouldSetTextContent from "./shouldSetTextContent";
 
 const ReactThreeFiberRenderer = ReactFiberReconciler({
   appendChild,
   appendChildToContainer,
   appendInitialChild,
-  commitTextUpdate,
   commitMount,
+  commitTextUpdate,
   commitUpdate,
   createInstance,
   createTextInstance,
   finalizeInitialChildren,
+  getChildHostContext,
   getPublicInstance,
+  getRootHostContext,
   insertBefore,
   insertInContainerBefore,
   prepareForCommit,
@@ -42,10 +44,8 @@ const ReactThreeFiberRenderer = ReactFiberReconciler({
   removeChildFromContainer,
   resetAfterCommit,
   resetTextContent,
-  shouldDeprioritizeSubtree,
-  getRootHostContext,
-  getChildHostContext,
   scheduleDeferredCallback: ReactDOMFrameScheduling.rIC,
+  shouldDeprioritizeSubtree,
   shouldSetTextContent,
   useSyncScheduling: true,
 });

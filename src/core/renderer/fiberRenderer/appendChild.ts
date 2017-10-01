@@ -1,8 +1,9 @@
+import {ReactFiber} from "../../dts";
 import fiberSymbol from "../utils/r3rFiberSymbol";
 
 export default function appendChild(parentInstance: any, childInstance: any): void {
-  const parentFiber = parentInstance[fiberSymbol] as ReactFiber.Fiber;
-  const childFiber = childInstance[fiberSymbol] as ReactFiber.Fiber;
+  const parentFiber = parentInstance[fiberSymbol] as ReactFiber.IFiber;
+  const childFiber = childInstance[fiberSymbol] as ReactFiber.IFiber;
 
   const parentType = parentFiber.type;
   const childType = childFiber.type;
@@ -13,12 +14,12 @@ export default function appendChild(parentInstance: any, childInstance: any): vo
   }
 
   switch (parentType) {
-    case 'scene':
+    case "scene":
       console.log(parentInstance, childInstance);
       parentInstance.add(childInstance);
       break;
     default:
-      throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
+      throw new Error("cannot add " + childType + " as a childInstance to " + parentType);
     // break;
   }
 }

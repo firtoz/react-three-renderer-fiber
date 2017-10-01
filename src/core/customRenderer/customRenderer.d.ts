@@ -1,11 +1,6 @@
-export interface CustomReactRenderer<TRootContainer> {
-  // childType:;
-  // test():void;
-  // RootContainer = TRootContainer;
-}
+export type ICustomReactRenderer<TRootContainer> = any;
 
-
-export interface NativeElement<TProps, T, TParent, TChild, TRoot, TRenderer extends CustomReactRenderer<any>> {
+export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
   createInstance(props: TProps, rootContainerInstance: TRoot): T;
 
   applyInitialPropUpdates(instance: T, props: TProps): void;

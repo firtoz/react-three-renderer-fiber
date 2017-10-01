@@ -1,21 +1,21 @@
 import * as THREE from "three";
-import {Object3DDescriptorBase, Object3DProps} from "./object3d";
+import {IObject3DProps, Object3DDescriptorBase} from "./object3d";
 
-interface PerspectiveCameraProps extends Object3DProps {
-  fov?: number,
-  aspect?: number,
-  near?: number,
-  far?: number,
+interface IPerspectiveCameraProps extends IObject3DProps {
+  fov?: number;
+  aspect?: number;
+  near?: number;
+  far?: number;
 }
 
-class PerspectiveCameraDescriptor extends Object3DDescriptorBase<PerspectiveCameraProps,
+class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCameraProps,
   THREE.PerspectiveCamera> {
-  createInstance(props: PerspectiveCameraProps) {
+  public createInstance(props: IPerspectiveCameraProps) {
     const {
       fov,
       aspect,
       near,
-      far
+      far,
     } = props;
 
     return new THREE.PerspectiveCamera(fov, aspect, near, far);

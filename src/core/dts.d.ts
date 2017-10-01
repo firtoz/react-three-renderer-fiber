@@ -1,57 +1,68 @@
-/// <reference path="../../node_modules/@types/react/index.d.ts"/>
-declare module ReactFiber {
+import "@types/react";
 
+declare namespace ReactFiber {
+  export interface IReactFiberRendererConfig {
+    scheduleDeferredCallback: any;
+    useSyncScheduling: boolean;
 
-  export interface ReactFiberRendererConfig {
-    getRootHostContext(rootContainerInstance: any): any,
+    getRootHostContext(rootContainerInstance: any): any;
 
-    getChildHostContext(parentHostContext: any, type: any): any,
+    getChildHostContext(parentHostContext: any, type: any): any;
 
-    shouldSetTextContent(props: any): boolean,
+    shouldSetTextContent(props: any): boolean;
 
-    shouldDeprioritizeSubtree(type: any, props: any): boolean,
+    shouldDeprioritizeSubtree(type: any, props: any): boolean;
 
-    createInstance(type: string, props: any, rootContainerInstance: any, hostContext: any, internalInstanceHandle: any): any,
+    createInstance(type: string,
+                   props: any,
+                   rootContainerInstance: any,
+                   hostContext: any,
+                   internalInstanceHandle: any): any;
 
-    finalizeInitialChildren(r3rElement: any, type: any, props: any, rootContainerInstance: any): boolean,
+    finalizeInitialChildren(r3rElement: any, type: any, props: any, rootContainerInstance: any): boolean;
 
-    prepareForCommit(): void,
+    prepareForCommit(): void;
 
-    resetAfterCommit(): void,
+    resetAfterCommit(): void;
 
-    prepareUpdate(instance: any, type: any, oldProps: any, newProps: any, rootContainerInstance: any, hostContext: any): any,
+    prepareUpdate(instance: any,
+                  type: any,
+                  oldProps: any,
+                  newProps: any,
+                  rootContainerInstance: any,
+                  hostContext: any): any;
 
-    commitUpdate(instance: any, updatePayload: any, type: any, oldProps: any, newProps: any, internalInstanceHandle: any): void,
+    commitUpdate(instance: any,
+                 updatePayload: any,
+                 type: any,
+                 oldProps: any,
+                 newProps: any,
+                 internalInstanceHandle: any): void;
 
-    appendChild(parentInstance: any, child: any): any,
+    appendChild(parentInstance: any, child: any): any;
 
-    appendInitialChild(parentInstance: any, child: any): void,
+    appendInitialChild(parentInstance: any, child: any): void;
 
-    getPublicInstance(instance: any): any,
+    getPublicInstance(instance: any): any;
 
-    scheduleDeferredCallback: any,
+    createTextInstance(text: string, rootContainerInstance: any, internalInstanceHandle: any): any;
 
-    createTextInstance(text: string, rootContainerInstance: any, internalInstanceHandle: any): any,
+    commitMount(): any;
 
-    useSyncScheduling: boolean,
+    resetTextContent(): any;
 
-    commitMount(): any,
+    commitTextUpdate(): any;
 
-    resetTextContent(): any,
+    appendChildToContainer(parent: any, child: any): any;
 
-    commitTextUpdate(): any,
+    insertBefore(): any;
 
-    appendChildToContainer(parent: any, child: any): any,
+    insertInContainerBefore(): any;
 
-    insertBefore(): any,
-
-    insertInContainerBefore(): any,
-
-    removeChild(parent: any, child: any): any,
+    removeChild(parent: any, child: any): any;
 
     removeChildFromContainer(container: any, child: any): void;
   }
-
 
   enum TypeOfWork {
     IndeterminateComponent = 0, // Before we know whether it is functional or class
@@ -64,7 +75,7 @@ declare module ReactFiber {
     CoroutineComponent = 7,
     CoroutineHandlerPhase = 8,
     YieldComponent = 9,
-    Fragment = 10
+    Fragment = 10,
   }
 
   enum PriorityLevel {
@@ -76,33 +87,29 @@ declare module ReactFiber {
     OffscreenPriority, // Won't be visible but do the work in case it becomes visible.
   }
 
-  interface $Subtype<State> {
-
-  }
-
   type PartialState<State, Props> =
-    | $Subtype<State>
-    | ((prevState: State, props: Props) => $Subtype<State>);
+    | {}
+    | ((prevState: State, props: Props) => {});
 
-  interface Update {
-    priorityLevel: PriorityLevel,
-    partialState: PartialState<any, any>,
-    callback: Function | null,
-    isReplace: boolean,
-    isForced: boolean,
-    isTopLevelUnmount: boolean,
-    next: Update | null,
+  interface IUpdate {
+    priorityLevel: PriorityLevel;
+    partialState: PartialState<any, any>;
+    callback: () => void | null;
+    isReplace: boolean;
+    isForced: boolean;
+    isTopLevelUnmount: boolean;
+    next: IUpdate | null;
   }
 
-  interface UpdateQueue {
+  interface IUpdateQueue {
 
-    first: Update | null,
-    last: Update | null,
-    hasForceUpdate: boolean,
-    callbackList: null | Array<() => any>,
+    first: IUpdate | null;
+    last: IUpdate | null;
+    hasForceUpdate: boolean;
+    callbackList: null | Array<() => any>;
 
     // Dev only
-    isProcessing?: boolean,
+    isProcessing?: boolean;
   }
 
   enum TypeOfInternalContext {
@@ -127,12 +134,12 @@ declare module ReactFiber {
 
   type DebugID = number;
 
-  interface Source {
-    fileName: string,
-    lineNumber: number,
+  interface ISource {
+    fileName: string;
+    lineNumber: number;
   }
 
-  interface Fiber {
+  interface IFiber {
     // These first fields are conceptually members of an Instance. This used to
     // be split into a separate type and intersected with the other Fiber fields,
     // but until Flow fixes its intersection bugs, we've merged them into a
@@ -144,16 +151,16 @@ declare module ReactFiber {
     // minimize the number of objects created during the initial render.
 
     // Tag identifying the type of fiber.
-    tag: TypeOfWork,
+    tag: TypeOfWork;
 
     // Unique identifier of this child.
-    key: null | string,
+    key: null | string;
 
     // The function/class/module associated with this fiber.
-    type: any,
+    type: any;
 
     // The local state associated with this fiber.
-    stateNode: any,
+    stateNode: any;
 
     // Conceptual aliases
     // parent : Instance -> return The parent happens to be the same as the
@@ -165,26 +172,26 @@ declare module ReactFiber {
     // This is effectively the parent, but there can be multiple parents (two)
     // so this is only the parent of the thing we're currently processing.
     // It is conceptually the same as the return address of a stack frame.
-    return: Fiber | null,
+    "return": IFiber | null;
 
     // Singly Linked List Tree Structure.
-    child: Fiber | null,
-    sibling: Fiber | null,
-    index: number,
+    child: IFiber | null;
+    sibling: IFiber | null;
+    index: number;
 
     // The ref last used to attach this node.
     // I'll avoid adding an owner field for prod and model that as functions.
-    ref: null | (((handle: any) => void) & { _stringRef: string | null }),
+    ref: null | (((handle: any) => void) & { _stringRef: string | null });
 
     // Input is the data coming into process this fiber. Arguments. Props.
-    pendingProps: any, // This type will be more specific once we overload the tag.
-    memoizedProps: any, // The props used to create the output.
+    pendingProps: any; // This type will be more specific once we overload the tag.
+    memoizedProps: any; // The props used to create the output.
 
     // A queue of state updates and callbacks.
-    updateQueue: UpdateQueue | null,
+    updateQueue: IUpdateQueue | null;
 
     // The state used to create the output
-    memoizedState: any,
+    memoizedState: any;
 
     // Bitfield that describes properties about the fiber and its subtree. E.g.
     // the AsyncUpdates flag indicates whether the subtree should be async-by-
@@ -192,119 +199,109 @@ declare module ReactFiber {
     // parent. Additional flags can be set at creation time, but after than the
     // value should remain unchanged throughout the fiber's lifetime, particularly
     // before its child fibers are created.
-    internalContextTag: TypeOfInternalContext,
+    internalContextTag: TypeOfInternalContext;
 
     // Effect
-    effectTag: TypeOfSideEffect,
+    effectTag: TypeOfSideEffect;
 
     // Singly linked list fast path to the next fiber with side-effects.
-    nextEffect: Fiber | null,
+    nextEffect: IFiber | null;
 
     // The first and last fiber with side-effect within this subtree. This allows
     // us to reuse a slice of the linked list when we reuse the work done within
     // this fiber.
-    firstEffect: Fiber | null,
-    lastEffect: Fiber | null,
+    firstEffect: IFiber | null;
+    lastEffect: IFiber | null;
 
     // This will be used to quickly determine if a subtree has no pending changes.
-    pendingWorkPriority: PriorityLevel,
+    pendingWorkPriority: PriorityLevel;
 
     // This is a pooled version of a Fiber. Every fiber that gets updated will
     // eventually have a pair. There are cases when we can clean up pairs to save
     // memory if we need to.
-    alternate: Fiber | null,
+    alternate: IFiber | null;
 
     // Conceptual aliases
     // workInProgress : Fiber ->  alternate The alternate used for reuse happens
     // to be the same as work in progress.
     // __DEV__ only
-    _debugID?: DebugID,
-    _debugSource?: Source | null,
-    _debugOwner?: Fiber | React.ReactInstance | null, // Stack compatible
-    _debugIsCurrentlyTiming?: boolean,
+    _debugID?: DebugID;
+    _debugSource?: ISource | null;
+    _debugOwner?: IFiber | React.ReactInstance | null; // Stack compatible
+    _debugIsCurrentlyTiming?: boolean;
   }
 
-  interface FiberRoot {
+  interface IFiberRoot {
     // Any additional information from the host associated with this root.
-    containerInfo: any,
+    containerInfo: any;
     // The currently active root fiber. This is the mutable root of the tree.
-    current: Fiber,
+    current: IFiber;
     // Determines if this root has already been added to the schedule for work.
-    isScheduled: boolean,
+    isScheduled: boolean;
     // The work schedule is a linked list.
-    nextScheduledRoot: FiberRoot | null,
+    nextScheduledRoot: IFiberRoot | null;
     // Top context object, used by renderSubtreeIntoContainer
-    context: Object | null,
-    pendingContext: Object | null,
-  }
-}
-
-
-declare module 'react-fiber-export/lib/renderers/shared/fiber/ReactFiberReconciler' {
-
-  function ReactFiberReconciler(config: ReactFiber.ReactFiberRendererConfig): any;
-
-  export = ReactFiberReconciler;
-}
-
-declare module 'react-fiber-export/lib/renderers/shared/ReactDOMFrameScheduling' {
-  class ReactDOMFrameScheduling {
-    static rIC(): number;
+    context: object | null;
+    pendingContext: object | null;
   }
 
-  export = ReactDOMFrameScheduling;
-}
+  interface IRenderer {
+    createContainer(container: any): any;
 
-declare module 'react-fiber-export/lib/renderers/shared/fiber/ReactFiberDevToolsHook' {
-  export function injectInternals(internals: ReactDevtools.HookConfig): any;
+    unbatchedUpdates(callback: () => void): any;
 
-  export function onCommitRoot(root: ReactFiber.FiberRoot): any;
+    updateContainer(children: any, root: any, parentComponent: any, callback: () => void): void;
 
-  export function onCommitUnmount(): any;
+    getPublicRootInstance(root: any): any;
+  }
 }
 
 declare namespace ReactDevtools {
   enum BundleType {
     PROD = 0,
-    DEV = 1
+    DEV = 1,
   }
 
-  interface HookConfig {
-    findFiberByHostInstance: Function,
-    findHostInstanceByFiber: Function,
+  interface IHookConfig {
+    findFiberByHostInstance: (hostInstance: any) => ReactFiber.IFiber;
+    findHostInstanceByFiber: (fiber: ReactFiber.IFiber) => any;
     // This is an enum because we may add more (e.g. profiler build)
-    bundleType: number,
-    version: string,
-    rendererPackageName: string,
+    bundleType: number;
+    version: string;
+    rendererPackageName: string;
   }
 
-  interface RendererInfo {
-    renderer: HookConfig;
+  interface IRendererInfo {
+    renderer: IHookConfig;
     id: number;
   }
 
-  interface Agent {
-    on(event: string, callback: Function): any;
+  interface IAgent {
+    on(name: "highlight",
+       callback: (highlightInfo: any) => void): () => void;
+
+    on(name: "hideHighlight",
+       callback: () => void): () => void;
   }
 
-  interface GlobalHook {
+  interface IGlobalHook {
+    reactDevtoolsAgent: ReactDevtools.IAgent;
+
     sub(name: "react-devtools",
-        callback: (agent: ReactDevtools.Agent) => void): Function;
+        callback: (agent: ReactDevtools.IAgent) => void): () => void;
 
     sub(name: "renderer",
-        callback: (rendererInfo: ReactDevtools.RendererInfo) => void): Function;
-
-    reactDevtoolsAgent: ReactDevtools.Agent;
+        callback: (rendererInfo: ReactDevtools.IRendererInfo) => void): () => void;
   }
 }
 
-interface Process {
+interface IProcess {
   env: {
     NODE_ENV: string,
     ENABLE_REACT_ADDON_HOOKS: string;
   };
 }
 
-declare const process: Process;
+declare const process: IProcess;
 
-declare const __REACT_DEVTOOLS_GLOBAL_HOOK__: ReactDevtools.GlobalHook;
+declare const __REACT_DEVTOOLS_GLOBAL_HOOK__: ReactDevtools.IGlobalHook;

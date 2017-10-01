@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import Experiment from "./app/Experiment";
 
 // import r3r from './core/r3r';
 //
@@ -12,8 +13,6 @@ import * as ReactDOM from "react-dom";
 //     />,
 //     document.getElementById("example")
 // );
-
-import Experiment  from './app/Experiment';
 // import React from 'react';
 // import ReactDOM from 'react-dom';
 
