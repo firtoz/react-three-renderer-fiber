@@ -1,23 +1,20 @@
 import * as THREE from "three";
-import {R3RendererNativeElement} from "../common/r3rendererNativeElement";
+import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
 interface WebGLRendererProps extends THREE.WebGLRendererParameters {
   width: number;
   height: number;
 }
 
-class WebGLRendererDescriptor implements R3RendererNativeElement<WebGLRendererProps,
+class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<WebGLRendererProps,
+  THREE.WebGLRenderer,
   HTMLCanvasElement,
-  THREE.WebGLRenderer> {
+  THREE.Scene> {
 
   createInstance(props: WebGLRendererProps, rootContainerInstance: HTMLCanvasElement): THREE.WebGLRenderer {
     return new THREE.WebGLRenderer({
       canvas: rootContainerInstance,
     });
-  }
-
-  removedFromParent(parentInstance: HTMLCanvasElement): void {
-
   }
 
   applyInitialPropUpdates(instance: THREE.WebGLRenderer, props: WebGLRendererProps): void {
@@ -27,6 +24,24 @@ class WebGLRendererDescriptor implements R3RendererNativeElement<WebGLRendererPr
     } = props;
 
     instance.setSize(width, height);
+  }
+
+  willBeRemovedFromParent(instance: THREE.WebGLRenderer, parent: HTMLCanvasElement): void {
+    console.log('renderer will be removed...');
+    // super.removedFromParent(parent);
+  }
+
+  appendInitialChild(instance: THREE.WebGLRenderer, child: THREE.Scene): void {
+    // if (!instance.userData) {
+    //   instance.userData = {};
+    // }
+    //
+    // if (child instanceof THREE.Scene) {
+    //   instance.userData._scene = child;
+    // } else {
+    //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
+    // }
+    // super.appendInitialChild(instance, child);
   }
 }
 

@@ -1,10 +1,8 @@
 import fiberSymbol from "../utils/r3rFiberSymbol";
 
 export default function appendChild(parentInstance: any, childInstance: any): void {
-  const parentFiber = parentInstance[fiberSymbol];
-  const childFiber = childInstance[fiberSymbol];
-
-  // debugger;
+  const parentFiber = parentInstance[fiberSymbol] as ReactFiber.Fiber;
+  const childFiber = childInstance[fiberSymbol] as ReactFiber.Fiber;
 
   const parentType = parentFiber.type;
   const childType = childFiber.type;

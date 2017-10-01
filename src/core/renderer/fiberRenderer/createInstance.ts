@@ -7,17 +7,17 @@ function precacheInstance(fiber: ReactFiber.Fiber, threeElement: any) {
 }
 
 export default function createInstance(type: string, props: any, rootContainerInstance: HTMLCanvasElement, hostContext: any, fiber: ReactFiber.Fiber) {
-  const creator = nativeTypes[type];
+  const descriptor = nativeTypes[type];
 
-  if (!creator) {
+  if (!descriptor) {
     throw new Error('cannot create this type yet: ' + type);
   }
 
-  const createdInstance = creator.createInstance(props, rootContainerInstance);
+  const createdInstance = descriptor.createInstance(props, rootContainerInstance);
 
   precacheInstance(fiber, createdInstance);
 
-  creator.applyInitialPropUpdates(createdInstance, props);
+  descriptor.applyInitialPropUpdates(createdInstance, props);
 
   return createdInstance;
 };

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {SimpleR3RNativeElement} from "../common/SimpleR3RNativeElement";
+import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
 interface BoxGeometryProps {
   width: number,
@@ -10,7 +10,7 @@ interface BoxGeometryProps {
   depthSegments?: number,
 }
 
-class BoxGeometryDescriptor extends SimpleR3RNativeElement<BoxGeometryProps,
+class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<BoxGeometryProps,
   THREE.BoxGeometry,
   THREE.Mesh> {
   createInstance(props: BoxGeometryProps) {
@@ -24,13 +24,6 @@ class BoxGeometryDescriptor extends SimpleR3RNativeElement<BoxGeometryProps,
     } = props;
 
     return new THREE.BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
-  }
-
-  removedFromParent(parent: THREE.Mesh): void {
-  }
-
-  applyInitialPropUpdates(instance: THREE.BoxGeometry, props: BoxGeometryProps): void {
-    // already done by constructor
   }
 }
 

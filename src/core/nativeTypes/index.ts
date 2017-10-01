@@ -1,6 +1,6 @@
-import {R3RendererNativeElement} from "./common/r3rendererNativeElement";
+import {NativeElement} from "../customRenderer/customRenderer";
 
-const nativeTypes: { [key: string]: R3RendererNativeElement<any, any, any>; } = {};
+const nativeTypes: { [key: string]: NativeElement<any, any, any, any, any, any>; } = {};
 
 const context = require.context('./types/', true, /\.ts$/);
 

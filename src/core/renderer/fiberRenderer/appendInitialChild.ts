@@ -1,44 +1,16 @@
-import * as THREE from 'three';
-
 import r3rFiberSymbol from '../utils/r3rFiberSymbol';
+import nativeTypes from "../../nativeTypes/index";
 
 export default function appendInitialChildInternal(parentInstance: any, childInstance: any) {
-  const parentInternalInstance = parentInstance[r3rFiberSymbol];
-  const childInternalInstance = childInstance[r3rFiberSymbol];
+  const parentFiber = parentInstance[r3rFiberSymbol] as ReactFiber.Fiber;
 
-  const parentType = parentInternalInstance.type;
-  const childType = childInternalInstance.type;
+  const parentType = parentFiber.type;
 
-  switch (parentType) {
-    case 'mesh':
-      if (childInstance instanceof THREE.Geometry) {
-        parentInstance.geometry = childInstance;
-      } else if (childInstance instanceof THREE.Material) {
-        parentInstance.material = childInstance;
-      } else {
-        throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-      }
-      break;
-    case 'scene':
-      if (childInstance instanceof THREE.Object3D) {
-        parentInstance.add(childInstance);
-      } else {
-        throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-      }
-      break;
-    case 'webglRenderer':
-      if (!parentInstance.userData) {
-        parentInstance.userData = {};
-      }
+  const creator = nativeTypes[parentType];
 
-      if (childInstance instanceof THREE.Scene) {
-        parentInstance.userData._scene = childInstance;
-      } else {
-        throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-      }
-
-      break;
-    default:
-      throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
+  if (!creator) {
+    throw new Error('cannot create this type yet: ' + parentType);
   }
+
+  creator.appendInitialChild(parentInstance, childInstance);
 }

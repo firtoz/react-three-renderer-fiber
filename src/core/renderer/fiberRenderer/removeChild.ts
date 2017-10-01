@@ -1,16 +1,37 @@
 import fiberSymbol from "../utils/r3rFiberSymbol";
+import nativeTypes from "../../nativeTypes/index";
 
 export default function removeChild(currentParent: any, child: any): any {
-  const parentInstance = currentParent[fiberSymbol];
-  switch (parentInstance.type) {
-    case 'scene':
-      currentParent.remove(child);
+  const childType = child[fiberSymbol].type;
 
-      break;
-    default:
-      console.log('removeChild', parentInstance.type, child);
-      throw new Error('removeChild');
+  const childDescriptor = nativeTypes[childType];
+
+  if (!childDescriptor) {
+    throw new Error('cannot remove this type yet: ' + childType);
   }
+
+  childDescriptor.willBeRemovedFromParent(child, parent);
+
+  const parentInstance = currentParent[fiberSymbol];
+  const type = parentInstance.type;
+
+  const descriptor = nativeTypes[type];
+
+  if (!descriptor) {
+    throw new Error('cannot remove children from this type yet: ' + type);
+  }
+
+  descriptor.removeChild(currentParent, child);
+
+  // switch (parentInstance.type) {
+  //   case 'scene':
+  //     currentParent.remove(child);
+  //
+  //     break;
+  //   default:
+  //     console.log('removeChild', parentInstance.type, child);
+  //     throw new Error('removeChild');
+  // }
 
   // debugger;
   //

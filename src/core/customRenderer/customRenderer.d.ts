@@ -4,25 +4,15 @@ export interface CustomReactRenderer<TRootContainer> {
   // RootContainer = TRootContainer;
 }
 
-interface InstanceInterface {
-  foo: string;
 
-  bar(): string;
-}
-
-
-interface ClassInterface {
-  // the constructor shape
-  new (foo: string): InstanceInterface;
-
-  // default static method
-  baz(): void;
-}
-
-export interface NativeElement<TProps, Parent, T, TRenderer extends CustomReactRenderer<any>> {
-  createInstance(props: TProps, rootContainerInstance: HTMLCanvasElement): T;
+export interface NativeElement<TProps, T, TParent, TChild, TRoot, TRenderer extends CustomReactRenderer<any>> {
+  createInstance(props: TProps, rootContainerInstance: TRoot): T;
 
   applyInitialPropUpdates(instance: T, props: TProps): void;
 
-  removedFromParent(parent: Parent): void;
+  willBeRemovedFromParent(instance: T, parent: TParent): void;
+
+  appendInitialChild(instance: T, child: TChild): void;
+
+  removeChild(instance: T, child: TChild): void;
 }
