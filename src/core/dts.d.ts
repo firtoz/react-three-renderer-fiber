@@ -23,10 +23,10 @@ declare global {
 
     interface IAgent {
       on(name: "highlight",
-         callback: (highlightInfo: any) => void): () => void;
+         callback: (highlightInfo: any) => void): this;
 
       on(name: "hideHighlight",
-         callback: () => void): () => void;
+         callback: () => void): this;
     }
 
     interface IGlobalHook {

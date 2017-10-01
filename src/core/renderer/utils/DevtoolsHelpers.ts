@@ -134,8 +134,9 @@ if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOK
       // agent.on('selected', (...args) => {
       //   console.log('selected?', args);
       // });
-      agent.on("highlight", onHighlightFromInspector);
-      agent.on("hideHighlight", onHideHighlightFromInspector);
+      agent
+        .on("highlight", onHighlightFromInspector)
+        .on("hideHighlight", onHideHighlightFromInspector);
       // agent.on('highlightMany', (...args) => {
       //   console.log('highlightMany?', args);
       // });
