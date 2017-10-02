@@ -20,8 +20,14 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
   Scene> {
 
   public createInstance(props: IWebGLRendererProps, rootContainerInstance: HTMLCanvasElement): WebGLRenderer {
+    if (rootContainerInstance instanceof HTMLCanvasElement) {
+      return new WebGLRenderer({
+        canvas: rootContainerInstance,
+      });
+    }
+
     return new WebGLRenderer({
-      canvas: rootContainerInstance,
+      // canvas: rootContainerInstance,
     });
   }
 
@@ -35,7 +41,11 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
   }
 
   public willBeRemovedFromParent(instance: WebGLRenderer, parent: HTMLCanvasElement): void {
-    console.log("renderer will be removed...");
+    if (parent instanceof HTMLCanvasElement) {
+      /* */
+    } else {
+      console.log("renderer will be removed...", parent);
+    }
     // super.removedFromParent(parent);
   }
 
@@ -52,10 +62,25 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
     // super.appendInitialChild(instance, child);
   }
 
+  public appendChild(instance: WebGLRenderer, child: Scene): void {
+    // if (!instance.userData) {
+    //   instance.userData = {};
+    // }
+    //
+    // if (child instanceof Scene) {
+    //   instance.userData._scene = child;
+    // } else {
+    //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
+    // }
+    // super.appendInitialChild(instance, child);
+  }
+
   public appendToContainer(instance: WebGLRenderer, container: HTMLCanvasElement): void {
     if (instance.domElement === container) {
       console.log("party!");
     } else {
+      container.appendChild(instance.domElement);
+      // console.log("woah there son", instance.domElement, container);
       // instance.domElement = container;
     }
     // super.appendToContainer(instance, container);

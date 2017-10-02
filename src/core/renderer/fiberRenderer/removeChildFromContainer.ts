@@ -6,5 +6,5 @@ export default function removeChildFromContainer(container: any, child: any): vo
 
   const childDescriptor = nativeTypes[childType];
 
-  childDescriptor.willBeRemovedFromParent(child, parent);
+  childDescriptor.willBeRemovedFromParent(child, container);
 }

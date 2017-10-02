@@ -40,7 +40,7 @@ class ReactThreeRenderer {
     return renderSubtreeIntoContainer(null, element, container, false, callback);
   }
 
-  public static unmountComponentAtNode(container: any): any {
+  public static unmountComponentAtNode(container: any, callback?: () => void): any {
     if (container[r3rRootContainerSymbol]) {
       // if (__DEV__) {
       //   const rootEl = getReactRootElementInContainer(container);
@@ -57,6 +57,10 @@ class ReactThreeRenderer {
       ReactThreeFiberRenderer.unbatchedUpdates(() => {
         renderSubtreeIntoContainer(null, null, container, false, () => {
           container[r3rRootContainerSymbol] = null;
+
+          if (callback != null) {
+            callback();
+          }
         });
       });
       // If you call unmountComponentAtNode twice in quick succession, you'll

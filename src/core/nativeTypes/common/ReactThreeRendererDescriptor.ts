@@ -27,6 +27,10 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     throw new Error("tried to append a child to " + (instance as any)[r3rFiberSymbol].type);
   }
 
+  public appendChild(instance: T, child: TChild): void {
+    throw new Error("tried to append a child to " + (instance as any)[r3rFiberSymbol].type);
+  }
+
   public removeChild(instance: T, child: TChild): void {
     throw new Error("tried to remove a child from " + (instance as any)[r3rFiberSymbol].type);
   }

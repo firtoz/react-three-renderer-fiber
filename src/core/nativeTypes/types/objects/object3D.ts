@@ -7,6 +7,7 @@ export interface IObject3DProps {
   name?: string;
   position?: Vector3;
   rotation?: Euler;
+  children?: React.ReactNode | React.ReactNode[];
 }
 
 declare global {
@@ -48,6 +49,10 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 
   public appendInitialChild(instance: T, child: TChild): void {
+    this.appendChild(instance, child);
+  }
+
+  public appendChild(instance: T, child: TChild): void {
     if (child instanceof Object3D) {
       instance.add(child);
     } else {
@@ -59,8 +64,6 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 
   public removeChild(instance: T, child: TChild): void {
-    super.removeChild(instance, child);
-
     if (child instanceof Object3D) {
       instance.remove(child);
     } else {
@@ -72,8 +75,18 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 
   public appendToContainer(instance: T, container: TParent): void {
-    if (container instanceof Object3D && instance instanceof Object3D) {
+    if (container instanceof Object3D) {
       container.add(instance);
+    } else {
+      throw new Error("Trying to add a child into a non-object parent...");
+    }
+  }
+
+  public willBeRemovedFromParent(instance: T, parent: TParent): void {
+    if (parent instanceof Object3D) {
+      parent.remove(instance);
+    } else {
+      throw new Error("Trying to remove a child from a non-object parent...");
     }
   }
 }

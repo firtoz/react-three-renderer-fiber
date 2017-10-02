@@ -137,7 +137,7 @@ declare module "react-fiber-export" {
     lineNumber: number;
   }
 
-  interface IFiber {
+  interface IFiber<T = any> {
     // These first fields are conceptually members of an Instance. This used to
     // be split into a separate type and intersected with the other Fiber fields,
     // but until Flow fixes its intersection bugs, we've merged them into a
@@ -179,7 +179,7 @@ declare module "react-fiber-export" {
 
     // The ref last used to attach this node.
     // I'll avoid adding an owner field for prod and model that as functions.
-    ref: null | (((handle: any) => void) & { _stringRef: string | null });
+    ref: React.Ref<T> | null;
 
     // Input is the data coming into process this fiber. Arguments. Props.
     pendingProps: any; // This type will be more specific once we overload the tag.
@@ -265,5 +265,9 @@ declare module "react-fiber-export" {
 
   export class ReactDOMFrameScheduling {
     public static rIC(): number;
+  }
+
+  export class ReactFiberContext {
+    public static getUnmaskedContext(fiber: IFiber): any;
   }
 }

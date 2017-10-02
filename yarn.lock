@@ -10,6 +10,10 @@
   version "2.2.43"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.43.tgz#03c54589c43ad048cbcbfd63999b55d0424eec27"
 
+"@types/prop-types@^15.5.2":
+  version "15.5.2"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.2.tgz#3c6b8dceb2906cc87fe4358e809f9d20c8d59be1"
+
 "@types/react-dom@15.5.5":
   version "15.5.5"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.5.tgz#6b117c7697b61fe74132bfe5c72bceb3319433b8"
@@ -1632,6 +1636,10 @@ diffie-hellman@^5.0.0:
     bn.js "^4.1.0"
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
+
+dirty-chai@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/dirty-chai/-/dirty-chai-2.0.1.tgz#6b2162ef17f7943589da840abc96e75bda01aff3"
 
 dns-equal@^1.0.0:
   version "1.0.0"
@@ -4067,7 +4075,7 @@ react-dom@16.0.0:
 
 "react-fiber-export@git+ssh://git@github.com/toxicFork/react-fiber-export.git":
   version "1.1.0"
-  resolved "git+ssh://git@github.com/toxicFork/react-fiber-export.git#9e12b08865f58354523ffbdab6207b688d5f78a4"
+  resolved "git+ssh://git@github.com/toxicFork/react-fiber-export.git#7f176864219a65a71c4108c4e4d5cd0f1ef05f51"
   dependencies:
     fbjs "0.8.16"
 

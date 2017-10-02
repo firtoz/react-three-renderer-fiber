@@ -4,21 +4,77 @@ import {PureComponent} from "react";
 import * as ReactDOM from "react-dom";
 import ReactThreeRenderer from "../core/renderer/reactThreeRenderer";
 
-class React3 extends PureComponent<any, any> {
+interface IContextWrapperProps {
+  testProps: number;
+  onContextUpdate: (newContext: any) => void;
+}
+
+class ContextReceiver extends React.Component<IContextWrapperProps, any> {
+  public static contextTypes: any;
+
+  constructor(props: IContextWrapperProps, context: any) {
+    super(props, context);
+
+    props.onContextUpdate(context);
+  }
+
+  public componentWillUpdate(nextProps: Readonly<IContextWrapperProps>,
+                             nextState: Readonly<any>,
+                             nextContext: any): void {
+    this.props.onContextUpdate(nextContext);
+  }
+
+  public componentWillReceiveProps(nextProps: Readonly<IContextWrapperProps>, nextContext: any): void {
+    // super.componentWillReceiveProps(nextProps, nextContext);
+    this.props.onContextUpdate(nextContext);
+  }
+
+  /* tslint:disable */
+  // private _reactInternalFiber: IFiber;
+  /* tslint:enable */
+
+  public render() {
+    // if (this._reactInternalFiber.return && this._reactInternalFiber.return.return) {
+    //   this._reactInternalFiber.return = this._reactInternalFiber.return.return;
+    // }
+
+    return <react-three-renderer-proxy testProps={this.props.testProps} />;
+  }
+}
+
+interface IContextForwarderProps {
+  context: any;
+}
+
+class ReactThreeRendererContext extends React.Component<IContextForwarderProps> {
+  public static childContextTypes: any;
+
+  public getChildContext() {
+    return this.props.context;
+  }
+
+  public render(): any {
+    return this.props.children;
+  }
+}
+
+interface IReact3Properties {
+  contextPassThrough?: any;
+}
+
+class React3 extends PureComponent<IReact3Properties, any> {
   private renderCount: number;
   private div: any;
-  private secondDiv: any;
-  private canvas: HTMLCanvasElement;
   private fakeDOMContainerInfo: any;
+  private passThroughContext: any;
 
-  constructor(props: any, context: any) {
+  constructor(props: IReact3Properties, context: any) {
     super(props, context);
 
     this.div = null;
-    this.secondDiv = null;
 
     // the canvas gets created here so that it can be rendered into even before the component gets mounted.
-    this.canvas = document.createElement("canvas");
+    // this.canvas = document.createElement("canvas");
 
     this.renderCount = 0;
 
@@ -45,16 +101,23 @@ class React3 extends PureComponent<any, any> {
       },
       nodeType: document.ELEMENT_NODE,
       ownerDocument: {
-        createElement: (name: any) => ({
-          name,
-          setAttribute: (/* ...args: any[] */) => {
-            // console.log('set attribute: ', ...args);
+        createElement: (name: any) => {
+          return ({
+            name,
+            setAttribute: (/* ...args: any[] */) => {
+              // console.log('set attribute: ', ...args);
 
-            if (this.div) {
-              ReactThreeRenderer.render(this.props.children, this.canvas);
-            }
-          },
-        }), // fake element gets created here
+              if (this.div) {
+                ReactThreeRendererContext.childContextTypes = this.props.contextPassThrough;
+
+                ReactThreeRenderer.render(<ReactThreeRendererContext
+                  context={this.passThroughContext}>
+                  {this.props.children}
+                </ReactThreeRendererContext>, this.div);
+              }
+            },
+          });
+        }, // fake element gets created here
       },
       setAttribute: () => {
         console.log("set attribute now!");
@@ -72,19 +135,22 @@ class React3 extends PureComponent<any, any> {
     this.div = div;
   }
 
-  public secondDivRef = (div: any) => {
-    this.secondDiv = div;
-  }
-
   public componentDidMount() {
-    this.div.appendChild(this.canvas);
+    ReactThreeRendererContext.childContextTypes = this.props.contextPassThrough;
 
-    ReactThreeRenderer.render(this.props.children, this.canvas);
+    ReactThreeRenderer.render(<ReactThreeRendererContext
+      context={this.passThroughContext}>
+      {this.props.children}
+    </ReactThreeRendererContext>, this.div);
   }
 
   public componentWillUnmount() {
-    ReactThreeRenderer.unmountComponentAtNode(this.canvas);
-    console.log("aaaah");
+    ReactThreeRenderer.unmountComponentAtNode(this.div);
+  }
+
+  public onContextUpdate = (newContext: any) => {
+    console.log("new context", newContext);
+    this.passThroughContext = newContext;
   }
 
   public render() {
@@ -97,18 +163,16 @@ class React3 extends PureComponent<any, any> {
 
     const implementation: any = null;
 
-    return (<div>
-      <div ref={this.divRef}>{
-        [
-          (ReactDOM as any).createPortal(
-            <react-three-renderer-proxy testProps={this.renderCount} />,
-            this.fakeDOMContainerInfo,
-            implementation,
-          ),
-        ]
-      }</div>
-      <div ref={this.secondDivRef} />
-    </div>);
+    ContextReceiver.contextTypes = this.props.contextPassThrough;
+
+    return (<div ref={this.divRef}>{
+      (ReactDOM as any).createPortal(
+        <ContextReceiver testProps={this.renderCount}
+                         onContextUpdate={this.onContextUpdate} />,
+        this.fakeDOMContainerInfo,
+        implementation,
+      )
+    }</div>);
   }
 }
 

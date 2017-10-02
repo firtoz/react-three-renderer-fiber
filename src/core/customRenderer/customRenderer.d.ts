@@ -9,6 +9,8 @@ export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer ext
 
   appendInitialChild(instance: T, child: TChild): void;
 
+  appendChild(instance: T, child: TChild): void;
+
   removeChild(instance: T, child: TChild): void;
 
   appendToContainer(instance: T, container: TParent): void;
