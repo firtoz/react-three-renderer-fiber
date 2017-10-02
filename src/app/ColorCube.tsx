@@ -1,22 +1,27 @@
-import React, { PureComponent } from 'react';
+import * as React from "react";
+import {PureComponent} from "react";
+
+interface IColorCubeProps {
+  rotation: any;
+}
 
 // fun to change the color state in React Devtools ;)
-export default class ColorCube extends PureComponent {
-  constructor(...args) {
+class ColorCube extends PureComponent<IColorCubeProps, any> {
+  constructor(...args: any[]) {
     super(...args);
 
     this.state = {
-      color: '#00FF00',
+      color: "#00FF00",
     };
   }
 
-  render() {
+  public render() {
     const {
       color,
     } = this.state;
 
     const {
-      rotation
+      rotation,
     } = this.props;
 
     return (<mesh
@@ -32,4 +37,10 @@ export default class ColorCube extends PureComponent {
       />
     </mesh>);
   }
+
+  public componentWillUnmount() {
+    console.log("cube unmounting...");
+  }
 }
+
+export default ColorCube;

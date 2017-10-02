@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "allowJs": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es5",
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "strictNullChecks": true,
+    "inlineSources": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*",
+    "node_modules/awesome-typescript-loader/lib/runtime.d.ts"
+  ]
+}
