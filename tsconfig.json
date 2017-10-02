@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
-    "sourceMap": true,
     "allowJs": true,
     "noImplicitAny": true,
     "module": "commonjs",
@@ -12,10 +11,12 @@
       "dom.iterable",
       "esnext"
     ],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "inlineSources": true,
+    "sourceMap": true
   },
   "include": [
-    "./src/**/*",
+    "src/**/*",
     "node_modules/awesome-typescript-loader/lib/runtime.d.ts"
   ]
 }

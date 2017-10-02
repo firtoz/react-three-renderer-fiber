@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig",
+  "include": [
+    "../src/**/*",
+    "./src/**/*",
+    "../node_modules/awesome-typescript-loader/lib/runtime.d.ts",
+    "../node_modules/@types/chai/index.d.ts",
+    "../node_modules/@types/mocha/index.d.ts"
+  ]
+}

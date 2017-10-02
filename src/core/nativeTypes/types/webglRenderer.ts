@@ -53,8 +53,12 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
   }
 
   public appendToContainer(instance: WebGLRenderer, container: HTMLCanvasElement): void {
+    if (instance.domElement === container) {
+      console.log("party!");
+    } else {
+      // instance.domElement = container;
+    }
     // super.appendToContainer(instance, container);
-    console.log("party!");
   }
 }
 

@@ -4,15 +4,6 @@ import ReactThreeRenderer from "../../src/core/renderer/reactThreeRenderer";
 
 import * as THREE from "three";
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      webglRenderer: any;
-      object3D: any;
-    }
-  }
-}
-
 describe("ReactThreeRenderer", () => {
   it("can render into a canvas", (done) => {
     const canvas = document.createElement("canvas");
@@ -22,21 +13,14 @@ describe("ReactThreeRenderer", () => {
     let webglRenderer: THREE.WebGLRenderer;
 
     function webglRendererRef(renderer: THREE.WebGLRenderer) {
-      // console.log("got renderer:", renderer);
       webglRenderer = renderer;
     }
 
-    console.log("starting render");
-
     ReactThreeRenderer.render(<webglRenderer ref={webglRendererRef} width={5} height={5} />, canvas, () => {
-      // console.log("render fin!");
-
       chai.expect(webglRenderer).to.be.an.instanceOf(THREE.WebGLRenderer);
 
       done();
     });
-
-    console.log("end render");
   });
 
   it("can render into another object", (done) => {
