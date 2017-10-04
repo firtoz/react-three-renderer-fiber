@@ -4073,9 +4073,9 @@ react-dom@16.0.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-"react-fiber-export@git+ssh://git@github.com/toxicFork/react-fiber-export.git":
-  version "1.1.0"
-  resolved "git+ssh://git@github.com/toxicFork/react-fiber-export.git#7f176864219a65a71c4108c4e4d5cd0f1ef05f51"
+react-fiber-export@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-fiber-export/-/react-fiber-export-1.2.0.tgz#96cb60e1c12cffdb9cd4f7fb49f51284aba1d395"
   dependencies:
     fbjs "0.8.16"
 

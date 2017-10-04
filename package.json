@@ -10,7 +10,6 @@
     "@types/three": "0.84.24",
     "react": "16.0.0",
     "react-dom": "16.0.0",
-    "react-fiber-export": "git+ssh://git@github.com/toxicFork/react-fiber-export.git",
     "three": "^0.87.1"
   },
   "scripts": {
@@ -41,6 +40,7 @@
     "karma-webpack": "^2.0.4",
     "mocha": "^3.5.3",
     "prop-types": "^15.6.0",
+    "react-fiber-export": "^1.2.0",
     "source-map": "^0.6.1",
     "source-map-loader": "0.2.1",
     "source-map-support": "^0.5.0",
