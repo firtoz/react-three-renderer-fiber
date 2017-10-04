@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Experiment from "./app/Experiment";
+import Simple from "../examples/simple";
 
 // import r3r from './core/r3r';
 //
@@ -16,6 +16,9 @@ import Experiment from "./app/Experiment";
 // import React from 'react';
 // import ReactDOM from 'react-dom';
 
-ReactDOM.render(<Experiment />, document.getElementById("example"));
+ReactDOM.render(<Simple
+  width={800}
+  height={600}
+/>, document.getElementById("example"));
 
 // console.log(r3r);

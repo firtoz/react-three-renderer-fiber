@@ -8,10 +8,12 @@ declare const process: {
   env: {
     NODE_ENV: string,
     ENABLE_REACT_ADDON_HOOKS: string;
+    DISABLE_REACT_ADDON_HOOKS: string;
   };
 };
 
-if (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOKS === "true") {
+if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
+  (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
   // Inject the runtime into a devtools global hook regardless of browser.
   // Allows for debugging when the hook is injected on the page.
   if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined") {
