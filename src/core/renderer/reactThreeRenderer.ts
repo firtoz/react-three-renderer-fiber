@@ -1,6 +1,7 @@
 import fiberSymbol from "./utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
+import {Scene, WebGLRenderer} from "three";
 import ReactThreeFiberRenderer from "./fiberRenderer";
 import "./utils/DevtoolsHelpers";
 
@@ -23,8 +24,6 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
 
     root = newRoot;
 
-    console.log("rooot", root);
-
     ReactThreeFiberRenderer.unbatchedUpdates(() => {
       ReactThreeFiberRenderer.updateContainer(children, newRoot, parentComponent, callback);
     });
@@ -35,8 +34,12 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
   return ReactThreeFiberRenderer.getPublicRootInstance(root);
 }
 
+type TRenderables = Scene | WebGLRenderer;
+
 class ReactThreeRenderer {
-  public static render(element: any, container: any, callback?: any) {
+  public static render<T extends TRenderables>(element: React.ReactElement<T> | Array<React.ReactElement<T>>,
+                                               container: any,
+                                               callback?: any): T {
     return renderSubtreeIntoContainer(null, element, container, false, callback);
   }
 

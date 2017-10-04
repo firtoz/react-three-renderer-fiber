@@ -108,19 +108,22 @@ class React3 extends PureComponent<IReact3Properties, any> {
               // console.log('set attribute: ', ...args);
 
               if (this.div) {
-                ReactThreeRendererContext.childContextTypes = this.props.contextPassThrough;
+                if (this.props.contextPassThrough) {
+                  ReactThreeRendererContext.childContextTypes = this.props.contextPassThrough;
 
-                ReactThreeRenderer.render(<ReactThreeRendererContext
-                  context={this.passThroughContext}>
-                  {this.props.children}
-                </ReactThreeRendererContext>, this.div);
+                  ReactThreeRenderer.render(<ReactThreeRendererContext
+                    context={this.passThroughContext}>
+                    {this.props.children}
+                  </ReactThreeRendererContext>, this.div);
+                } else {
+                  ReactThreeRenderer.render(this.props.children as any, this.div);
+                }
               }
             },
           });
         }, // fake element gets created here
       },
       setAttribute: () => {
-        console.log("set attribute now!");
 
         // R3R.render(this.props.children, this.canvas);
       },
@@ -136,12 +139,17 @@ class React3 extends PureComponent<IReact3Properties, any> {
   }
 
   public componentDidMount() {
-    ReactThreeRendererContext.childContextTypes = this.props.contextPassThrough;
 
-    ReactThreeRenderer.render(<ReactThreeRendererContext
-      context={this.passThroughContext}>
-      {this.props.children}
-    </ReactThreeRendererContext>, this.div);
+    if (this.props.contextPassThrough) {
+      ReactThreeRendererContext.childContextTypes = this.props.contextPassThrough;
+
+      ReactThreeRenderer.render(<ReactThreeRendererContext
+        context={this.passThroughContext}>
+        {this.props.children}
+      </ReactThreeRendererContext>, this.div);
+    } else {
+      ReactThreeRenderer.render(this.props.children as any, this.div);
+    }
   }
 
   public componentWillUnmount() {
@@ -149,7 +157,6 @@ class React3 extends PureComponent<IReact3Properties, any> {
   }
 
   public onContextUpdate = (newContext: any) => {
-    console.log("new context", newContext);
     this.passThroughContext = newContext;
   }
 

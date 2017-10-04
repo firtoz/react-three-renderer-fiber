@@ -1,5 +1,17 @@
 const path = require('path');
 
+const tslintLoaderRule = {
+  test: /\.tsx?$/,
+  enforce: 'pre',
+  loader: 'tslint-loader',
+  options: {
+    tsConfigFile: require.resolve('./tsconfig.json'),
+    configFile: require.resolve('../tslint.json'),
+
+    emitErrors: true,
+  }
+};
+
 module.exports = {
   // entry: "../src/index.tsx",
   output: {
@@ -8,7 +20,7 @@ module.exports = {
   },
 
   // Enable sourcemaps for debugging webpack's output.
-  devtool: "eval-inline-source-map",
+  devtool: "source-map",
 
   devServer: {
     publicPath: "/dist/"
@@ -35,6 +47,7 @@ module.exports = {
           "babelCore": require.resolve("babel-core")
         }
       },
+      tslintLoaderRule,
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
@@ -51,3 +64,15 @@ module.exports = {
     // "react-dom": "ReactDOM"
   },
 };
+
+Object.defineProperty(module.exports, "withKarmaConfig", {
+  enumerable: false,
+  get() {
+    return function(karmaConfig) {
+      if (karmaConfig.singleRun) {
+        module.exports.devtool = 'inline-source-map';
+      }
+      return module.exports;
+    }
+  }
+})

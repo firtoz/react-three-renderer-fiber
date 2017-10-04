@@ -20,31 +20,49 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
   Scene> {
 
   public createInstance(props: IWebGLRendererProps, rootContainerInstance: HTMLCanvasElement): WebGLRenderer {
+    let canvas: HTMLCanvasElement | null = null;
+
     if (rootContainerInstance instanceof HTMLCanvasElement) {
-      return new WebGLRenderer({
-        canvas: rootContainerInstance,
-      });
+      canvas = rootContainerInstance;
+      // return new WebGLRenderer({
+      //   canvas: rootContainerInstance,
+      // });
     }
 
-    return new WebGLRenderer({
-      // canvas: rootContainerInstance,
-    });
+    const propsToUse = Object.assign({}, props);
+
+    if (canvas !== null) {
+      propsToUse.canvas = canvas;
+    }
+
+    return new WebGLRenderer(propsToUse);
   }
 
   public applyInitialPropUpdates(instance: WebGLRenderer, props: IWebGLRendererProps): void {
     const {
       width,
       height,
+      clearAlpha,
+      clearColor,
     } = props;
 
     instance.setSize(width, height);
+
+    if (clearColor !== undefined) {
+      if (clearAlpha !== undefined) {
+        instance.setClearColor(clearColor, clearAlpha);
+      }
+    } else if (clearAlpha !== undefined) {
+      instance.setClearAlpha(clearAlpha);
+    }
   }
 
   public willBeRemovedFromParent(instance: WebGLRenderer, parent: HTMLCanvasElement): void {
+    // TODO
     if (parent instanceof HTMLCanvasElement) {
       /* */
     } else {
-      console.log("renderer will be removed...", parent);
+      /* */
     }
     // super.removedFromParent(parent);
   }
@@ -77,13 +95,12 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
 
   public appendToContainer(instance: WebGLRenderer, container: HTMLCanvasElement): void {
     if (instance.domElement === container) {
-      console.log("party!");
-    } else {
+      /* nothing to do here, as it will be passed in via the constructor */
+    } else if (container instanceof Element) {
       container.appendChild(instance.domElement);
-      // console.log("woah there son", instance.domElement, container);
-      // instance.domElement = container;
+    } else {
+      throw new Error("Trying to mount a <webglRenderer/> into an invalid object");
     }
-    // super.appendToContainer(instance, container);
   }
 }
 

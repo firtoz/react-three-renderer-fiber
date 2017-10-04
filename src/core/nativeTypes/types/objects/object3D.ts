@@ -8,6 +8,7 @@ export interface IObject3DProps {
   position?: Vector3;
   rotation?: Euler;
   children?: React.ReactNode | React.ReactNode[];
+  lookAt?: Vector3;
 }
 
 declare global {
@@ -33,6 +34,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       name,
       position,
       rotation,
+      lookAt,
     } = props;
 
     if (position != null) {
@@ -43,8 +45,15 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       instance.name = name;
     }
 
-    if (rotation != null) {
-      instance.rotation.copy(rotation);
+    if (lookAt != null) {
+      if (rotation != null) {
+        console.warn("An object has a rotation parameter when it shouldn't because it has a lookAt parameter too");
+      }
+      instance.lookAt(lookAt);
+    } else {
+      if (rotation != null) {
+        instance.rotation.copy(rotation);
+      }
     }
   }
 

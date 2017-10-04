@@ -29,7 +29,6 @@ describe("core", () => {
         let webglRenderer: THREE.WebGLRenderer;
 
         function webglRendererRef(renderer: THREE.WebGLRenderer) {
-          console.log("renderer: ", !!renderer);
           webglRenderer = renderer;
         }
 
@@ -38,19 +37,14 @@ describe("core", () => {
           chai.expect(webglRenderer.domElement).to.equal(canvas);
 
           ReactThreeRenderer.unmountComponentAtNode(canvas, () => {
-            console.log("unmounted?");
-
             chai.expect(webglRenderer, "webglRenderer should have been null").to.be.null();
 
             done();
           });
-
-          console.log("after unmount");
         });
       });
 
       after(() => {
-        console.log("canvas!!");
         document.body.removeChild(canvas);
       });
     });
@@ -81,6 +75,102 @@ describe("core", () => {
           });
         });
       });
+    });
+  });
+
+  describe("callback order", () => {
+    it("should execute callbacks in the right order", (done) => {
+      const callbackOrder: string[] = [];
+
+      class DOMCallbackTester extends React.Component<{ name: string }> {
+        public componentWillMount() {
+          callbackOrder.push(`will mount ${this.props.name}`);
+        }
+
+        public componentDidMount() {
+          callbackOrder.push(`did mount ${this.props.name}`);
+        }
+
+        public componentWillUnmount() {
+          callbackOrder.push(`will unmount ${this.props.name}`);
+        }
+
+        public render(): any {
+          return this.props.children;
+        }
+      }
+
+      const container = document.createElement("div");
+      document.body.appendChild(container);
+
+      let index = 0;
+
+      ReactDOM.render(<DOMCallbackTester name={`component-${index++}`}>
+        <DOMCallbackTester name={`component-${index++}`}>
+          <DOMCallbackTester name={`component-${index++}`}>
+            <DOMCallbackTester name={`component-${index++}`}>
+              <DOMCallbackTester name={`component-${index}`}>
+                <div />
+              </DOMCallbackTester>
+            </DOMCallbackTester>
+          </DOMCallbackTester>
+        </DOMCallbackTester>
+      </DOMCallbackTester>, container);
+
+      ReactDOM.unmountComponentAtNode(container);
+
+      const domCallbackOrder = callbackOrder.concat();
+
+      callbackOrder.splice(0);
+
+      const obj3d = new Object3D();
+
+      index = 0;
+
+      ReactThreeRenderer.render(<DOMCallbackTester name={`component-${index++}`}>
+        <DOMCallbackTester name={`component-${index++}`}>
+          <DOMCallbackTester name={`component-${index++}`}>
+            <DOMCallbackTester name={`component-${index++}`}>
+              <DOMCallbackTester name={`component-${index}`}>
+                <object3D />
+              </DOMCallbackTester>
+            </DOMCallbackTester>
+          </DOMCallbackTester>
+        </DOMCallbackTester>
+      </DOMCallbackTester>, obj3d);
+
+      ReactThreeRenderer.unmountComponentAtNode(obj3d);
+
+      const r3rCallbackOrder = callbackOrder.concat();
+
+      callbackOrder.splice(0);
+
+      index = 0;
+
+      ReactDOM.render(<DOMCallbackTester name={`component-${index++}`}>
+        <DOMCallbackTester name={`component-${index++}`}>
+          <DOMCallbackTester name={`component-${index++}`}>
+            <React3>
+              <DOMCallbackTester name={`component-${index++}`}>
+                <DOMCallbackTester name={`component-${index}`}>
+                  <webglRenderer width={5} height={5} />
+                </DOMCallbackTester>
+              </DOMCallbackTester>
+            </React3>
+          </DOMCallbackTester>
+        </DOMCallbackTester>
+      </DOMCallbackTester>, container);
+
+      ReactDOM.unmountComponentAtNode(container);
+
+      const mixedCallbackOrder = callbackOrder.concat();
+
+      callbackOrder.splice(0);
+
+      chai.expect(r3rCallbackOrder).to.deep.equal(domCallbackOrder);
+      chai.expect(mixedCallbackOrder).to.deep.equal(domCallbackOrder);
+
+      done();
     });
   });
 
@@ -219,8 +309,6 @@ describe("core", () => {
 
         constructor(props: any, context: ITestContext) {
           super(props, context);
-
-          console.log("props: ", props, "context:", context);
 
           testContext = Object.assign({}, context, {
             from: "constructor",
