@@ -170,16 +170,26 @@ class React3 extends PureComponent<IReact3Properties, any> {
 
     const implementation: any = null;
 
-    ContextReceiver.contextTypes = this.props.contextPassThrough;
+    if (this.props.contextPassThrough) {
+      ContextReceiver.contextTypes = this.props.contextPassThrough;
 
-    return (<div ref={this.divRef}>{
-      (ReactDOM as any).createPortal(
-        <ContextReceiver testProps={this.renderCount}
-                         onContextUpdate={this.onContextUpdate} />,
-        this.fakeDOMContainerInfo,
-        implementation,
-      )
-    }</div>);
+      return (<div ref={this.divRef}>{
+        (ReactDOM as any).createPortal(
+          <ContextReceiver testProps={this.renderCount}
+                           onContextUpdate={this.onContextUpdate} />,
+          this.fakeDOMContainerInfo,
+          implementation,
+        )
+      }</div>);
+    } else {
+      return (<div ref={this.divRef}>{
+        (ReactDOM as any).createPortal(
+          <react-three-renderer-proxy testProps={this.renderCount} />,
+          this.fakeDOMContainerInfo,
+          implementation,
+        )
+      }</div>);
+    }
   }
 }
 
