@@ -26,18 +26,18 @@ describe("core", () => {
       });
 
       it("can render into a canvas", (done) => {
-        let webglRenderer: THREE.WebGLRenderer;
+        let webGLRenderer: THREE.WebGLRenderer;
 
-        function webglRendererRef(renderer: THREE.WebGLRenderer) {
-          webglRenderer = renderer;
+        function webGLRendererRef(renderer: THREE.WebGLRenderer) {
+          webGLRenderer = renderer;
         }
 
-        ReactThreeRenderer.render(<webglRenderer ref={webglRendererRef} width={5} height={5} />, canvas, () => {
-          chai.expect(webglRenderer).to.be.an.instanceOf(THREE.WebGLRenderer);
-          chai.expect(webglRenderer.domElement).to.equal(canvas);
+        ReactThreeRenderer.render(<webGLRenderer ref={webGLRendererRef} width={5} height={5} />, canvas, () => {
+          chai.expect(webGLRenderer).to.be.an.instanceOf(THREE.WebGLRenderer);
+          chai.expect(webGLRenderer.domElement).to.equal(canvas);
 
           ReactThreeRenderer.unmountComponentAtNode(canvas, () => {
-            chai.expect(webglRenderer, "webglRenderer should have been null").to.be.null();
+            chai.expect(webGLRenderer, "webGLRenderer should have been null").to.be.null();
 
             done();
           });
@@ -153,7 +153,7 @@ describe("core", () => {
             <React3>
               <DOMCallbackTester name={`component-${index++}`}>
                 <DOMCallbackTester name={`component-${index}`}>
-                  <webglRenderer width={5} height={5} />
+                  <webGLRenderer width={5} height={5} />
                 </DOMCallbackTester>
               </DOMCallbackTester>
             </React3>
@@ -169,6 +169,26 @@ describe("core", () => {
 
       chai.expect(r3rCallbackOrder).to.deep.equal(domCallbackOrder);
       chai.expect(mixedCallbackOrder).to.deep.equal(domCallbackOrder);
+
+      done();
+    });
+  });
+
+  describe("props", () => {
+    const target = new Object3D();
+
+    afterEach("cleanup", () => {
+      ReactThreeRenderer.unmountComponentAtNode(target);
+    });
+
+    it("should be updated", (done) => {
+      ReactThreeRenderer.render(<object3D
+        name={"test-name"}
+      />, target);
+
+      ReactThreeRenderer.render(<object3D
+        name={"updated-name"}
+      />, target);
 
       done();
     });
@@ -335,11 +355,11 @@ describe("core", () => {
         Test!
         <ContextParentDOM value={"first-value"}>
           <React3 contextPassThrough={ContextChild.contextTypes}>
-            <webglRenderer width={55} height={55}>
+            <webGLRenderer width={55} height={55}>
               <scene>
                 <ContextChild />
               </scene>
-            </webglRenderer>
+            </webGLRenderer>
           </React3></ContextParentDOM></div>, container, () => {
         chai.expect(testContext.from).to.equal("constructor");
         chai.expect(testContext.testValue).to.equal("first-value");
@@ -348,11 +368,11 @@ describe("core", () => {
           Test!
           <ContextParentDOM value={"second-value"}>
             <React3 contextPassThrough={ContextChild.contextTypes}>
-              <webglRenderer width={55} height={55}>
+              <webGLRenderer width={55} height={55}>
                 <scene>
                   <ContextChild />
                 </scene>
-              </webglRenderer>
+              </webGLRenderer>
             </React3></ContextParentDOM></div>, container, () => {
           chai.expect(testContext.from).to.equal("update");
           chai.expect(testContext.testValue).to.equal("second-value");
@@ -361,11 +381,11 @@ describe("core", () => {
             Test!
             <ContextParentDOM value={"third-value"}>
               <React3 contextPassThrough={ContextChild.contextTypes}>
-                <webglRenderer width={55} height={55}>
+                <webGLRenderer width={55} height={55}>
                   <scene>
                     <ContextChild />
                   </scene>
-                </webglRenderer>
+                </webGLRenderer>
               </React3></ContextParentDOM></div>, container, () => {
             chai.expect(testContext.from).to.equal("update");
             chai.expect(testContext.testValue).to.equal("third-value");

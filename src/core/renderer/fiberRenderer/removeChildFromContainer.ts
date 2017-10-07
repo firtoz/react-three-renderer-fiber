@@ -1,10 +1,5 @@
-import nativeTypes from "../../nativeTypes/index";
-import fiberSymbol from "../utils/r3rFiberSymbol";
+import getDescriptorForInstance from "../utils/getDescriptorForInstance";
 
 export default function removeChildFromContainer(container: any, child: any): void {
-  const childType = child[fiberSymbol].type;
-
-  const childDescriptor = nativeTypes[childType];
-
-  childDescriptor.willBeRemovedFromParent(child, container);
+  getDescriptorForInstance(child).willBeRemovedFromParent(child, container);
 }

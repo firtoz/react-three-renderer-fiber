@@ -117,10 +117,8 @@ if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
       // });
     };
 
-    if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent !== "undefined"
-      && __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent) {
-      const agent = __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent;
-      hookAgent(agent);
+    if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent !== "undefined") {
+      hookAgent(__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent);
     } else {
       const devtoolsCallbackCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__
         .sub("react-devtools", (agent: ReactDevtools.IAgent) => {

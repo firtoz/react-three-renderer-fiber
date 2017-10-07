@@ -1,9 +1,15 @@
-export default function commitUpdateInternal(instance: any,
-                                             updatePayload: any,
-                                             type: any,
-                                             /* oldProps: any, */
-                                             /* newProps: any, */
-                                             /* internalInstanceHandle: any */) {
+import {IFiber} from "react-fiber-export";
+import nativeTypes from "../../nativeTypes";
+import {IPropMap} from "./prepareUpdate";
+
+export default function commitUpdate(instance: any,
+                                     // update payload will never be null
+                                     updatePayload: any[],
+                                     type: string,
+                                     oldProps: IPropMap,
+                                     newProps: IPropMap,
+                                     fiber: IFiber) {
+  nativeTypes[fiber.type].commitUpdate(instance, updatePayload, oldProps, newProps);
   let sizeUpdates: any = null;
 
   for (let i = 0; i < updatePayload.length; i += 2) {
@@ -17,29 +23,18 @@ export default function commitUpdateInternal(instance: any,
             instance.color.set(newValue);
             break;
           default:
-            throw new Error("Cannot update prop " + propName + " for " + type);
-        }
-
-        break;
-      case "mesh":
-        switch (propName) {
-          case "rotation":
-            instance.rotation.copy(newValue);
-            break;
-          default:
-            throw new Error("Cannot update prop " + propName + " for " + type);
+          // throw new Error("Cannot update prop " + propName + " for " + type);
         }
 
         break;
       case "perspectiveCamera":
-
         switch (propName) {
           case "aspect":
             instance.aspect = newValue;
             instance.updateProjectionMatrix();
             break;
           default:
-            throw new Error("Cannot update prop " + propName + " for " + type);
+          // throw new Error("Cannot update prop " + propName + " for " + type);
         }
         break;
       case "webglRenderer":
@@ -53,7 +48,7 @@ export default function commitUpdateInternal(instance: any,
 
         break;
       default:
-        throw new Error("Cannot update prop " + propName + " for " + type);
+      // throw new Error("Cannot update prop " + propName + " for " + type);
     }
   }
 

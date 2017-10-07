@@ -14,7 +14,7 @@ export default function createInstance(type: string,
                                        fiber: IFiber) {
   const descriptor = nativeTypes[type];
 
-  if (!descriptor) {
+  if (descriptor === undefined) {
     throw new Error("cannot create this type yet: " + type);
   }
 

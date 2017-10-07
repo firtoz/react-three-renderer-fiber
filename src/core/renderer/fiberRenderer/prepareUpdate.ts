@@ -1,9 +1,17 @@
-function diffProperties(lastProps: any, nextProps: any) {
+import r3rFiberSymbol from "../utils/r3rFiberSymbol";
+
+export interface IPropMap {
+  [key: string]: any;
+}
+
+export type TUpdatePayload = any[];
+
+function diffProperties(lastProps: IPropMap, nextProps: IPropMap): TUpdatePayload | null {
   // if (process.env.NODE_ENV !== 'production') {
   //   validatePropertiesInDevelopment(tag, nextRawProps); // TODO
   // }
 
-  let updatePayload: Array<string | null> | null = null;
+  let updatePayload: TUpdatePayload | null = null;
 
   const lastPropsKeys = Object.keys(lastProps);
 
@@ -11,16 +19,20 @@ function diffProperties(lastProps: any, nextProps: any) {
     if (nextProps.hasOwnProperty(propKey) || !lastProps.hasOwnProperty(propKey) || lastProps[propKey] == null) {
       continue;
     }
-    (updatePayload = updatePayload || []).push(propKey, null);
+
+    if (updatePayload === null) {
+      updatePayload = [];
+    }
+
+    // all removed props will be null
+    updatePayload.push(propKey, null);
   }
 
   const nextPropsKeys = Object.keys(nextProps);
 
-  const hasLastProps = !!lastProps;
+  const hasLastProps = lastProps !== undefined && lastProps !== null;
 
   for (const propKey of nextPropsKeys) {
-    // const propKey = nextPropsKeys[i];
-
     const nextProp = nextProps[propKey];
     const lastProp = hasLastProps ? lastProps[propKey] : undefined;
     if (!nextProps.hasOwnProperty(propKey) || nextProp === lastProp || (!nextProp) && (!lastProp)) {
@@ -29,10 +41,22 @@ function diffProperties(lastProps: any, nextProps: any) {
 
     if (propKey === "children") {
       if (lastProp !== nextProp && (typeof nextProp === "string" || typeof nextProp === "number")) {
-        (updatePayload = updatePayload || []).push(propKey, "" + nextProp);
+        // update text
+
+        if (updatePayload === null) {
+          updatePayload = [];
+        }
+
+        updatePayload.push(propKey, "" + nextProp);
       }
     } else {
-      (updatePayload = updatePayload || []).push(propKey, nextProp);
+      // update value
+
+      if (updatePayload === null) {
+        updatePayload = [];
+      }
+
+      updatePayload.push(propKey, nextProp);
     }
   }
 

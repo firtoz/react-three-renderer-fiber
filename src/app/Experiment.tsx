@@ -66,7 +66,7 @@ class Experiment extends Component {
 
     this.renderer.render(this.scene, this.camera);
 
-    this.animateInterval = setInterval(() => {
+    this.animateInterval = window.setInterval(() => {
       this.onAnimate(() => {
         if (this.rafRequest === 0) {
           this.rafRequest = requestAnimationFrame(renderFunction);
@@ -86,16 +86,15 @@ class Experiment extends Component {
     const height = window.innerHeight; // canvas height
 
     let testResult = null;
-    let cube = null;
     let react3 = null;
 
-    cube = <ColorCube rotation={this.state.cubeRotation} />;
+    const cube: any = <ColorCube rotation={this.state.cubeRotation} />;
 
     if (this.state.wantsResult) {
       testResult = <div key="result">Yay</div>;
     } else {
       react3 = <React3>
-        <webglRenderer
+        <webGLRenderer
           ref={this.rendererRef}
 
           width={width}
@@ -116,7 +115,7 @@ class Experiment extends Component {
             />
             {cube}
           </scene>
-        </webglRenderer>
+        </webGLRenderer>
       </React3>;
     }
 
@@ -161,7 +160,7 @@ class Experiment extends Component {
         this.rafRequest = 0;
       };
 
-      this.animateInterval = setInterval(() => {
+      this.animateInterval = window.setInterval(() => {
         this.onAnimate(() => {
           if (this.rafRequest === 0) {
             this.rafRequest = requestAnimationFrame(renderFunction);

@@ -270,4 +270,13 @@ declare module "react-fiber-export" {
   export class ReactFiberContext {
     public static getUnmaskedContext(fiber: IFiber): any;
   }
+
+  export class ReactFiber {
+    public static createFiberFromHostInstanceForDeletion(): IFiber;
+
+    public static createFiberFromElementType(type: any,
+                                             key: null | string,
+                                             internalContextTag: number,
+                                             debugOwner?: IFiber | React.ReactInstance | null): IFiber;
+  }
 }

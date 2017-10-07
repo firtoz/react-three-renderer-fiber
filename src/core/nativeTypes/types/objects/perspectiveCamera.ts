@@ -18,6 +18,16 @@ declare global {
 
 class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCameraProps,
   PerspectiveCamera> {
+
+  public constructor() {
+    super();
+
+    this.hasSimpleProp<void>("fov", false);
+    this.hasSimpleProp<void>("aspect", false);
+    this.hasSimpleProp<void>("near", false);
+    this.hasSimpleProp<void>("far", false);
+  }
+
   public createInstance(props: IPerspectiveCameraProps) {
     const {
       fov,

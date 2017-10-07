@@ -12,6 +12,8 @@ interface ISimpleProps {
 
 interface ISimpleState {
   cubeRotation: Euler;
+  antialias: boolean;
+  rotate: boolean;
 }
 
 class Simple extends React.Component<ISimpleProps, ISimpleState> {
@@ -35,7 +37,13 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
     // React will think that things have changed when they have not.
 
     this.state = {
-      cubeRotation: new Euler(),
+      antialias: true,
+      cubeRotation: new Euler(
+        5,
+        10,
+        15,
+      ),
+      rotate: false,
     };
   }
 
@@ -49,17 +57,23 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
     // pretend cubeRotation is immutable.
     // this helps with updates and pure rendering.
     // React will be sure that the rotation has now updated.
-    this.setState({
-      cubeRotation: new Euler(
-        this.state.cubeRotation.x + 0.1,
-        this.state.cubeRotation.y + 0.1,
-        0,
-      ),
-    }, () => {
+    if (this.state.rotate) {
+      this.setState({
+        cubeRotation: new Euler(
+          this.state.cubeRotation.x + 0.1,
+          this.state.cubeRotation.y + 0.1,
+          0,
+        ),
+      }, () => {
+        this.renderer.render(this.scene, this.camera);
+
+        this.animationRequest = requestAnimationFrame(this.onAnimate);
+      });
+    } else {
       this.renderer.render(this.scene, this.camera);
 
       this.animationRequest = requestAnimationFrame(this.onAnimate);
-    });
+    }
   }
 
   public componentWillUnmount() {
@@ -77,13 +91,12 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
     // height = window.innerHeight
 
     return <React3>
-      <webglRenderer
+      <webGLRenderer
         width={width}
         height={height}
         ref={this.rendererRef}
 
-        antialias
-        devicePixelRatio={window.devicePixelRatio}
+        antialias={this.state.antialias}
       >
         <scene
           ref={this.sceneRef}
@@ -111,7 +124,7 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
             />
           </mesh>
         </scene>
-      </webglRenderer>
+      </webGLRenderer>
     </React3>;
   }
 

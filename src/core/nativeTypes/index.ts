@@ -2,13 +2,13 @@ import {INativeElement} from "../customRenderer/customRenderer";
 
 const nativeTypes: { [key: string]: INativeElement<any, any, any, any, any, any>; } = {};
 
-const context = require.context("./types/", true, /\.ts$/);
+const context = (require as any).context("./types/", true, /\.ts$/);
 
 context
   .keys()
-  .forEach((key) => {
+  .forEach((key: string) => {
     const name = key.match(/(\w+)\.ts$/);
-    if (name) {
+    if (name !== null) {
       nativeTypes[name[1]] = context(key).default;
     }
   });

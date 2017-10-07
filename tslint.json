@@ -14,7 +14,8 @@
     ],
     "max-classes-per-file": [
       false
-    ]
+    ],
+    "strict-boolean-expressions": true
   },
   "rulesDirectory": []
 }

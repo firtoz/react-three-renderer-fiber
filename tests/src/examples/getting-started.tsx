@@ -47,7 +47,7 @@ describe("examples", () => {
 
       const pointLight = refProxy<PointLight>();
 
-      const renderer = ReactThreeRenderer.render<WebGLRenderer>(<webglRenderer
+      const renderer = ReactThreeRenderer.render<WebGLRenderer>(<webGLRenderer
         key="renderer"
 
         width={800}
@@ -97,7 +97,7 @@ describe("examples", () => {
             ref={pointLight}
           />
         </scene>
-      </webglRenderer>, document.body);
+      </webGLRenderer>, document.body);
 
       expect(renderer).to.equal(rendererRef.ref);
 

@@ -1,3 +1,5 @@
+import {IPropMap} from "../renderer/fiberRenderer/prepareUpdate";
+
 export type ICustomReactRenderer<TRootContainer> = any;
 
 export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
@@ -14,4 +16,9 @@ export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer ext
   removeChild(instance: T, child: TChild): void;
 
   appendToContainer(instance: T, container: TParent): void;
+
+  commitUpdate(instance: any,
+               updatePayload: any[],
+               oldProps: IPropMap,
+               newProps: IPropMap): void;
 }

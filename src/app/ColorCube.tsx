@@ -7,8 +7,8 @@ interface IColorCubeProps {
 
 // fun to change the color state in React Devtools ;)
 class ColorCube extends PureComponent<IColorCubeProps, any> {
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: IColorCubeProps, context: any) {
+    super(props, context);
 
     this.state = {
       color: "#00FF00",
