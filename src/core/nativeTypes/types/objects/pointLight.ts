@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {Mesh, PointLight} from "three";
+import {PropertyDescriptorBase} from "../../common/IPropertyDescriptor";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IPointLightProps extends IObject3DProps {
@@ -20,12 +21,22 @@ declare global {
 class PointLightDescriptor extends Object3DDescriptorBase<IPointLightProps,
   PointLight> {
 
-  public createInstance(props: IPointLightProps) {
-    return new THREE.PointLight(props.color, props.intensity, props.distance, props.decay);
+  constructor() {
+    super();
+
+    this.hasProp("color",
+      class extends PropertyDescriptorBase<IPointLightProps, PointLight, number | string> {
+        public update(instance: PointLight,
+                      newValue: number | string,
+                      oldProps: IPointLightProps,
+                      newProps: IPointLightProps): void {
+          instance.color.set(newValue as any);
+        }
+      }, false);
   }
 
-  public addedToParent(instance: PointLight, container: Mesh): void {
-    throw new Error("the world is not ready");
+  public createInstance(props: IPointLightProps) {
+    return new THREE.PointLight(props.color, props.intensity, props.distance, props.decay);
   }
 }
 

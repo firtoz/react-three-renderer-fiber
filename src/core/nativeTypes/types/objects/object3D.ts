@@ -148,7 +148,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
 
   public appendChild(instance: T, child: TChild): void {
     if (child instanceof Object3D) {
-      instance.add(child);
+      // instance.add(child);
     } else {
       throw new Error("cannot add " +
         (child as any)[r3rFiberSymbol].type +
@@ -169,9 +169,10 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public addedToParent(instance: T, container: TParent): void {
-    if (container instanceof Object3D) {
-      container.add(instance);
+  public addedToParent(instance: T, parentInstance: TParent): void {
+    if (parentInstance instanceof Object3D) {
+      // console.log("well the parent should contain us: ", parentInstance.children.indexOf(instance));
+      parentInstance.add(instance);
     } else {
       throw new Error("Trying to add a child into a non-object parent...");
     }

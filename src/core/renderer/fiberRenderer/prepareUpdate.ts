@@ -1,5 +1,3 @@
-import r3rFiberSymbol from "../utils/r3rFiberSymbol";
-
 export interface IPropMap {
   [key: string]: any;
 }

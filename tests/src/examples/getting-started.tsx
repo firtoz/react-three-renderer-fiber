@@ -118,15 +118,15 @@ describe("examples", () => {
       }
 
       if (material.ref !== null) {
-        expect(material.ref.color.getHex()).to.equal(0xFF0000);
+        expect(material.ref.color.getHexString()).to.equal("ff0000");
       }
 
       if (pointLight.ref !== null) {
-        expect(pointLight.ref.color.getHex()).to.equal(0xFFFF00);
+        expect(pointLight.ref.color.getHexString()).to.equal("ffff00");
       }
 
       if (rendererRef.ref !== null) {
-        expect(rendererRef.ref.getClearColor().getHex()).to.equal(0xdddddd);
+        expect(rendererRef.ref.getClearColor().getHexString()).to.equal("dddddd");
         expect(rendererRef.ref.getClearAlpha()).to.equal(1);
 
         if (scene.ref !== null && camera.ref !== null) {

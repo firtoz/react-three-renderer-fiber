@@ -38,6 +38,28 @@ function createSetter(instance: any, propertyName: string): SetterFunction {
 const wrapperDetailsSymbol = Symbol("react-three-renderer-details");
 const wrapperSymbol = Symbol("react-three-renderer-wrapper");
 
+function getWrappedAttributes(property: PropertyDescriptor,
+                              objectToWrap: any,
+                              propertyName: string): PropertyDescriptor {
+  const attributes: PropertyDescriptor = {
+    configurable: property.configurable,
+    enumerable: property.enumerable,
+  };
+
+  if (property.set !== undefined) {
+    attributes.set = createSetterFromExisting(objectToWrap, property.set);
+  } else if (property.writable !== undefined && property.writable) {
+    attributes.set = createSetter(objectToWrap, propertyName);
+  }
+
+  if (property.get !== undefined) {
+    attributes.get = createGetterFromExisting(objectToWrap, property.get);
+  } else {
+    attributes.get = createGetter(objectToWrap, propertyName);
+  }
+  return attributes;
+}
+
 abstract class WrapperDetails<TProps, TWrapped> {
   public static get<TProps,
     TWrapped,
@@ -98,45 +120,27 @@ abstract class WrapperDetails<TProps, TWrapped> {
 
   public abstract appendToContainer(instance: TWrapped, container: any): void;
 
-  protected abstract recreateInstance(newProps: any): TWrapped;
+  public abstract willBeRemovedFromParent(instance: TWrapped, container: any): void;
 
+  protected abstract recreateInstance(newProps: any): TWrapped;
 }
 
-//
-// class WebglRendererWrapperDummy {
-//   constructor() {
-//     /* noop */
-//   }
-// }
+function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebGLRenderer {
+  const oldLog = window.console.log;
+
+  window.console.log = () => {
+    /* no-op on purpose */
+  };
+
+  const renderer = new WebGLRenderer(parameters);
+
+  window.console.log = oldLog;
+
+  return renderer;
+}
 
 class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
   private containerIsCanvas: boolean;
-
-  constructor(props: IWebGLRendererProps) {
-    super(props);
-
-    // RendererWrapperDetails.set(new WebglRendererWrapperDummy(), this);
-
-    // let canvas: HTMLCanvasElement | null = null;
-    //
-    // const containerIsCanvas = rootContainerInstance instanceof HTMLCanvasElement;
-    // if (containerIsCanvas) {
-    //   canvas = rootContainerInstance;
-    //   // return new WebGLRenderer({
-    //   //   canvas: rootContainerInstance,
-    //   // });
-    // }
-    //
-    // const propsToUse = Object.assign({}, props);
-    //
-    // if (canvas !== null) {
-    //   propsToUse.canvas = canvas;
-    // }
-
-    // fake-abstract it
-    // return new WebglRendererWrapper(propsToUse, containerIsCanvas);
-    // super();
-  }
 
   public appendToContainer(instance: WebGLRenderer, container: Node): void {
     const propsToUse: IWebGLRendererProps = Object.assign({}, this.props);
@@ -148,7 +152,7 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
       propsToUse.canvas = container;
     }
 
-    const webglRenderer = createRendererWithoutLogging(this.props);
+    const webglRenderer = createRendererWithoutLogging(propsToUse);
 
     if (!this.containerIsCanvas) {
       container.appendChild(webglRenderer.domElement);
@@ -157,10 +161,24 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
     this.wrapObject(webglRenderer);
   }
 
-  // public createWrapped(props: IWebGLRendererProps, container: any): WebGLRenderer {
-  // return undefined;
+  public willBeRemovedFromParent(instance: WebGLRenderer, container: any): void {
+    const actualRenderer = this.wrappedObject;
 
-  // }
+    if (actualRenderer !== null) {
+      const contextLossExtension = actualRenderer.extensions.get("WEBGL_lose_context");
+
+      if (contextLossExtension) {
+        // noinspection JSUnresolvedFunction
+        contextLossExtension.loseContext();
+      }
+
+      actualRenderer.dispose();
+
+      if (!this.containerIsCanvas && actualRenderer.domElement.parentNode !== null) {
+        actualRenderer.domElement.parentNode.removeChild(actualRenderer.domElement);
+      }
+    }
+  }
 
   public wrapObject(rendererInstance: WebGLRenderer) {
     super.wrapObject(rendererInstance);
@@ -179,7 +197,7 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
           window.console.warn = (...args: string[]) => {
             if (args.length === 2
               && args[0] === "THREE.WebGLProgram: gl.getProgramInfoLog()"
-              && args[1].match(/^\s*$/)) {
+              && args[1].match(/^\s*$/) !== null) {
               return;
             }
 
@@ -198,30 +216,30 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
   }
 
   protected recreateInstance(newProps: WebGLRendererParameters): WebGLRenderer {
-    const actualRenderer = this.wrappedObject;
+    const lastRenderer = this.wrappedObject;
 
-    if (actualRenderer !== null) {
-      const contextLossExtension = actualRenderer.extensions.get("WEBGL_lose_context");
+    if (lastRenderer !== null) {
+      const contextLossExtension = lastRenderer.extensions.get("WEBGL_lose_context");
 
       if (contextLossExtension) {
         // noinspection JSUnresolvedFunction
         contextLossExtension.loseContext();
       }
 
-      actualRenderer.dispose();
+      lastRenderer.dispose();
 
       const propsToUse = Object.assign({}, newProps);
 
       if (this.containerIsCanvas) {
-        propsToUse.canvas = actualRenderer.domElement;
+        propsToUse.canvas = lastRenderer.domElement;
       }
 
       const newRenderer = createRendererWithoutLogging(propsToUse);
 
       if (!this.containerIsCanvas) {
-        const parentNode: Node | null = actualRenderer.domElement.parentNode;
+        const parentNode: Node | null = lastRenderer.domElement.parentNode;
         if (parentNode !== null) {
-          parentNode.removeChild(actualRenderer.domElement);
+          parentNode.removeChild(lastRenderer.domElement);
           parentNode.appendChild(newRenderer.domElement);
         }
       }
@@ -232,107 +250,11 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
     }
 
     // it's not even mounted yet...
-    throw new Error("unhandled");
-    // return null;
+    throw new Error("props were modified before webGLRenderer could be mounted...\n" +
+      "How did this happen?\n" +
+      "Please create an issue with details!");
   }
 }
-
-//
-// class ObjectWrapper<T> {
-//   constructor(details: WrapperDetails<T>, wrappedObject: T) {
-//     WrapperDetails.set(this, details);
-//
-//     details.wrapObject(wrappedObject);
-//   }
-// }
-
-function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebGLRenderer {
-  const oldLog = window.console.log;
-
-  window.console.log = () => {
-    /* no-op on purpose */
-  };
-
-  const renderer = new WebGLRenderer(parameters);
-
-  window.console.log = oldLog;
-
-  return renderer;
-}
-
-function getWrappedAttributes(property: PropertyDescriptor,
-                              objectToWrap: any,
-                              propertyName: string): PropertyDescriptor {
-  const attributes: PropertyDescriptor = {
-    configurable: property.configurable,
-    enumerable: property.enumerable,
-  };
-
-  if (typeof property.set !== "undefined") {
-    attributes.set = createSetterFromExisting(objectToWrap, property.set);
-  } else if (property.writable) {
-    attributes.set = createSetter(objectToWrap, propertyName);
-  }
-
-  if (typeof property.get !== "undefined") {
-    attributes.get = createGetterFromExisting(objectToWrap, property.get);
-  } else {
-    attributes.get = createGetter(objectToWrap, propertyName);
-  }
-  return attributes;
-}
-
-// class WebglRendererWrapper extends ObjectWrapper<WebGLRenderer> {
-//   public static createInstance(props: IWebGLRendererProps,
-//                                rootContainerInstance: HTMLCanvasElement): WebglRendererWrapper {
-//     let canvas: HTMLCanvasElement | null = null;
-//
-//     const containerIsCanvas = rootContainerInstance instanceof HTMLCanvasElement;
-//     if (containerIsCanvas) {
-//       canvas = rootContainerInstance;
-//       // return new WebGLRenderer({
-//       //   canvas: rootContainerInstance,
-//       // });
-//     }
-//
-//     const propsToUse = Object.assign({}, props);
-//
-//     if (canvas !== null) {
-//       propsToUse.canvas = canvas;
-//     }
-//
-//     // fake-abstract it
-//     return new WebglRendererWrapper(propsToUse, containerIsCanvas);
-//   }
-//
-//   constructor(parameters: WebGLRendererParameters, containerIsCanvas: boolean) {
-//     const rendererInstance = createRendererWithoutLogging(parameters);
-//
-//     super(new RendererWrapperDetails(
-//       containerIsCanvas,
-//     ), rendererInstance);
-//   }
-// }
-//
-// function createWrapper<T>(typeToWrap: new (...params: any[]) => T,
-//                           detailsClass: () => WrapperDetails<T>): new () => ObjectWrapper<T> {
-//   const wrapperClass = class extends ObjectWrapper<T> {
-//     constructor() {
-//       super(detailsClass(), null as any);
-//     }
-//   };
-//
-//   const typeToWrapInstanceOf = typeToWrap[Symbol.hasInstance];
-//
-//   Object.defineProperty(typeToWrap, Symbol.hasInstance, {
-//     value: (type: any) => {
-//       // yes let's completely abuse javascript
-//       return typeToWrapInstanceOf.call(typeToWrap, type) || type instanceof wrapperClass;
-//     },
-//   });
-//
-//   return wrapperClass;
-// }
 
 declare global {
   namespace JSX {
@@ -415,6 +337,13 @@ class WrappedEntityDescriptor<TProps = any,
     }
   }
 
+  public willBeRemovedFromParent(instance: TInstance, parent: TParent): void {
+    // super.willBeRemovedFromParent(instance, parent);
+    const wrapperDetails = this.wrapperType.get(instance);
+
+    wrapperDetails.willBeRemovedFromParent(instance, parent);
+  }
+
   protected hasRemountProp(propName: string): void {
     this.hasProp<any>(propName, this.remountTrigger, false);
   }
@@ -434,7 +363,7 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
   constructor() {
     super(RendererWrapperDetails, WebGLRenderer, true);
 
-    this.hasProp<number>("width",
+    this.hasProp("width",
       class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
         public update(instance: WebGLRenderer,
                       newValue: number,
@@ -476,54 +405,30 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
 
     this.hasRemountProp("antialias");
 
-    this.hasProp<number>("devicePixelRatio",
+    this.hasProp("devicePixelRatio",
       class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
         public update(instance: WebGLRenderer,
                       newValue: number): void {
           instance.setPixelRatio(newValue);
         }
       });
-  }
 
-  public willBeRemovedFromParent(instance: any, parent: HTMLCanvasElement): void {
-    // TODO
-    if (parent instanceof HTMLCanvasElement) {
-      /* */
-    } else {
-      /* */
-    }
-    // super.removedFromParent(parent);
-  }
+    this.hasProp("clearColor",
+      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
+        public update(instance: WebGLRenderer,
+                      newValue: number): void {
+          instance.setClearColor(newValue);
+        }
+      }, true);
 
-  //
-  // public appendInitialChild(instance: WebGLRenderer, child: Scene): void {
-  //   super.appendInitialChild(instance, child);
-  //   // if (!instance.userData) {
-  //   //   instance.userData = {};
-  //   // }
-  //   //
-  //   // if (child instanceof Scene) {
-  //   //   instance.userData._scene = child;
-  //   // } else {
-  //   //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-  //   // }
-  //   // super.appendInitialChild(instance, child);
-  // }
-  //
-  // public appendChild(instance: WebGLRenderer, child: Scene): void {
-  //   super.appendChild(instance, child);
-  //
-  //   // if (!instance.userData) {
-  //   //   instance.userData = {};
-  //   // }
-  //   //
-  //   // if (child instanceof Scene) {
-  //   //   instance.userData._scene = child;
-  //   // } else {
-  //   //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-  //   // }
-  //   // super.appendInitialChild(instance, child);
-  // }
+    this.hasProp("clearAlpha",
+      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
+        public update(instance: WebGLRenderer,
+                      newValue: number): void {
+          instance.setClearAlpha(newValue);
+        }
+      }, false);
+  }
 }
 
 export default new WebGLRendererDescriptor();

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {Mesh, MeshLambertMaterial} from "three";
-import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+import {MaterialDescriptorBase} from "./material";
 
 declare global {
   namespace JSX {
@@ -10,16 +10,11 @@ declare global {
   }
 }
 
-class MeshLambertMaterialDescriptor extends ReactThreeRendererDescriptor<THREE.MeshLambertMaterialParameters,
-  MeshLambertMaterial,
-  Mesh> {
+class MeshLambertMaterialDescriptor extends MaterialDescriptorBase<THREE.MeshLambertMaterialParameters,
+  MeshLambertMaterial> {
 
   public createInstance(props: THREE.MeshLambertMaterialParameters) {
     return new THREE.MeshLambertMaterial(props);
-  }
-
-  public addedToParent(instance: MeshLambertMaterial, container: Mesh): void {
-    throw new Error("the world is not ready");
   }
 }
 
