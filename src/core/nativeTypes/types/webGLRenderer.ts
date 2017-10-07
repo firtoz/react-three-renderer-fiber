@@ -6,7 +6,7 @@ import {
   WebGLRendererParameters,
 } from "three";
 import {PropertyDescriptorBase} from "../common/IPropertyDescriptor";
-import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+import {DescriptorType, ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;
@@ -37,26 +37,36 @@ function createSetter(instance: any, propertyName: string): SetterFunction {
 
 const wrapperDetailsSymbol = Symbol("react-three-renderer-details");
 
-abstract class WrapperDetails<T> {
-  public static get<T>(wrapper: ObjectWrapper<T>): WrapperDetails<T> {
+abstract class WrapperDetails<TProps, TWrapped> {
+  public static get<TProps,
+    TWrapped,
+    TWrapperDetails extends WrapperDetails<TProps, TWrapped>>(this: { new(...args: any[]): TWrapperDetails },
+                                                              wrapper: TWrapped): TWrapperDetails {
     return (wrapper as any)[wrapperDetailsSymbol];
   }
 
-  public static set<T>(wrapper: ObjectWrapper<T>, details: WrapperDetails<T>) {
-    details.setWrapper(wrapper);
+  public static set<TProps,
+    TWrapped,
+    TWrapperDetails extends WrapperDetails<TProps, TWrapped>>(this: { new(...args: any[]): TWrapperDetails },
+                                                              wrapper: TWrapped,
+                                                              details: TWrapperDetails): void {
+    details.wrapper = wrapper;
     (wrapper as any)[wrapperDetailsSymbol] = details;
   }
 
-  public wrappedObject: T;
-  protected wrapper: ObjectWrapper<T>;
+  public wrappedObject: TWrapped | null;
+  public wrapper: any;
+
+  constructor(public props: TProps) {
+  }
 
   // public abstract createInstance(params: TParams, container: any): T;
 
-  public setWrapper(wrapper: ObjectWrapper<T>) {
+  public setWrapper(wrapper: any) {
     this.wrapper = wrapper;
   }
 
-  public wrapObject(rendererInstance: T) {
+  public wrapObject(rendererInstance: TWrapped) {
     this.wrappedObject = rendererInstance;
 
     Object.getOwnPropertyNames(rendererInstance)
@@ -72,16 +82,69 @@ abstract class WrapperDetails<T> {
     this.wrapObject(this.recreateInstance(newProps));
   }
 
-  protected abstract recreateInstance(newProps: any): T;
+  public abstract appendToContainer(instance: TWrapped, container: any): void;
+
+  protected abstract recreateInstance(newProps: any): TWrapped;
+
 }
 
-class RendererWrapperDetails extends WrapperDetails<WebGLRenderer> {
-  constructor(public containerIsCanvas: boolean) {
-    super();
+class WebglRendererWrapperDummy {
+  constructor() {
+    /* noop */
+  }
+}
+
+class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
+  private containerIsCanvas: boolean;
+
+  constructor(props: IWebGLRendererProps) {
+    super(props);
+
+    RendererWrapperDetails.set(new WebglRendererWrapperDummy(), this);
+
+    // let canvas: HTMLCanvasElement | null = null;
+    //
+    // const containerIsCanvas = rootContainerInstance instanceof HTMLCanvasElement;
+    // if (containerIsCanvas) {
+    //   canvas = rootContainerInstance;
+    //   // return new WebGLRenderer({
+    //   //   canvas: rootContainerInstance,
+    //   // });
+    // }
+    //
+    // const propsToUse = Object.assign({}, props);
+    //
+    // if (canvas !== null) {
+    //   propsToUse.canvas = canvas;
+    // }
+
+    // fake-abstract it
+    // return new WebglRendererWrapper(propsToUse, containerIsCanvas);
+    // super();
   }
 
-  // public createInstance(params: IWebGLRendererProps, container: any): WebGLRenderer {
-  //   return undefined;
+  public appendToContainer(instance: WebGLRenderer, container: Node): void {
+    const propsToUse: IWebGLRendererProps = Object.assign({}, this.props);
+
+    if (container instanceof HTMLCanvasElement) {
+      this.containerIsCanvas = true;
+      // canvas = container;
+
+      propsToUse.canvas = container;
+    }
+
+    const webglRenderer = createRendererWithoutLogging(this.props);
+
+    if (!this.containerIsCanvas) {
+      container.appendChild(webglRenderer.domElement);
+    }
+
+    this.wrapObject(webglRenderer);
+  }
+
+  // public createWrapped(props: IWebGLRendererProps, container: any): WebGLRenderer {
+  // return undefined;
+
   // }
 
   public wrapObject(rendererInstance: WebGLRenderer) {
@@ -122,44 +185,51 @@ class RendererWrapperDetails extends WrapperDetails<WebGLRenderer> {
   protected recreateInstance(newProps: WebGLRendererParameters): WebGLRenderer {
     const actualRenderer = this.wrappedObject;
 
-    const contextLossExtension = actualRenderer.extensions.get("WEBGL_lose_context");
+    if (actualRenderer !== null) {
+      const contextLossExtension = actualRenderer.extensions.get("WEBGL_lose_context");
 
-    if (contextLossExtension) {
-      // noinspection JSUnresolvedFunction
-      contextLossExtension.loseContext();
-    }
-
-    actualRenderer.dispose();
-
-    const propsToUse = Object.assign({}, newProps);
-
-    if (this.containerIsCanvas) {
-      propsToUse.canvas = actualRenderer.domElement;
-    }
-
-    const newRenderer = createRendererWithoutLogging(propsToUse);
-
-    if (!this.containerIsCanvas) {
-      const parentNode: Node | null = actualRenderer.domElement.parentNode;
-      if (parentNode !== null) {
-        parentNode.removeChild(actualRenderer.domElement);
-        parentNode.appendChild(newRenderer.domElement);
+      if (contextLossExtension) {
+        // noinspection JSUnresolvedFunction
+        contextLossExtension.loseContext();
       }
+
+      actualRenderer.dispose();
+
+      const propsToUse = Object.assign({}, newProps);
+
+      if (this.containerIsCanvas) {
+        propsToUse.canvas = actualRenderer.domElement;
+      }
+
+      const newRenderer = createRendererWithoutLogging(propsToUse);
+
+      if (!this.containerIsCanvas) {
+        const parentNode: Node | null = actualRenderer.domElement.parentNode;
+        if (parentNode !== null) {
+          parentNode.removeChild(actualRenderer.domElement);
+          parentNode.appendChild(newRenderer.domElement);
+        }
+      }
+
+      // otherwise we don't need to do anything, a new context should have been created
+
+      return newRenderer;
     }
 
-    // otherwise we don't need to do anything, a new context should have been created
-
-    return newRenderer;
+    // it's not even mounted yet...
+    throw new Error("unhandled");
+    // return null;
   }
 }
 
-class ObjectWrapper<T> {
-  constructor(details: WrapperDetails<T>, wrappedObject: T) {
-    WrapperDetails.set(this, details);
-
-    details.wrapObject(wrappedObject);
-  }
-}
+//
+// class ObjectWrapper<T> {
+//   constructor(details: WrapperDetails<T>, wrappedObject: T) {
+//     WrapperDetails.set(this, details);
+//
+//     details.wrapObject(wrappedObject);
+//   }
+// }
 
 function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebGLRenderer {
   const oldLog = window.console.log;
@@ -197,46 +267,66 @@ function getWrappedAttributes(property: PropertyDescriptor,
   return attributes;
 }
 
-class WebglRendererWrapper extends ObjectWrapper<WebGLRenderer> {
-  public static createInstance(props: IWebGLRendererProps,
-                               rootContainerInstance: HTMLCanvasElement): WebglRendererWrapper {
-    let canvas: HTMLCanvasElement | null = null;
+// class WebglRendererWrapper extends ObjectWrapper<WebGLRenderer> {
+//   public static createInstance(props: IWebGLRendererProps,
+//                                rootContainerInstance: HTMLCanvasElement): WebglRendererWrapper {
+//     let canvas: HTMLCanvasElement | null = null;
+//
+//     const containerIsCanvas = rootContainerInstance instanceof HTMLCanvasElement;
+//     if (containerIsCanvas) {
+//       canvas = rootContainerInstance;
+//       // return new WebGLRenderer({
+//       //   canvas: rootContainerInstance,
+//       // });
+//     }
+//
+//     const propsToUse = Object.assign({}, props);
+//
+//     if (canvas !== null) {
+//       propsToUse.canvas = canvas;
+//     }
+//
+//     // fake-abstract it
+//     return new WebglRendererWrapper(propsToUse, containerIsCanvas);
+//   }
+//
+//   constructor(parameters: WebGLRendererParameters, containerIsCanvas: boolean) {
+//     const rendererInstance = createRendererWithoutLogging(parameters);
+//
+//     super(new RendererWrapperDetails(
+//       containerIsCanvas,
+//     ), rendererInstance);
+//   }
+// }
+//
+// function createWrapper<T>(typeToWrap: new (...params: any[]) => T,
+//                           detailsClass: () => WrapperDetails<T>): new () => ObjectWrapper<T> {
+//   const wrapperClass = class extends ObjectWrapper<T> {
+//     constructor() {
+//       super(detailsClass(), null as any);
+//     }
+//   };
+//
+//   const typeToWrapInstanceOf = typeToWrap[Symbol.hasInstance];
+//
+//   Object.defineProperty(typeToWrap, Symbol.hasInstance, {
+//     value: (type: any) => {
+//       // yes let's completely abuse javascript
+//       return typeToWrapInstanceOf.call(typeToWrap, type) || type instanceof wrapperClass;
+//     },
+//   });
+//
+//   return wrapperClass;
+// }
 
-    const containerIsCanvas = rootContainerInstance instanceof HTMLCanvasElement;
-    if (containerIsCanvas) {
-      canvas = rootContainerInstance;
-      // return new WebGLRenderer({
-      //   canvas: rootContainerInstance,
-      // });
-    }
-
-    const propsToUse = Object.assign({}, props);
-
-    if (canvas !== null) {
-      propsToUse.canvas = canvas;
-    }
-
-    // fake-abstract it
-    return new WebglRendererWrapper(propsToUse, containerIsCanvas);
-  }
-
-  constructor(parameters: WebGLRendererParameters, containerIsCanvas: boolean) {
-    const rendererInstance = createRendererWithoutLogging(parameters);
-
-    super(new RendererWrapperDetails(
-      containerIsCanvas,
-    ), rendererInstance);
-  }
-}
-
-const webglRendererInstanceOf = WebGLRenderer[Symbol.hasInstance];
-
-Object.defineProperty(WebGLRenderer, Symbol.hasInstance, {
-  value: (type: any) => {
-    // yes let's completely abuse javascript
-    return webglRendererInstanceOf.call(WebGLRenderer, type) || type instanceof WebglRendererWrapper;
-  },
-});
+// const webglRendererInstanceOf = WebGLRenderer[Symbol.hasInstance];
+//
+// Object.defineProperty(WebGLRenderer, Symbol.hasInstance, {
+//   value: (type: any) => {
+//     // yes let's completely abuse javascript
+//     return webglRendererInstanceOf.call(WebGLRenderer, type) || type instanceof WebglRendererWrapper;
+//   },
+// });
 
 declare global {
   namespace JSX {
@@ -251,8 +341,44 @@ interface IWebGLRendererProps extends WebGLRendererParameters {
   height: number;
 }
 
+interface IWrapperType<TProps, TWrapped, TWrapperDetails extends WrapperDetails<TProps, TWrapped>> {
+  new(props: TProps): TWrapperDetails;
+
+  get(v: TWrapped): TWrapperDetails;
+}
+
+class WrappedEntityDescriptor<TProps = any,
+  TInstance = any,
+  TParent = any,
+  TChild = never,
+  TWrapper extends WrapperDetails<TProps, TInstance> = any> extends ReactThreeRendererDescriptor<TProps,
+  TInstance,
+  TParent,
+  TChild> {
+
+  constructor(private wrapperType: IWrapperType<TProps, TInstance, TWrapper>) {
+    super();
+  }
+
+  public createInstance(props: TProps, rootContainerInstance: any): any {
+    return new this.wrapperType(props).wrapper;
+  }
+
+  public appendToContainer(instance: any, container: any): void {
+    const wrapperDetails = this.wrapperType.get(instance);
+
+    wrapperDetails.appendToContainer(instance, container);
+
+    console.log("and now applying initial props!");
+
+    super.applyInitialPropUpdates(instance, wrapperDetails.props);
+
+    // super.appendToContainer(instance, container);
+  }
+}
+
 class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendererProps,
-  WebglRendererWrapper,
+  any,
   HTMLCanvasElement,
   Scene> {
   constructor() {
@@ -307,7 +433,7 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
                       newValue: boolean,
                       oldProps: IWebGLRendererProps,
                       newProps: IWebGLRendererProps): void {
-          WrapperDetails.get(instance).remount(newProps);
+          RendererWrapperDetails.get(instance).remount(newProps);
 
           self.applyInitialPropUpdates(instance, newProps);
         }
@@ -322,11 +448,12 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
       });
   }
 
-  public createInstance(props: IWebGLRendererProps, rootContainerInstance: HTMLCanvasElement): WebglRendererWrapper {
-    return WebglRendererWrapper.createInstance(props, rootContainerInstance);
+  public createInstance(props: IWebGLRendererProps, rootContainerInstance: HTMLCanvasElement): any {
+    return new RendererWrapperDetails(props).wrapper;
+    // return WebglRendererWrapper.createInstance(props, rootContainerInstance);
   }
 
-  public willBeRemovedFromParent(instance: WebglRendererWrapper, parent: HTMLCanvasElement): void {
+  public willBeRemovedFromParent(instance: any, parent: HTMLCanvasElement): void {
     // TODO
     if (parent instanceof HTMLCanvasElement) {
       /* */
@@ -362,14 +489,27 @@ class WebGLRendererDescriptor extends ReactThreeRendererDescriptor<IWebGLRendere
     // super.appendInitialChild(instance, child);
   }
 
+  public applyInitialPropUpdates(instance: any, props: IWebGLRendererProps): void {
+    // super.applyInitialPropUpdates(instance, props);
+    // this will be done on append
+  }
+
   public appendToContainer(instance: WebGLRenderer, container: HTMLCanvasElement): void {
-    if (instance.domElement === container) {
-      /* nothing to do here, as it will be passed in via the constructor */
-    } else if (container instanceof Element) {
-      container.appendChild(instance.domElement);
-    } else {
-      throw new Error("Trying to mount a <webglRenderer/> into an invalid object");
-    }
+    const wrapperDetails = RendererWrapperDetails.get(instance);
+
+    wrapperDetails.appendToContainer(instance, container);
+
+    console.log("and now applying initial props!");
+
+    super.applyInitialPropUpdates(instance, wrapperDetails.props);
+    // and NOW we create an instance?
+    // if (instance.domElement === container) {
+    //   /* nothing to do here, as it will be passed in via the constructor */
+    // } else if (container instanceof Element) {
+    //   container.appendChild(instance.domElement);
+    // } else {
+    //   throw new Error("Trying to mount a <webglRenderer/> into an invalid object");
+    // }
   }
 }
 

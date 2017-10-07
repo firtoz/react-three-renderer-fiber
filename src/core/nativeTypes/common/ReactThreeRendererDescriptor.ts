@@ -28,6 +28,12 @@ class SimplePropertyDescriptor<TPropType> implements IReactThreeRendererProperty
 
 const emptyObject = {};
 
+export type DescriptorType<TProps,
+  TInstance,
+  TProp> = new (initialUpdate: boolean) => PropertyDescriptorBase<TProps,
+  TInstance,
+  TProp>;
+
 export abstract class ReactThreeRendererDescriptor<TProps = any,
   TInstance = any,
   TParent = any,
@@ -38,7 +44,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     TChild,
     HTMLCanvasElement,
     ReactThreeRenderer> {
-  private propertyDescriptors: IPropertyDescriptorMap<TProps, TInstance>;
+  protected propertyDescriptors: IPropertyDescriptorMap<TProps, TInstance>;
 
   constructor() {
     this.propertyDescriptors = {};
@@ -105,7 +111,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   public abstract appendToContainer(instance: TInstance, container: TParent): void;
 
   protected hasProp<TProp>(propName: string,
-                           descriptor: new (initialUpdate: boolean) => PropertyDescriptorBase<TProps, TInstance, TProp>,
+                           descriptor: DescriptorType<TProps, TInstance, TProp>,
                            updateInitial: boolean = true) {
     if (typeof this.propertyDescriptors[name] !== "undefined") {
       throw new Error(`Property type for ${name} is already defined.`);
