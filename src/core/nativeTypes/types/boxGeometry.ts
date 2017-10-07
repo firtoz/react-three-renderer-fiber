@@ -96,8 +96,8 @@ class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryPro
     return new BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
   }
 
-  public appendToContainer(instance: BoxGeometry, container: Mesh): void {
-    throw new Error("the world is not ready");
+  protected addedToParent(instance: BoxGeometry, container: Mesh): void {
+    // super.addedToParent(instance, container);
   }
 }
 

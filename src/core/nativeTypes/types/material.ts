@@ -35,7 +35,7 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     instance.setValues(newProps);
   }
 
-  public appendToContainer(instance: Material, container: Mesh): void {
+  public addedToParent(instance: Material, container: Mesh): void {
     container.material = instance;
   }
 }

@@ -9,6 +9,8 @@ export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer ext
 
   willBeRemovedFromParent(instance: T, parent: TParent): void;
 
+  willBeRemovedFromContainer(instance: T, container: TParent): void;
+
   appendInitialChild(instance: T, child: TChild): void;
 
   appendChild(instance: T, child: TChild): void;

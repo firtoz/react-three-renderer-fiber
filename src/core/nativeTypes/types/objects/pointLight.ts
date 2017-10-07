@@ -24,7 +24,7 @@ class PointLightDescriptor extends Object3DDescriptorBase<IPointLightProps,
     return new THREE.PointLight(props.color, props.intensity, props.distance, props.decay);
   }
 
-  public appendToContainer(instance: PointLight, container: Mesh): void {
+  public addedToParent(instance: PointLight, container: Mesh): void {
     throw new Error("the world is not ready");
   }
 }

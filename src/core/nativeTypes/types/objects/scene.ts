@@ -15,6 +15,14 @@ class SceneDescriptor extends Object3DDescriptorBase<IObject3DProps, Scene, Scen
   public createInstance(props: IObject3DProps) {
     return new Scene();
   }
+
+  public addedToParent(instance: Scene, container: SceneParents): void {
+    if (container instanceof WebGLRenderer) {
+      // no-op
+    } else {
+      super.addedToParent(instance, container);
+    }
+  }
 }
 
 export default new SceneDescriptor();

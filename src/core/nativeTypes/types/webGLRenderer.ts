@@ -71,9 +71,10 @@ abstract class WrapperDetails<TProps, TWrapped> {
   public wrapper: any;
 
   constructor(public props: TProps) {
-  }
+    const staticType = (this.constructor as IWrapperType<TProps, TWrapped, any>);
 
-  // public abstract createInstance(params: TParams, container: any): T;
+    staticType.set(new (staticType.getWrappedType())(), this);
+  }
 
   public setWrapper(wrapper: any) {
     this.wrapper = wrapper;
@@ -101,11 +102,12 @@ abstract class WrapperDetails<TProps, TWrapped> {
 
 }
 
-class WebglRendererWrapperDummy {
-  constructor() {
-    /* noop */
-  }
-}
+//
+// class WebglRendererWrapperDummy {
+//   constructor() {
+//     /* noop */
+//   }
+// }
 
 class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
   private containerIsCanvas: boolean;
@@ -113,7 +115,7 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
   constructor(props: IWebGLRendererProps) {
     super(props);
 
-    RendererWrapperDetails.set(new WebglRendererWrapperDummy(), this);
+    // RendererWrapperDetails.set(new WebglRendererWrapperDummy(), this);
 
     // let canvas: HTMLCanvasElement | null = null;
     //
@@ -348,7 +350,9 @@ interface IWebGLRendererProps extends WebGLRendererParameters {
 interface IWrapperType<TProps, TWrapped, TWrapperDetails extends WrapperDetails<TProps, TWrapped>> {
   new(props: TProps): TWrapperDetails;
 
-  get(v: TWrapped): TWrapperDetails;
+  get(wrapper: TWrapped): TWrapperDetails;
+
+  set(wrapper: TWrapped, details: TWrapperDetails): void;
 
   getWrappedType(): new () => any;
 }
@@ -401,7 +405,7 @@ class WrappedEntityDescriptor<TProps = any,
     }
   }
 
-  public appendToContainer(instance: TInstance, container: any): void {
+  public addedToParent(instance: TInstance, container: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 
     wrapperDetails.appendToContainer(instance, container);
@@ -491,31 +495,35 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
     // super.removedFromParent(parent);
   }
 
-  public appendInitialChild(instance: WebGLRenderer, child: Scene): void {
-    // if (!instance.userData) {
-    //   instance.userData = {};
-    // }
-    //
-    // if (child instanceof Scene) {
-    //   instance.userData._scene = child;
-    // } else {
-    //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-    // }
-    // super.appendInitialChild(instance, child);
-  }
-
-  public appendChild(instance: WebGLRenderer, child: Scene): void {
-    // if (!instance.userData) {
-    //   instance.userData = {};
-    // }
-    //
-    // if (child instanceof Scene) {
-    //   instance.userData._scene = child;
-    // } else {
-    //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
-    // }
-    // super.appendInitialChild(instance, child);
-  }
+  //
+  // public appendInitialChild(instance: WebGLRenderer, child: Scene): void {
+  //   super.appendInitialChild(instance, child);
+  //   // if (!instance.userData) {
+  //   //   instance.userData = {};
+  //   // }
+  //   //
+  //   // if (child instanceof Scene) {
+  //   //   instance.userData._scene = child;
+  //   // } else {
+  //   //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
+  //   // }
+  //   // super.appendInitialChild(instance, child);
+  // }
+  //
+  // public appendChild(instance: WebGLRenderer, child: Scene): void {
+  //   super.appendChild(instance, child);
+  //
+  //   // if (!instance.userData) {
+  //   //   instance.userData = {};
+  //   // }
+  //   //
+  //   // if (child instanceof Scene) {
+  //   //   instance.userData._scene = child;
+  //   // } else {
+  //   //   throw new Error('cannot add ' + childType + ' as a childInstance to ' + parentType);
+  //   // }
+  //   // super.appendInitialChild(instance, child);
+  // }
 }
 
 export default new WebGLRendererDescriptor();

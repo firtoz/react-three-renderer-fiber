@@ -142,6 +142,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 
   public appendInitialChild(instance: T, child: TChild): void {
+    super.appendInitialChild(instance, child);
     this.appendChild(instance, child);
   }
 
@@ -157,6 +158,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   }
 
   public removeChild(instance: T, child: TChild): void {
+    super.removeChild(instance, child);
     if (child instanceof Object3D) {
       instance.remove(child);
     } else {
@@ -167,7 +169,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public appendToContainer(instance: T, container: TParent): void {
+  public addedToParent(instance: T, container: TParent): void {
     if (container instanceof Object3D) {
       container.add(instance);
     } else {

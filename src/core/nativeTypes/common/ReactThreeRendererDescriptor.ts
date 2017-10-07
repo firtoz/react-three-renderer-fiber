@@ -1,6 +1,7 @@
 import {INativeElement} from "../../customRenderer/customRenderer";
 import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
+import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInstance";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 import IReactThreeRendererPropertyDescriptor, {PropertyDescriptorBase} from "./IPropertyDescriptor";
 
@@ -74,6 +75,10 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     /* noop by default */
   }
 
+  public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
+    this.willBeRemovedFromParent(instance, container);
+  }
+
   public applyInitialPropUpdates(instance: TInstance, props: TProps) {
     const keys = Object.keys(props);
 
@@ -97,18 +102,27 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   }
 
   public appendInitialChild(instance: TInstance, child: TChild): void {
-    throw new Error("tried to append a child to " + (instance as any)[r3rFiberSymbol].type);
+    (getDescriptorForInstance(child) as ReactThreeRendererDescriptor).addedToParent(child, instance);
+    // throw new Error("tried to append a child initial to " + (instance as any)[r3rFiberSymbol].type);
   }
 
   public appendChild(instance: TInstance, child: TChild): void {
-    throw new Error("tried to append a child to " + (instance as any)[r3rFiberSymbol].type);
+    (getDescriptorForInstance(child) as ReactThreeRendererDescriptor).addedToParent(child, instance);
+
+    // throw new Error("tried to append a child to " + (instance as any)[r3rFiberSymbol].type);
   }
 
   public removeChild(instance: TInstance, child: TChild): void {
-    throw new Error("tried to remove a child from " + (instance as any)[r3rFiberSymbol].type);
+    getDescriptorForInstance(child).willBeRemovedFromParent(child, instance);
+
+    // throw new Error("tried to remove a child from " + (instance as any)[r3rFiberSymbol].type);
   }
 
-  public abstract appendToContainer(instance: TInstance, container: TParent): void;
+  public appendToContainer(instance: TInstance, container: TParent): void {
+    this.addedToParent(instance, container);
+  }
+
+  protected abstract addedToParent(instance: TInstance, container: TParent): void;
 
   protected hasProp<TProp>(propName: string,
                            descriptor: DescriptorType<TProps, TInstance, TProp>,

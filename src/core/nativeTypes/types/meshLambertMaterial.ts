@@ -18,7 +18,7 @@ class MeshLambertMaterialDescriptor extends ReactThreeRendererDescriptor<THREE.M
     return new THREE.MeshLambertMaterial(props);
   }
 
-  public appendToContainer(instance: MeshLambertMaterial, container: Mesh): void {
+  public addedToParent(instance: MeshLambertMaterial, container: Mesh): void {
     throw new Error("the world is not ready");
   }
 }

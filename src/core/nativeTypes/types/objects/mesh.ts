@@ -33,6 +33,7 @@ class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType
   }
 
   public removeChild(instance: Mesh, child: MeshChildType): void {
+    super.removeChild(instance, child);
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if (child instanceof Material) {
