@@ -133,21 +133,6 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   protected abstract recreateInstance(newProps: any): TWrapped;
 }
 
-function getAllPropertyNames(obj: any) {
-  let props: string[] = [];
-
-  do {
-    // if (obj.constructor === Object) {
-    // break;
-    // }
-    props = props.concat(Object.getOwnPropertyNames(obj));
-
-    obj = Object.getPrototypeOf(obj);
-  } while (obj.constructor !== Object && obj !== null);
-
-  return props;
-}
-
 export class WrappedEntityDescriptor<TProps = any,
   TInstance = any,
   TParent = any,
