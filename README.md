@@ -11,7 +11,7 @@ This is even more WIP than `react-three-renderer` itself! Literally unusable. Th
   - Looked at how [react-ionize](https://github.com/mhink/react-ionize) does it
   - Looked at how [react-dom does it](https://github.com/facebook/react/blob/master/src/renderers/dom/fiber/ReactDOMFiber.js)
 - It seems to be super fast (for this specific experiment, that does not mean that much though)
-- I :heart: fiber
+- I &nbsp; :heart: &nbsp; fiber
 
 ## Current state:
 - It's so minimal it only works with a few hardcoded components :D
