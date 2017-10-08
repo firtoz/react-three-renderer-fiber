@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import {BoxGeometry, Mesh} from "three";
-import {PropertyDescriptorBase} from "../common/IPropertyDescriptor";
+import {BoxBufferGeometry, BoxGeometry, Mesh} from "three";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
 interface IBoxGeometryProps {
@@ -26,61 +25,47 @@ class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryPro
   constructor() {
     super();
 
-    this.hasProp<number>("width",
-      class extends PropertyDescriptorBase<IBoxGeometryProps, BoxGeometry, number> {
-        // noinspection JSUnusedLocalSymbols
-        public update(instance: BoxGeometry,
-                      newValue: number,
-                      oldProps: IBoxGeometryProps,
-                      newProps: IBoxGeometryProps): void {
-          // TODO remount :)
-          throw new Error("Method not implemented.");
-        }
-      }, false);
+    // noinspection JSUnusedLocalSymbols
+    this.hasProp<number>("width", (instance: BoxGeometry,
+                                   newValue: number,
+                                   oldProps: IBoxGeometryProps,
+                                   newProps: IBoxGeometryProps): void => {
+      // TODO remount :)
+      throw new Error("Method not implemented.");
+    }, false);
 
-    this.hasProp<number>("height",
-      class extends PropertyDescriptorBase<IBoxGeometryProps, BoxGeometry, number> {
-        // noinspection JSUnusedLocalSymbols
-        public update(instance: BoxGeometry,
-                      newValue: number,
-                      oldProps: IBoxGeometryProps,
-                      newProps: IBoxGeometryProps): void {
-          throw new Error("Method not implemented.");
-        }
-      }, false);
+    // noinspection JSUnusedLocalSymbols
+    this.hasProp<number>("height", (instance: BoxGeometry,
+                                    newValue: number,
+                                    oldProps: IBoxGeometryProps,
+                                    newProps: IBoxGeometryProps): void => {
+      throw new Error("Method not implemented.");
+    }, false);
 
-    this.hasProp<number>("depth",
-      class extends PropertyDescriptorBase<IBoxGeometryProps, BoxGeometry, number> {
-        // noinspection JSUnusedLocalSymbols
-        public update(instance: BoxGeometry,
-                      newValue: number,
-                      oldProps: IBoxGeometryProps,
-                      newProps: IBoxGeometryProps): void {
-          throw new Error("Method not implemented.");
-        }
-      }, false);
+    // noinspection JSUnusedLocalSymbols
+    this.hasProp<number>("depth", (instance: BoxGeometry,
+                                   newValue: number,
+                                   oldProps: IBoxGeometryProps,
+                                   newProps: IBoxGeometryProps): void => {
+      throw new Error("Method not implemented.");
+    }, false);
 
+    // noinspection JSUnusedLocalSymbols
     this.hasProp<number>("widthSegments",
-      class extends PropertyDescriptorBase<IBoxGeometryProps, BoxGeometry, number> {
-        // noinspection JSUnusedLocalSymbols
-        public update(instance: BoxGeometry,
-                      newValue: number,
-                      oldProps: IBoxGeometryProps,
-                      newProps: IBoxGeometryProps): void {
-          throw new Error("Method not implemented.");
-        }
+      (instance: BoxGeometry,
+       newValue: number,
+       oldProps: IBoxGeometryProps,
+       newProps: IBoxGeometryProps): void => {
+        throw new Error("Method not implemented.");
       }, false);
 
-    this.hasProp<number>("heightSegments",
-      class extends PropertyDescriptorBase<IBoxGeometryProps, BoxGeometry, number> {
-        // noinspection JSUnusedLocalSymbols
-        public update(instance: BoxGeometry,
-                      newValue: number,
-                      oldProps: IBoxGeometryProps,
-                      newProps: IBoxGeometryProps): void {
-          throw new Error("Method not implemented.");
-        }
-      }, false);
+    // noinspection JSUnusedLocalSymbols
+    this.hasProp<number>("heightSegments", (instance: BoxGeometry,
+                                            newValue: number,
+                                            oldProps: IBoxGeometryProps,
+                                            newProps: IBoxGeometryProps): void => {
+      throw new Error("Method not implemented.");
+    }, false);
   }
 
   public createInstance(props: IBoxGeometryProps) {

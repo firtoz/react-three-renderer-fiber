@@ -3,37 +3,20 @@ import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInstance";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
-import IReactThreeRendererPropertyDescriptor, {PropertyDescriptorBase} from "./IPropertyDescriptor";
 
-interface IPropertyDescriptor<TProps, TInstance, TPropType> {
-  update(instance: TInstance,
-         newValue: TPropType,
-         oldProps: TProps,
-         newProps: TProps): void;
-}
+type IPropertyUpdater<TProps, TInstance, TPropType> = (instance: TInstance,
+                                                       newValue: TPropType,
+                                                       oldProps: TProps,
+                                                       newProps: TProps) => void;
 
-interface IPropertyDescriptorMap<TProps, TInstance> {
-  [key: string]: PropertyDescriptorBase<TProps, TInstance, any>;
-}
-
-class SimplePropertyDescriptor<TPropType> implements IReactThreeRendererPropertyDescriptor<any,
-  any,
-  TPropType> {
-  constructor(private key: string, public updateInitial: boolean) {
-  }
-
-  public update(instance: any, newValue: TPropType, oldProps: any, newProps: any): void {
-    (instance as any)[this.key] = newValue;
-  }
+interface IPropertyUpdaterMap<TProps, TInstance> {
+  [key: string]: {
+    updateFunction: IPropertyUpdater<TProps, TInstance, any>,
+    updateInitial: boolean,
+  };
 }
 
 const emptyObject = {};
-
-export type DescriptorType<TProps,
-  TInstance,
-  TProp> = new (initialUpdate: boolean) => PropertyDescriptorBase<TProps,
-  TInstance,
-  TProp>;
 
 export abstract class ReactThreeRendererDescriptor<TProps = any,
   TInstance = any,
@@ -45,7 +28,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     TChild,
     HTMLCanvasElement,
     ReactThreeRenderer> {
-  protected propertyDescriptors: IPropertyDescriptorMap<TProps, TInstance>;
+  protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
 
   constructor() {
     this.propertyDescriptors = {};
@@ -59,13 +42,13 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
       const key: string = updatePayload[keyIndex];
       const value: any = updatePayload[keyIndex + 1];
 
-      const propertyDescriptor: IPropertyDescriptor<TProps, TInstance, any> = this.propertyDescriptors[key];
+      const propertyDescriptor: IPropertyUpdater<TProps, TInstance, any> = this.propertyDescriptors[key].updateFunction;
 
       if (propertyDescriptor === undefined) {
-        throw new Error(`Property descriptor for ${(instance as any)[r3rFiberSymbol].type}.${key} is not defined.`);
+        throw new Error(`Property updateFunction for ${(instance as any)[r3rFiberSymbol].type}.${key} is not defined.`);
       }
 
-      propertyDescriptor.update(instance, value, oldProps, newProps);
+      propertyDescriptor(instance, value, oldProps, newProps);
     }
   }
 
@@ -92,11 +75,11 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
       const propertyDescriptor = this.propertyDescriptors[key];
 
       if (propertyDescriptor === undefined) {
-        throw new Error(`Property descriptor for ${(instance as any)[r3rFiberSymbol].type}.${key} is not defined.`);
+        throw new Error(`Property updateFunction for ${(instance as any)[r3rFiberSymbol].type}.${key} is not defined.`);
       }
 
       if (propertyDescriptor.updateInitial) {
-        propertyDescriptor.update(instance, value, emptyObject as any, props);
+        propertyDescriptor.updateFunction(instance, value, emptyObject as any, props);
       }
     }
   }
@@ -125,15 +108,23 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   protected abstract addedToParent(instance: TInstance, container: TParent): void;
 
   protected hasProp<TProp>(propName: string,
-                           descriptor: DescriptorType<TProps, TInstance, TProp>,
+                           updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
                            updateInitial: boolean = true) {
     if (typeof this.propertyDescriptors[name] !== "undefined") {
       throw new Error(`Property type for ${name} is already defined.`);
     }
-    this.propertyDescriptors[propName] = new descriptor(updateInitial);
+    this.propertyDescriptors[propName] = {
+      updateFunction,
+      updateInitial,
+    };
   }
 
   protected hasSimpleProp<TProp>(propName: string, updateInitial: boolean = true) {
-    this.propertyDescriptors[propName] = new SimplePropertyDescriptor(propName, updateInitial);
+    this.propertyDescriptors[propName] = {
+      updateFunction(instance: any, newValue: TProp): void {
+        (instance as any)[this.key] = newValue;
+      },
+      updateInitial,
+    };
   }
 }

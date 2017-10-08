@@ -86,58 +86,47 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     super();
 
     this.hasSimpleProp<string>("name");
-    this.hasProp<Vector3>("position", class extends Object3DPropertyDescriptor<Vector3> {
-      public update(instance: Object3D, newValue: Vector3 | null): void {
-        if (newValue === null) {
-          instance.position.set(0, 0, 0);
-        } else {
-          instance.position.copy(newValue);
-        }
+    this.hasProp<Vector3>("position", (instance: Object3D, newValue: Vector3 | null): void => {
+      if (newValue === null) {
+        instance.position.set(0, 0, 0);
+      } else {
+        instance.position.copy(newValue);
+      }
 
-        const lookingAt = (instance as any)[lookAtSymbol];
+      const lookingAt = (instance as any)[lookAtSymbol];
 
-        if (typeof lookingAt !== "undefined") {
-          instance.lookAt(lookingAt);
-        }
+      if (typeof lookingAt !== "undefined") {
+        instance.lookAt(lookingAt);
       }
     });
 
-    this.hasProp<Euler>("rotation", class extends Object3DPropertyDescriptor<Euler> {
-      // noinspection JSUnusedLocalSymbols
-      public update(instance: Object3D,
-                    newValue: Euler | null,
-                    oldProps: IObject3DProps,
-                    newProps: IObject3DProps): void {
-        if (newValue === null) {
-          resetRotation(instance, newProps);
-        } else {
-          instance.rotation.copy(newValue);
-        }
+    this.hasProp<Euler>("rotation", (instance: Object3D,
+                                     newValue: Euler | null,
+                                     oldProps: IObject3DProps,
+                                     newProps: IObject3DProps): void => {
+      if (newValue === null) {
+        resetRotation(instance, newProps);
+      } else {
+        instance.rotation.copy(newValue);
       }
     });
 
-    this.hasProp<Quaternion>("quaternion", class extends Object3DPropertyDescriptor<Quaternion> {
-      // noinspection JSUnusedLocalSymbols
-      public update(instance: Object3D,
-                    newValue: Quaternion | null,
-                    oldProps: IObject3DProps,
-                    newProps: IObject3DProps): void {
-        if (newValue === null) {
-          resetRotation(instance, newProps);
-        } else {
-          instance.quaternion.copy(newValue);
-        }
+    this.hasProp<Quaternion>("quaternion", (instance: Object3D,
+                                            newValue: Quaternion | null,
+                                            oldProps: IObject3DProps,
+                                            newProps: IObject3DProps): void => {
+      if (newValue === null) {
+        resetRotation(instance, newProps);
+      } else {
+        instance.quaternion.copy(newValue);
       }
     });
 
-    this.hasProp<Vector3>("lookAt", class extends Object3DPropertyDescriptor<Vector3> {
-      // noinspection JSUnusedLocalSymbols
-      public update(instance: Object3D,
-                    newValue: Vector3 | null,
-                    oldProps: IObject3DProps,
-                    newProps: IObject3DProps): void {
-        updateLookAt(instance, newValue, newProps);
-      }
+    this.hasProp<Vector3>("lookAt", (instance: Object3D,
+                                     newValue: Vector3 | null,
+                                     oldProps: IObject3DProps,
+                                     newProps: IObject3DProps): void => {
+      updateLookAt(instance, newValue, newProps);
     });
   }
 

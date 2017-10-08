@@ -24,15 +24,10 @@ class PointLightDescriptor extends Object3DDescriptorBase<IPointLightProps,
   constructor() {
     super();
 
-    this.hasProp("color",
-      class extends PropertyDescriptorBase<IPointLightProps, PointLight, number | string> {
-        public update(instance: PointLight,
-                      newValue: number | string,
-                      oldProps: IPointLightProps,
-                      newProps: IPointLightProps): void {
-          instance.color.set(newValue as any);
-        }
-      }, false);
+    this.hasProp("color", (instance: PointLight,
+                           newValue: number | string): void => {
+      instance.color.set(newValue as any);
+    }, false);
   }
 
   public createInstance(props: IPointLightProps) {

@@ -287,7 +287,10 @@ class WrappedEntityDescriptor<TProps = any,
   TInstance,
   TParent,
   TChild> {
-  private remountTrigger: new () => PropertyDescriptorBase<TProps, TInstance, any>;
+  private remountTrigger: (instance: TInstance,
+                           newValue: any,
+                           oldProps: TProps,
+                           newProps: TProps) => void;
 
   constructor(private wrapperType: IWrapperType<TProps, TInstance, TWrapper>,
               private typeToWrap: any,
@@ -307,13 +310,11 @@ class WrappedEntityDescriptor<TProps = any,
       this.remount(instance, newProps);
     };
 
-    this.remountTrigger = class RemountTrigger extends PropertyDescriptorBase<TProps, TInstance, any> {
-      public update(instance: TInstance,
-                    newValue: any,
-                    oldProps: TProps,
-                    newProps: TProps) {
-        remountFunction(instance, newProps);
-      }
+    this.remountTrigger = (instance: TInstance,
+                           newValue: any,
+                           oldProps: TProps,
+                           newProps: TProps) => {
+      remountFunction(instance, newProps);
     };
   }
 
@@ -363,71 +364,63 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
   constructor() {
     super(RendererWrapperDetails, WebGLRenderer, true);
 
-    this.hasProp("width",
-      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
-        public update(instance: WebGLRenderer,
-                      newValue: number,
-                      oldProps: IWebGLRendererProps,
-                      newProps: IWebGLRendererProps): void {
-          if (newValue === null) {
-            // error!
-            return;
-          }
+    // this.hasMultiProp(["width", "height"], (instance: WebGLRenderer,
+    //                                         newSize: { width: number, height: number }) => {
+    //   const updatedSize: { width: number, height: number } = Object.assign({}, instance.getSize(), newSize);
+    //
+    //   instance.setSize(updatedSize.width, updatedSize.height);
+    // });
 
-          // if the height has changed, it will handle the update in the next step
-          if (newProps.height === oldProps.height) {
-            // can apply height
+    this.hasProp("width", (instance: WebGLRenderer,
+                           newValue: number,
+                           oldProps: IWebGLRendererProps,
+                           newProps: IWebGLRendererProps): void => {
+      if (newValue === null) {
+        // error!
+        return;
+      }
 
-            instance.setSize(newValue, instance.getSize().height);
-          }
-        }
-      });
+      // if the height has changed, it will handle the update in the next step
+      if (newProps.height === oldProps.height) {
+        // can apply height
 
-    this.hasProp<number>("height",
-      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
-        public update(instance: WebGLRenderer,
-                      newValue: number,
-                      oldProps: IWebGLRendererProps,
-                      newProps: IWebGLRendererProps): void {
-          if (newValue === null) {
-            return;
-          }
+        instance.setSize(newValue, instance.getSize().height);
+      }
+    });
 
-          if (newProps.width === null || newProps.width === oldProps.width) {
-            // can apply height, otherwise apply them together
+    this.hasProp<number>("height", (instance: WebGLRenderer,
+                                    newValue: number,
+                                    oldProps: IWebGLRendererProps,
+                                    newProps: IWebGLRendererProps): void => {
+      if (newValue === null) {
+        return;
+      }
 
-            instance.setSize(instance.getSize().width, newValue);
-          } else {
-            instance.setSize(newProps.width, newValue);
-          }
-        }
-      });
+      if (newProps.width === null || newProps.width === oldProps.width) {
+        // can apply height, otherwise apply them together
+
+        instance.setSize(instance.getSize().width, newValue);
+      } else {
+        instance.setSize(newProps.width, newValue);
+      }
+    });
 
     this.hasRemountProp("antialias");
 
-    this.hasProp("devicePixelRatio",
-      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
-        public update(instance: WebGLRenderer,
-                      newValue: number): void {
-          instance.setPixelRatio(newValue);
-        }
-      });
+    this.hasProp("devicePixelRatio", (instance: WebGLRenderer,
+                                      newValue: number): void => {
+      instance.setPixelRatio(newValue);
+    });
 
-    this.hasProp("clearColor",
-      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
-        public update(instance: WebGLRenderer,
-                      newValue: number): void {
-          instance.setClearColor(newValue);
-        }
-      }, true);
+    this.hasProp("clearColor", (instance: WebGLRenderer,
+                                newValue: number): void => {
+      instance.setClearColor(newValue);
+    }, true);
 
-    this.hasProp("clearAlpha",
-      class extends PropertyDescriptorBase<IWebGLRendererProps, WebGLRenderer, number> {
-        public update(instance: WebGLRenderer,
-                      newValue: number): void {
-          instance.setClearAlpha(newValue);
-        }
-      }, false);
+    this.hasProp("clearAlpha", (instance: WebGLRenderer,
+                                newValue: number): void => {
+      instance.setClearAlpha(newValue);
+    }, false);
   }
 }
 
