@@ -1,4 +1,5 @@
 import {Geometry, Material, Mesh} from "three";
+import getDescriptorForInstance from "../../../renderer/utils/getDescriptorForInstance";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IMeshProps extends IObject3DProps {
@@ -22,6 +23,8 @@ class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType
   }
 
   public appendInitialChild(instance: Mesh, child: MeshChildType): void {
+    (getDescriptorForInstance(child) as any).addedToParent(child, instance);
+
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if (child instanceof Material) {
@@ -33,11 +36,12 @@ class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType
   }
 
   public removeChild(instance: Mesh, child: MeshChildType): void {
-    super.removeChild(instance, child);
+    getDescriptorForInstance(child).willBeRemovedFromParent(child, instance);
+
     if (child instanceof Geometry) {
-      instance.geometry = child;
+      instance.geometry = null as any;
     } else if (child instanceof Material) {
-      instance.material = child;
+      instance.material = null as any;
     } else {
       super.removeChild(instance, child);
       // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');

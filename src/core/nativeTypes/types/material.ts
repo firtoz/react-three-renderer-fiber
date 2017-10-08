@@ -36,7 +36,13 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
   }
 
   public addedToParent(instance: Material, container: Mesh): void {
-    container.material = instance;
+    // container.material = instance;
+  }
+
+  public willBeRemovedFromParent(instance: Material, parent: Mesh): void {
+    // if (parent.material === instance) {
+    //   parent.material = null as any;
+    // }
   }
 }
 

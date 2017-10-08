@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import {BoxBufferGeometry, BoxGeometry, Mesh} from "three";
-import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+import {BoxGeometry, Mesh} from "three";
+import {WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
 
 interface IBoxGeometryProps {
   width: number;
@@ -19,20 +19,76 @@ declare global {
   }
 }
 
-class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryProps,
-  BoxGeometry,
-  Mesh> {
-  constructor() {
-    super();
+class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeometry> {
+  private container: Mesh | null;
 
-    // noinspection JSUnusedLocalSymbols
-    this.hasProp<number>("width", (instance: BoxGeometry,
-                                   newValue: number,
-                                   oldProps: IBoxGeometryProps,
-                                   newProps: IBoxGeometryProps): void => {
-      // TODO remount :)
-      throw new Error("Method not implemented.");
-    }, false);
+  constructor(props: IBoxGeometryProps) {
+    super(props);
+
+    this.container = null;
+
+    this.wrapObject(new BoxGeometry(props.width,
+      props.height,
+      props.depth,
+      props.widthSegments,
+      props.heightSegments,
+      props.depthSegments));
+  }
+
+  public addedToParent(instance: BoxGeometry, container: Mesh): void {
+    this.container = container;
+    /* */
+  }
+
+  public willBeRemovedFromParent(instance: BoxGeometry, container: Mesh): void {
+    if (this.container === container) {
+      this.container = null;
+    }
+    /* */
+  }
+
+  protected recreateInstance(newProps: IBoxGeometryProps): BoxGeometry {
+    const boxGeometry = this.wrappedObject;
+
+    if (boxGeometry !== null) {
+      const newBoxGeometry = new BoxGeometry(newProps.width,
+        newProps.height,
+        newProps.depth,
+        newProps.widthSegments,
+        newProps.heightSegments,
+        newProps.depthSegments);
+
+      if (this.container !== null) {
+        this.container.geometry = newBoxGeometry;
+      }
+
+      return newBoxGeometry;
+    }
+
+    // it's not even mounted yet...
+    throw new Error("props were modified before boxGeometry could be mounted...\n" +
+      "How did this happen?\n" +
+      "Please create an issue with details!");
+  }
+}
+
+class BoxGeometryDescriptor extends WrappedEntityDescriptor<IBoxGeometryProps,
+  BoxGeometry,
+  Mesh,
+  BoxGeometryWrapper> {
+  constructor() {
+    super(BoxGeometryWrapper, BoxGeometry);
+
+    this.hasRemountProp("width");
+    //
+    // // noinspection JSUnusedLocalSymbols
+    // this.hasProp<number>("width", (instance: BoxGeometry,
+    //                                newValue: number,
+    //                                oldProps: IBoxGeometryProps,
+    //                                newProps: IBoxGeometryProps): void => {
+    //   // TODO remount :)
+    //   throw new Error("Method not implemented.");
+    // }, false);
 
     // noinspection JSUnusedLocalSymbols
     this.hasProp<number>("height", (instance: BoxGeometry,
@@ -66,23 +122,6 @@ class BoxGeometryDescriptor extends ReactThreeRendererDescriptor<IBoxGeometryPro
                                             newProps: IBoxGeometryProps): void => {
       throw new Error("Method not implemented.");
     }, false);
-  }
-
-  public createInstance(props: IBoxGeometryProps) {
-    const {
-      width,
-      height,
-      depth,
-      widthSegments,
-      heightSegments,
-      depthSegments,
-    } = props;
-
-    return new BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
-  }
-
-  protected addedToParent(instance: BoxGeometry, container: Mesh): void {
-    // super.addedToParent(instance, container);
   }
 }
 

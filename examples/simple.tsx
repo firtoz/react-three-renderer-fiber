@@ -14,6 +14,7 @@ interface ISimpleState {
   cubeRotation: Euler;
   antialias: boolean;
   rotate: boolean;
+  frameNumber: number;
 }
 
 class Simple extends React.Component<ISimpleProps, ISimpleState> {
@@ -43,6 +44,7 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
         10,
         15,
       ),
+      frameNumber: 0,
       rotate: false,
     };
   }
@@ -64,15 +66,20 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
           this.state.cubeRotation.y + 0.1,
           0,
         ),
+        frameNumber: this.state.frameNumber + 1,
       }, () => {
         this.renderer.render(this.scene, this.camera);
 
         this.animationRequest = requestAnimationFrame(this.onAnimate);
       });
     } else {
-      this.renderer.render(this.scene, this.camera);
+      this.setState({
+        frameNumber: this.state.frameNumber + 1,
+      }, () => {
+        this.renderer.render(this.scene, this.camera);
 
-      this.animationRequest = requestAnimationFrame(this.onAnimate);
+        this.animationRequest = requestAnimationFrame(this.onAnimate);
+      });
     }
   }
 
@@ -115,7 +122,7 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
             rotation={this.state.cubeRotation}
           >
             <boxGeometry
-              width={1}
+              width={Math.abs(Math.cos(this.state.frameNumber / 100.0)) * 2}
               height={1}
               depth={1}
             />
