@@ -190,14 +190,14 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
         return;
       }
 
-      if (!groupedUpdates[groupName]) {
+      if (groupedUpdates[groupName] === undefined) {
         groupNamesToUpdate.push(groupName);
         groupedUpdates[groupName] = {};
       }
 
       groupedUpdates[groupName][propName] = value;
     } else {
-      if (updateInitial && !propertyDescriptor.updateInitial) {
+      if (updateInitial && propertyDescriptor.updateInitial !== true) {
         return;
       }
 

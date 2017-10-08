@@ -5,16 +5,20 @@ declare module "dirty-chai" {
   }
 
   export = dirtyChai;
-
 }
 
 declare namespace Chai {
   /* tslint:disable */
   interface Assertion {
-    (): void;
+    (...args: any[]): void;
 
-    /* tslint:enable */
   }
+
+  interface TypeComparison {
+    (...args: any[]): void;
+  }
+
+  /* tslint:enable */
 }
 
 declare module "source-map-support/register" {

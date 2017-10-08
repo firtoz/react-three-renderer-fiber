@@ -49,14 +49,12 @@ export function getWrappedAttributes(property: PropertyDescriptor,
   };
 
   if (property.set !== undefined) {
-    console.log("we got a setter!");
     attributes.set = createSetterFromExisting(objectToWrap, property.set);
   } else if (property.writable !== undefined && property.writable) {
     attributes.set = createSetter(objectToWrap, propertyName);
   }
 
   if (property.get !== undefined) {
-    console.log("we got a getter!");
     attributes.get = createGetterFromExisting(objectToWrap, property.get);
   } else {
     attributes.get = createGetter(objectToWrap, propertyName);
