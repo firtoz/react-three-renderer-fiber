@@ -11,12 +11,21 @@ type IPropertyUpdater<TProps, TInstance, TPropType> = (instance: TInstance,
 
 interface IPropertyUpdaterMap<TProps, TInstance> {
   [key: string]: {
-    updateFunction: IPropertyUpdater<TProps, TInstance, any>,
+    updateFunction?: IPropertyUpdater<TProps, TInstance, any>,
+    updateInitial?: boolean,
+    groupName?: string,
+  } | undefined;
+}
+
+interface IPropertyGroupMap<TProps, TInstance> {
+  [key: string]: {
+    properties: string[],
     updateInitial: boolean,
+    updateFunction: IPropertyUpdater<TProps, TInstance, any>,
   };
 }
 
-const emptyObject = {};
+const emptyObject: any = {};
 
 export abstract class ReactThreeRendererDescriptor<TProps = any,
   TInstance = any,
@@ -29,26 +38,35 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     HTMLCanvasElement,
     ReactThreeRenderer> {
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
+  protected propertyGroups: IPropertyGroupMap<TProps, TInstance>;
 
   constructor() {
     this.propertyDescriptors = {};
+    this.propertyGroups = {};
   }
 
   public commitUpdate(instance: TInstance,
                       updatePayload: TUpdatePayload,
                       oldProps: TProps,
                       newProps: TProps): void {
+    const groupedUpdates: {
+      [groupName: string]: {
+        [propertyName: string]: any;
+      },
+    } = {};
+
+    const groupNamesToUpdate: string[] = [];
+
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
       const key: string = updatePayload[keyIndex];
       const value: any = updatePayload[keyIndex + 1];
+      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps);
+    }
 
-      const propertyDescriptor: IPropertyUpdater<TProps, TInstance, any> = this.propertyDescriptors[key].updateFunction;
+    for (const groupName of groupNamesToUpdate) {
+      const newData = groupedUpdates[groupName];
 
-      if (propertyDescriptor === undefined) {
-        throw new Error(`Property updateFunction for ${(instance as any)[r3rFiberSymbol].type}.${key} is not defined.`);
-      }
-
-      propertyDescriptor(instance, value, oldProps, newProps);
+      this.propertyGroups[groupName].updateFunction(instance, newData, oldProps, newProps);
     }
   }
 
@@ -63,8 +81,15 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   }
 
   public applyInitialPropUpdates(instance: TInstance, props: TProps) {
-    const keys = Object.keys(props);
+    const groupedUpdates: {
+      [groupName: string]: {
+        [propertyName: string]: any;
+      },
+    } = {};
 
+    const groupNamesToUpdate: string[] = [];
+
+    const keys = Object.keys(props);
     for (const key of keys) {
       if (key === "children") {
         continue;
@@ -72,15 +97,13 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
       const value = (props as any)[key];
 
-      const propertyDescriptor = this.propertyDescriptors[key];
+      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, emptyObject, props, true);
+    }
 
-      if (propertyDescriptor === undefined) {
-        throw new Error(`Property updateFunction for ${(instance as any)[r3rFiberSymbol].type}.${key} is not defined.`);
-      }
+    for (const groupName of groupNamesToUpdate) {
+      const newData = groupedUpdates[groupName];
 
-      if (propertyDescriptor.updateInitial) {
-        propertyDescriptor.updateFunction(instance, value, emptyObject as any, props);
-      }
+      this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
     }
   }
 
@@ -110,8 +133,8 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   protected hasProp<TProp>(propName: string,
                            updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
                            updateInitial: boolean = true) {
-    if (typeof this.propertyDescriptors[name] !== "undefined") {
-      throw new Error(`Property type for ${name} is already defined.`);
+    if (this.propertyDescriptors[propName] !== undefined) {
+      throw new Error(`Property type for ${this.constructor.name}#${propName} is already defined.`);
     }
     this.propertyDescriptors[propName] = {
       updateFunction,
@@ -119,12 +142,73 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     };
   }
 
-  protected hasSimpleProp<TProp>(propName: string, updateInitial: boolean = true) {
-    this.propertyDescriptors[propName] = {
-      updateFunction(instance: any, newValue: TProp): void {
-        (instance as any)[this.key] = newValue;
-      },
+  protected hasPropGroup<TProp>(propNames: string[],
+                                updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
+                                updateInitial: boolean = true) {
+    const groupName = propNames.join(",");
+
+    this.propertyGroups[groupName] = {
+      properties: propNames,
+      updateFunction,
       updateInitial,
     };
+
+    propNames.forEach((propName) => {
+      if (typeof this.propertyDescriptors[propName] !== "undefined") {
+        throw new Error(`Property type for ${propName} is already defined.`);
+      }
+
+      this.propertyDescriptors[propName] = {
+        groupName,
+      };
+    });
+  }
+
+  protected hasSimpleProp<TProp>(propName: string, updateInitial: boolean = true) {
+    this.hasProp(propName, (instance: any, newValue: TProp): void => {
+      (instance as any)[propName] = newValue;
+    }, updateInitial);
+  }
+
+  private updateProperty(propName: string,
+                         groupedUpdates: { [p: string]: { [p: string]: any } },
+                         groupNamesToUpdate: string[],
+                         value: any,
+                         instance: TInstance,
+                         oldProps: TProps,
+                         newProps: TProps,
+                         updateInitial: boolean = false) {
+    const propertyDescriptor = this.propertyDescriptors[propName];
+    if (propertyDescriptor === undefined) {
+      throw new Error(`Cannot find property descriptor for ${this.constructor.name}#${propName}`);
+    }
+
+    const groupName = propertyDescriptor.groupName;
+
+    if (groupName !== undefined) {
+      if (updateInitial && !this.propertyGroups[groupName].updateInitial) {
+        return;
+      }
+
+      if (!groupedUpdates[groupName]) {
+        groupNamesToUpdate.push(groupName);
+        groupedUpdates[groupName] = {};
+      }
+
+      groupedUpdates[groupName][propName] = value;
+    } else {
+      if (updateInitial && !propertyDescriptor.updateInitial) {
+        return;
+      }
+
+      const updateFunction = propertyDescriptor.updateFunction;
+
+      if (updateFunction === undefined) {
+        throw new Error("Property updateFunction for " +
+          `${(instance as any)[r3rFiberSymbol].type}.${propName} is not defined.`);
+      }
+
+      updateFunction(instance, value, oldProps, newProps);
+    }
   }
 }

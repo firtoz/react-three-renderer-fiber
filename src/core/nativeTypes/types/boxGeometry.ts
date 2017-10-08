@@ -79,49 +79,11 @@ class BoxGeometryDescriptor extends WrappedEntityDescriptor<IBoxGeometryProps,
   constructor() {
     super(BoxGeometryWrapper, BoxGeometry);
 
-    this.hasRemountProp("width");
-    //
-    // // noinspection JSUnusedLocalSymbols
-    // this.hasProp<number>("width", (instance: BoxGeometry,
-    //                                newValue: number,
-    //                                oldProps: IBoxGeometryProps,
-    //                                newProps: IBoxGeometryProps): void => {
-    //   // TODO remount :)
-    //   throw new Error("Method not implemented.");
-    // }, false);
-
-    // noinspection JSUnusedLocalSymbols
-    this.hasProp<number>("height", (instance: BoxGeometry,
-                                    newValue: number,
-                                    oldProps: IBoxGeometryProps,
-                                    newProps: IBoxGeometryProps): void => {
-      throw new Error("Method not implemented.");
-    }, false);
-
-    // noinspection JSUnusedLocalSymbols
-    this.hasProp<number>("depth", (instance: BoxGeometry,
-                                   newValue: number,
-                                   oldProps: IBoxGeometryProps,
-                                   newProps: IBoxGeometryProps): void => {
-      throw new Error("Method not implemented.");
-    }, false);
-
-    // noinspection JSUnusedLocalSymbols
-    this.hasProp<number>("widthSegments",
-      (instance: BoxGeometry,
-       newValue: number,
-       oldProps: IBoxGeometryProps,
-       newProps: IBoxGeometryProps): void => {
-        throw new Error("Method not implemented.");
-      }, false);
-
-    // noinspection JSUnusedLocalSymbols
-    this.hasProp<number>("heightSegments", (instance: BoxGeometry,
-                                            newValue: number,
-                                            oldProps: IBoxGeometryProps,
-                                            newProps: IBoxGeometryProps): void => {
-      throw new Error("Method not implemented.");
-    }, false);
+    this.hasRemountProps("width",
+      "height",
+      "depth",
+      "widthSegments",
+      "heightSegments");
   }
 }
 

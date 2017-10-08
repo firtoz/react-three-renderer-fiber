@@ -225,8 +225,27 @@ export class WrappedEntityDescriptor<TProps = any,
     wrapperDetails.willBeRemovedFromParent(instance, parent);
   }
 
-  protected hasRemountProp(propName: string): void {
-    this.hasProp<any>(propName, this.remountTrigger, false);
+  protected hasRemountProps(...propNames: string[]): void {
+    const groupName = "#remount";
+    if (this.propertyGroups[groupName] === undefined) {
+      this.propertyGroups[groupName] = {
+        properties: [],
+        updateFunction: this.remountTrigger,
+        updateInitial: false,
+      };
+    }
+
+    for (const propName of propNames) {
+      this.propertyGroups[groupName].properties.push(propName);
+
+      if (typeof this.propertyDescriptors[propName] !== "undefined") {
+        throw new Error(`Property type for ${propName} is already defined.`);
+      }
+
+      this.propertyDescriptors[propName] = {
+        groupName,
+      };
+    }
   }
 
   private remount(instance: TInstance, newProps: TProps) {

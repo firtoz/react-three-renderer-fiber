@@ -14,6 +14,7 @@ interface ISimpleState {
   cubeRotation: Euler;
   antialias: boolean;
   rotate: boolean;
+  scale: boolean;
   frameNumber: number;
 }
 
@@ -46,6 +47,7 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
       ),
       frameNumber: 0,
       rotate: false,
+      scale: true,
     };
   }
 
@@ -122,9 +124,9 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
             rotation={this.state.cubeRotation}
           >
             <boxGeometry
-              width={Math.abs(Math.cos(this.state.frameNumber / 100.0)) * 2}
-              height={1}
-              depth={1}
+              width={!this.state.scale ? 1 : Math.abs(Math.cos(this.state.frameNumber / 100.0)) * 2}
+              height={!this.state.scale ? 1 : Math.abs(Math.cos((this.state.frameNumber + 200) / 100.0)) * 2}
+              depth={!this.state.scale ? 1 : Math.abs(Math.sin((this.state.frameNumber - 200) / 100.0)) * 2}
             />
             <meshBasicMaterial
               color={0x00ff00}

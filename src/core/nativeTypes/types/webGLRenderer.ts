@@ -5,8 +5,7 @@ import {
   WebGLRenderer,
   WebGLRendererParameters,
 } from "three";
-import {getWrappedAttributes, IWrapperType, WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
-import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+import {getWrappedAttributes, WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
 
 function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebGLRenderer {
   const oldLog = window.console.log;
@@ -160,63 +159,38 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
   constructor() {
     super(RendererWrapperDetails, WebGLRenderer, true);
 
-    // this.hasMultiProp(["width", "height"], (instance: WebGLRenderer,
-    //                                         newSize: { width: number, height: number }) => {
-    //   const updatedSize: { width: number, height: number } = Object.assign({}, instance.getSize(), newSize);
-    //
-    //   instance.setSize(updatedSize.width, updatedSize.height);
-    // });
+    this.hasPropGroup(["width", "height"], (instance: WebGLRenderer,
+                                            newSize: {
+                                              width?: number,
+                                              height?: number,
+                                            }) => {
+      const updatedSize: { width: number, height: number } = Object.assign({}, instance.getSize(), newSize);
 
-    this.hasProp("width", (instance: WebGLRenderer,
-                           newValue: number,
-                           oldProps: IWebGLRendererProps,
-                           newProps: IWebGLRendererProps): void => {
-      if (newValue === null) {
-        // error!
-        return;
-      }
-
-      // if the height has changed, it will handle the update in the next step
-      if (newProps.height === oldProps.height) {
-        // can apply height
-
-        instance.setSize(newValue, instance.getSize().height);
-      }
+      instance.setSize(updatedSize.width, updatedSize.height);
     });
 
-    this.hasProp<number>("height", (instance: WebGLRenderer,
-                                    newValue: number,
-                                    oldProps: IWebGLRendererProps,
-                                    newProps: IWebGLRendererProps): void => {
-      if (newValue === null) {
-        return;
-      }
-
-      if (newProps.width === null || newProps.width === oldProps.width) {
-        // can apply height, otherwise apply them together
-
-        instance.setSize(instance.getSize().width, newValue);
-      } else {
-        instance.setSize(newProps.width, newValue);
-      }
-    });
-
-    this.hasRemountProp("antialias");
+    this.hasRemountProps("antialias", "alpha");
 
     this.hasProp("devicePixelRatio", (instance: WebGLRenderer,
                                       newValue: number): void => {
       instance.setPixelRatio(newValue);
     });
 
-    this.hasProp("clearColor", (instance: WebGLRenderer,
-                                newValue: number): void => {
-      instance.setClearColor(newValue);
-    }, true);
-
-    this.hasProp("clearAlpha", (instance: WebGLRenderer,
-                                newValue: number): void => {
-      instance.setClearAlpha(newValue);
-    }, false);
+    this.hasPropGroup(["clearColor", "clearAlpha"], (instance: WebGLRenderer,
+                                                     newColors: {
+                                                       clearColor?: number,
+                                                       clearAlpha?: number,
+                                                     }) => {
+      if (newColors.clearColor !== undefined) {
+        if (newColors.clearAlpha !== undefined) {
+          instance.setClearColor(newColors.clearColor, newColors.clearAlpha);
+        } else {
+          instance.setClearColor(newColors.clearColor, instance.getClearAlpha());
+        }
+      } else if (newColors.clearAlpha !== undefined) {
+        instance.setClearAlpha(newColors.clearAlpha);
+      }
+    });
   }
 }
 
