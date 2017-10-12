@@ -1,17 +1,29 @@
-import {PerspectiveCamera} from "three";
+import {Camera, PerspectiveCamera} from "three";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
-interface IPerspectiveCameraProps extends IObject3DProps {
+// tslint:disable-next-line no-empty-interface
+export interface ICameraProps extends IObject3DProps {
+
+}
+
+interface IPerspectiveCameraProps extends ICameraProps {
   fov?: number;
   aspect?: number;
   near?: number;
   far?: number;
 }
 
+export type CameraElementProps = IReactThreeRendererElement<Camera> & ICameraProps;
+
+export type PerspectiveCameraElement =
+  CameraElementProps
+  & IReactThreeRendererElement<PerspectiveCamera>
+  & IPerspectiveCameraProps;
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      perspectiveCamera: IReactThreeRendererElement<PerspectiveCamera> & IPerspectiveCameraProps;
+      perspectiveCamera: PerspectiveCameraElement;
     }
   }
 }
@@ -22,10 +34,10 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
   public constructor() {
     super();
 
-    this.hasSimpleProp<void>("fov", false);
-    this.hasSimpleProp<void>("aspect", false);
-    this.hasSimpleProp<void>("near", false);
-    this.hasSimpleProp<void>("far", false);
+    this.hasSimpleProp("fov", false);
+    this.hasSimpleProp("aspect", false);
+    this.hasSimpleProp("near", false);
+    this.hasSimpleProp("far", false);
   }
 
   public createInstance(props: IPerspectiveCameraProps) {

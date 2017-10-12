@@ -1,8 +1,12 @@
+import r3rContextSymbol from "../utils/r3rContextSymbol";
+
 const emptyObject = {};
 
-export default function getRootHostContext(/* rootContainerInstance: any */) {
-  // console.log('getRootHostContext', rootContainerInstance);
-  // try to copy from the parents somehow if they're from ReactDOM?
+export default function getRootHostContext(rootContainerInstance: any) {
+  // console.log("getRootHostContext", this);
+  if (rootContainerInstance && rootContainerInstance[r3rContextSymbol] !== undefined) {
+    return rootContainerInstance[r3rContextSymbol];
+  }
 
   return emptyObject;
 }

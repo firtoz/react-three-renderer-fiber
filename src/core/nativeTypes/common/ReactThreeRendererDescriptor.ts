@@ -1,7 +1,9 @@
 import {INativeElement} from "../../customRenderer/customRenderer";
+import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInstance";
+import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 
 type IPropertyUpdater<TProps, TInstance, TPropType> = (instance: TInstance,
@@ -12,8 +14,9 @@ type IPropertyUpdater<TProps, TInstance, TPropType> = (instance: TInstance,
 interface IPropertyUpdaterMap<TProps, TInstance> {
   [key: string]: {
     updateFunction?: IPropertyUpdater<TProps, TInstance, any>,
-    updateInitial?: boolean,
-    groupName?: string,
+    groupName: string | null,
+    updateInitial: boolean,
+    wantsRepaint: boolean;
   } | undefined;
 }
 
@@ -22,6 +25,7 @@ interface IPropertyGroupMap<TProps, TInstance> {
     properties: string[],
     updateInitial: boolean,
     updateFunction: IPropertyUpdater<TProps, TInstance, any>,
+    wantsRepaint: boolean,
   };
 }
 
@@ -60,7 +64,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
       const key: string = updatePayload[keyIndex];
       const value: any = updatePayload[keyIndex + 1];
-      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps);
+      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false);
     }
 
     for (const groupName of groupNamesToUpdate) {
@@ -132,25 +136,30 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
   protected hasProp<TProp>(propName: string,
                            updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
-                           updateInitial: boolean = true) {
+                           updateInitial: boolean = true,
+                           wantsRepaint: boolean = true) {
     if (this.propertyDescriptors[propName] !== undefined) {
       throw new Error(`Property type for ${this.constructor.name}#${propName} is already defined.`);
     }
     this.propertyDescriptors[propName] = {
+      groupName: null,
       updateFunction,
       updateInitial,
+      wantsRepaint,
     };
   }
 
   protected hasPropGroup<TProp>(propNames: string[],
                                 updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
-                                updateInitial: boolean = true) {
+                                updateInitial: boolean = true,
+                                wantsRepaint: boolean = true) {
     const groupName = propNames.join(",");
 
     this.propertyGroups[groupName] = {
       properties: propNames,
       updateFunction,
       updateInitial,
+      wantsRepaint,
     };
 
     propNames.forEach((propName) => {
@@ -160,12 +169,14 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
       this.propertyDescriptors[propName] = {
         groupName,
+        updateInitial: false,
+        wantsRepaint: false,
       };
     });
   }
 
-  protected hasSimpleProp<TProp>(propName: string, updateInitial: boolean = true) {
-    this.hasProp(propName, (instance: any, newValue: TProp): void => {
+  protected hasSimpleProp(propName: string, updateInitial: boolean = true) {
+    this.hasProp(propName, (instance: any, newValue: any): void => {
       (instance as any)[propName] = newValue;
     }, updateInitial);
   }
@@ -177,7 +188,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
                          instance: TInstance,
                          oldProps: TProps,
                          newProps: TProps,
-                         updateInitial: boolean = false) {
+                         isInitialUpdate: boolean) {
     const propertyDescriptor = this.propertyDescriptors[propName];
     if (propertyDescriptor === undefined) {
       throw new Error(`Cannot find property descriptor for ${this.constructor.name}#${propName}`);
@@ -185,8 +196,8 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
     const groupName = propertyDescriptor.groupName;
 
-    if (groupName !== undefined) {
-      if (updateInitial && !this.propertyGroups[groupName].updateInitial) {
+    if (groupName !== null) {
+      if (isInitialUpdate && !this.propertyGroups[groupName].updateInitial) {
         return;
       }
 
@@ -197,7 +208,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
       groupedUpdates[groupName][propName] = value;
     } else {
-      if (updateInitial && propertyDescriptor.updateInitial !== true) {
+      if (isInitialUpdate && propertyDescriptor.updateInitial !== true) {
         return;
       }
 
@@ -209,6 +220,14 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
       }
 
       updateFunction(instance, value, oldProps, newProps);
+
+      if (propertyDescriptor.wantsRepaint) {
+        const context: IHostContext = (instance as any)[r3rContextSymbol];
+
+        if (context !== undefined) {
+          context.triggerRender();
+        }
+      }
     }
   }
 }

@@ -46,7 +46,7 @@ describe("getting started", () => {
 
     const pointLight = refProxy<PointLight>();
 
-    const renderer = ReactThreeRenderer.render<WebGLRenderer>(<webGLRenderer
+    const renderer = ReactThreeRenderer.render(<webGLRenderer
       key="renderer"
 
       width={800}

@@ -1,9 +1,16 @@
 import fiberSymbol from "./utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
-import {Scene, WebGLRenderer} from "three";
+import {CameraElementProps} from "../nativeTypes/types/objects/perspectiveCamera";
+import {SceneElementProps} from "../nativeTypes/types/objects/scene";
+import {RenderAction} from "../nativeTypes/types/render";
+import {WebGLRendererElementProps} from "../nativeTypes/types/webGLRenderer";
 import ReactThreeFiberRenderer from "./fiberRenderer";
+import {IHostContext} from "./fiberRenderer/createInstance";
 import "./utils/DevtoolsHelpers";
+import r3rContextSymbol from "./utils/r3rContextSymbol";
+
+const renderActionsSymbol = Symbol("r3r-render-actions");
 
 function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> | null,
                                     children: any,
@@ -22,6 +29,27 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
     container[r3rRootContainerSymbol] = newRoot;
     container[fiberSymbol] = newRoot;
 
+    const renderActionsForContainer: RenderAction[] = [];
+
+    if (container[r3rContextSymbol] === undefined) {
+      // noinspection UnnecessaryLocalVariableJS
+      const rootContext: IHostContext = {
+        triggerRender() {
+          // console.log("render triggered for", renderActionsForContainer);
+
+          renderActionsForContainer.forEach((action: RenderAction) => {
+            action.triggerRender();
+          });
+        },
+        renderActionFound(action: RenderAction) {
+          // console.log("render action found", action);
+          renderActionsForContainer.push(action);
+        },
+      };
+
+      container[r3rContextSymbol] = rootContext;
+    }
+
     root = newRoot;
 
     ReactThreeFiberRenderer.unbatchedUpdates(() => {
@@ -34,12 +62,12 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
   return ReactThreeFiberRenderer.getPublicRootInstance(root);
 }
 
-type TRenderables = Scene | WebGLRenderer;
+type TRenderables = SceneElementProps | WebGLRendererElementProps | CameraElementProps;
 
 class ReactThreeRenderer {
   public static render<T extends TRenderables>(element: React.ReactElement<T> | Array<React.ReactElement<T>>,
                                                container: any,
-                                               callback?: any): T {
+                                               callback?: any): any {
     return renderSubtreeIntoContainer(null, element, container, false, callback);
   }
 

@@ -22,7 +22,7 @@ ReactThreeRenderer.render(<webGLRenderer
     />}
     scene={<scene>
       <mesh>
-        <boxGeometry width={25} height={5} depth={5} />
+        <boxGeometry width={5} height={5} depth={5} />
         <meshLambertMaterial
           color={0xFF0000}
         />

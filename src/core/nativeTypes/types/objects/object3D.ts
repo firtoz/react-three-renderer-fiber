@@ -85,7 +85,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   public constructor() {
     super();
 
-    this.hasSimpleProp<string>("name");
+    this.hasSimpleProp("name");
     this.hasProp<Vector3>("position", (instance: Object3D, newValue: Vector3 | null): void => {
       if (newValue === null) {
         instance.position.set(0, 0, 0);

@@ -2,7 +2,9 @@ import {
   Material, MaterialParameters,
   Mesh,
 } from "three";
+import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
+import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 
 declare global {
@@ -33,6 +35,12 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
                       newProps: TProps): void {
     // that simple!?
     instance.setValues(newProps);
+
+    const context: IHostContext = (instance as any)[r3rContextSymbol];
+
+    if (context !== undefined) {
+      context.triggerRender();
+    }
   }
 
   public addedToParent(instance: Material, container: Mesh): void {

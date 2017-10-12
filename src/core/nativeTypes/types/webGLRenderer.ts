@@ -1,10 +1,12 @@
 import {
-  Camera,
+  Camera, PerspectiveCamera,
   RenderTarget,
   Scene,
   WebGLRenderer,
   WebGLRendererParameters,
 } from "three";
+import * as THREE from "three";
+import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import {getWrappedAttributes, WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
 
 function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebGLRenderer {
@@ -138,17 +140,19 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
   }
 }
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      webGLRenderer: IReactThreeRendererElement<WebGLRenderer> & IWebGLRendererProps;
-    }
-  }
-}
-
 interface IWebGLRendererProps extends WebGLRendererParameters {
   width: number;
   height: number;
+}
+
+export type WebGLRendererElementProps = IReactThreeRendererElement<WebGLRenderer> & IWebGLRendererProps;
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      webGLRenderer: WebGLRendererElementProps;
+    }
+  }
 }
 
 class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProps,
@@ -190,6 +194,16 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
       } else if (newColors.clearAlpha !== undefined) {
         instance.setClearAlpha(newColors.clearAlpha);
       }
+    });
+
+    this.hasProp("camera", (instance: WebGLRenderer, cameraElement: any) => {
+      // console.log(cameraElement);
+      const cameraContainer = new THREE.Object3D();
+      let camera: PerspectiveCamera;
+
+      ReactThreeRenderer.render(cameraElement, cameraContainer, function(this: PerspectiveCamera) {
+        camera = this;
+      });
     });
   }
 }

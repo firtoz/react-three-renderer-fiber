@@ -1,4 +1,5 @@
 import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
+import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;
@@ -124,6 +125,11 @@ export abstract class WrapperDetails<TProps, TWrapped> {
 
   public remount(newProps: any) {
     this.wrapObject(this.recreateInstance(newProps));
+
+    if (this.wrapper[r3rContextSymbol] !== undefined) {
+      // console.log("triggering a render for context", this.wrapper[r3rContextSymbol]);
+      this.wrapper[r3rContextSymbol].triggerRender();
+    }
   }
 
   public abstract addedToParent(instance: TWrapped, container: any): void;
@@ -215,6 +221,7 @@ export class WrappedEntityDescriptor<TProps = any,
         properties: [],
         updateFunction: this.remountTrigger,
         updateInitial: false,
+        wantsRepaint: true,
       };
     }
 
@@ -227,6 +234,8 @@ export class WrappedEntityDescriptor<TProps = any,
 
       this.propertyDescriptors[propName] = {
         groupName,
+        updateInitial: false,
+        wantsRepaint: false,
       };
     }
   }
