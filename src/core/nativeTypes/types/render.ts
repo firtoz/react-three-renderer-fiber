@@ -99,12 +99,14 @@ export class RenderAction implements IHostContext {
 
       const sceneRefFromElement: React.Ref<Scene> | null = (scene).ref || null;
 
+      const originalKey = scene.key || "";
+
       if (this.wrappedSceneRef !== sceneRefFromElement) {
         this.regenerateSceneRef(sceneRefFromElement);
       }
 
       sceneElementToRender = React.cloneElement(scene, {
-        key: "scene",
+        key: "scene" + originalKey,
         ref: this.sceneRef,
       } as any /* partial props won't match type completely */);
     }
@@ -113,12 +115,14 @@ export class RenderAction implements IHostContext {
       // then it must be a react element
       const cameraRefFromElement: React.Ref<Camera> | null = (camera).ref || null;
 
+      const originalKey = camera.key || "";
+
       if (this.wrappedCameraRef !== cameraRefFromElement) {
         this.regenerateCameraRef(cameraRefFromElement);
       }
 
       cameraElementToRender = React.cloneElement(camera, {
-        key: "camera",
+        key: "camera" + originalKey,
         ref: this.cameraRef,
       } as any /* partial props won't match type completely */);
     }
