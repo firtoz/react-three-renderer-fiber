@@ -5,7 +5,7 @@ import {MaterialDescriptorBase} from "./material";
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      meshBasicMaterial: IReactThreeRendererElement<THREE.MeshBasicMaterial> & THREE.MeshBasicMaterialParameters;
+      meshBasicMaterial: IThreeElementPropsBase<THREE.MeshBasicMaterial> & THREE.MeshBasicMaterialParameters;
     }
   }
 }

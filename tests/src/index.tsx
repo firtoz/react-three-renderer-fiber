@@ -5,8 +5,9 @@ import dirtyChai = require("dirty-chai");
 
 chai.use(dirtyChai);
 
+export const mockConsole = new MockConsole();
+
 describe("React Three Renderer", () => {
-  const mockConsole = new MockConsole();
 
   beforeEach(() => {
     mockConsole.wrapConsole();

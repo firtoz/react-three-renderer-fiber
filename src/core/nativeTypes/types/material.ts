@@ -10,7 +10,7 @@ import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescript
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      Material: IReactThreeRendererElement<Material> & MaterialParameters;
+      Material: IThreeElementPropsBase<Material> & MaterialParameters;
     }
   }
 }

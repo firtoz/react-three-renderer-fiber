@@ -4,16 +4,29 @@ import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+import {
+  CameraElementProps,
+} from "./objects/perspectiveCamera";
+import {SceneElement, SceneElementProps} from "./objects/scene";
+
+interface IElementTest<T, Props> extends React.ReactElement<Props> {
+  ref?: React.Ref<T>;
+}
 
 interface IRenderProps extends WebGLRendererParameters {
-  camera: JSX.Element;
-  scene: JSX.Element;
+  camera: IElementTest<Camera, CameraElementProps> | Camera | null;
+  scene: any | SceneElement | Scene | null;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      render: IReactThreeRendererElement<RenderAction> & IRenderProps;
+      render: IThreeElementPropsBase<RenderAction> & IRenderProps;
+    }
+
+    interface IElement<T, TypeString extends string, TProps> extends React.ReactElement<TProps> {
+      type: string;
+      ref: React.Ref<T>;
     }
   }
 }
@@ -29,8 +42,8 @@ export class RenderAction implements IHostContext {
   private wrappedSceneRef: React.Ref<Scene> | null;
   private wrappedCameraRef: React.Ref<Camera> | null;
 
-  private sceneRef: React.Ref<Scene>;
-  private cameraRef: React.Ref<Camera>;
+  private sceneRef: React.Ref<Scene> | null;
+  private cameraRef: React.Ref<Camera> | null;
   private animationFrameRequest: number;
 
   constructor() {
@@ -38,6 +51,9 @@ export class RenderAction implements IHostContext {
     (this.group as any)[r3rContextSymbol] = this;
 
     this.renderer = null;
+
+    this.wrappedSceneRef = null;
+    this.wrappedCameraRef = null;
 
     this.regenerateSceneRef(null);
     this.regenerateCameraRef(null);
@@ -75,27 +91,39 @@ export class RenderAction implements IHostContext {
       camera,
     } = newValue;
 
-    const sceneRefFromELement = (scene as any).ref || null;
-    const cameraRefFromElement = (camera as any).ref || null;
+    let sceneElementToRender: React.ReactElement<SceneElementProps> | null = null;
+    let cameraElementToRender: React.ReactElement<CameraElementProps> | null = null;
 
-    if (this.wrappedSceneRef !== sceneRefFromELement) {
-      this.regenerateSceneRef(sceneRefFromELement);
+    if (scene !== null && !(scene instanceof Scene)) {
+      // then it must be a react element
+
+      const sceneRefFromElement: React.Ref<Scene> | null = (scene).ref || null;
+
+      if (this.wrappedSceneRef !== sceneRefFromElement) {
+        this.regenerateSceneRef(sceneRefFromElement);
+      }
+
+      sceneElementToRender = React.cloneElement(scene, {
+        key: "scene",
+        ref: this.sceneRef,
+      } as any /* partial props won't match type completely */);
     }
-    if (this.wrappedCameraRef !== cameraRefFromElement) {
-      this.regenerateCameraRef(cameraRefFromElement);
+
+    if (camera !== null && !(camera instanceof Camera)) {
+      // then it must be a react element
+      const cameraRefFromElement: React.Ref<Camera> | null = (camera).ref || null;
+
+      if (this.wrappedCameraRef !== cameraRefFromElement) {
+        this.regenerateCameraRef(cameraRefFromElement);
+      }
+
+      cameraElementToRender = React.cloneElement(camera, {
+        key: "camera",
+        ref: this.cameraRef,
+      } as any /* partial props won't match type completely */);
     }
 
-    const clonedSceneElement = React.cloneElement(scene, {
-      key: "scene",
-      ref: this.sceneRef,
-    });
-
-    const clonedCameraElement = React.cloneElement(camera as any, {
-      key: "camera",
-      ref: this.cameraRef,
-    });
-
-    ReactThreeRenderer.render([clonedSceneElement, clonedCameraElement], this.group, this.render);
+    ReactThreeRenderer.render([sceneElementToRender, cameraElementToRender], this.group, this.render);
   }
 
   private rafCallback = () => {
@@ -105,11 +133,19 @@ export class RenderAction implements IHostContext {
   }
 
   private regenerateSceneRef(sceneRef: React.Ref<Scene> | null): void {
+    let oldWrappedSceneRef = this.wrappedSceneRef;
+
     this.wrappedSceneRef = sceneRef;
 
     this.sceneRef = (scene: Scene | null) => {
-      if (sceneRef !== null) {
-        (sceneRef as any)(scene);
+      if (oldWrappedSceneRef !== null) {
+        (oldWrappedSceneRef as any)(null);
+
+        oldWrappedSceneRef = null;
+      }
+
+      if (this.wrappedSceneRef !== null) {
+        (this.wrappedSceneRef as any)(scene);
       }
 
       this.internalScene = scene;
@@ -117,11 +153,19 @@ export class RenderAction implements IHostContext {
   }
 
   private regenerateCameraRef(cameraRef: React.Ref<Camera> | null): void {
+    let oldWrappedCameraRef = this.wrappedCameraRef;
+
     this.wrappedCameraRef = cameraRef;
 
     this.cameraRef = (camera: Camera | null) => {
-      if (cameraRef !== null) {
-        (cameraRef as any)(camera);
+      if (oldWrappedCameraRef !== null) {
+        (oldWrappedCameraRef as any)(null);
+
+        oldWrappedCameraRef = null;
+      }
+
+      if (this.wrappedCameraRef !== null) {
+        (this.wrappedCameraRef as any)(camera);
       }
 
       this.internalCamera = camera;

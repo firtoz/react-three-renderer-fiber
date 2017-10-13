@@ -10,7 +10,7 @@ interface IMeshProps extends IObject3DProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      mesh: IReactThreeRendererElement<Mesh> & IMeshProps;
+      mesh: IThreeElementPropsBase<Mesh> & IMeshProps;
     }
   }
 }

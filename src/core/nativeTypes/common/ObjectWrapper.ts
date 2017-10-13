@@ -1,5 +1,5 @@
-import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
+import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;

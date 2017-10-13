@@ -6,18 +6,20 @@ export interface ICameraProps extends IObject3DProps {
 
 }
 
-interface IPerspectiveCameraProps extends ICameraProps {
+export interface IPerspectiveCameraProps extends ICameraProps {
   fov?: number;
   aspect?: number;
   near?: number;
   far?: number;
 }
 
-export type CameraElementProps = IReactThreeRendererElement<Camera> & ICameraProps;
+export type CameraElementProps = IThreeElementPropsBase<Camera> & ICameraProps;
+
+export type CameraElement = JSX.IElement<Camera, "camera", CameraElementProps>;
 
 export type PerspectiveCameraElement =
   CameraElementProps
-  & IReactThreeRendererElement<PerspectiveCamera>
+  & IThreeElementPropsBase<PerspectiveCamera>
   & IPerspectiveCameraProps;
 
 declare global {

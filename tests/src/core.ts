@@ -3,4 +3,5 @@ describe("core", () => {
   require("./core/callback-order");
   require("./core/props");
   require("./core/context");
+  require("./core/render");
 });

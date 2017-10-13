@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import {Mesh, PointLight} from "three";
-import {PropertyDescriptorBase} from "../../common/IPropertyDescriptor";
+import {PointLight} from "three";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 interface IPointLightProps extends IObject3DProps {
@@ -13,7 +12,7 @@ interface IPointLightProps extends IObject3DProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      pointLight: IReactThreeRendererElement<PointLight> & IPointLightProps;
+      pointLight: IThreeElementPropsBase<PointLight> & IPointLightProps;
     }
   }
 }

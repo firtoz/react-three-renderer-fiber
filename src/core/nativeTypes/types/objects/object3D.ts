@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import {Euler, Object3D, Quaternion, Vector3} from "three";
 import r3rFiberSymbol from "../../../renderer/utils/r3rFiberSymbol";
-import {PropertyDescriptorBase} from "../../common/IPropertyDescriptor";
 import {IPropsWithChildren} from "../../common/IPropsWithChildren";
 import {ReactThreeRendererDescriptor} from "../../common/ReactThreeRendererDescriptor";
 
@@ -16,18 +15,9 @@ export interface IObject3DProps extends IPropsWithChildren {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      object3D: IReactThreeRendererElement<THREE.Object3D> & IObject3DProps;
+      object3D: IThreeElementPropsBase<THREE.Object3D> & IObject3DProps;
     }
   }
-}
-
-abstract class Object3DPropertyDescriptor<TProp> extends PropertyDescriptorBase<IObject3DProps,
-  Object3D,
-  TProp> {
-  public abstract update(instance: Object3D,
-                         newValue: TProp,
-                         oldProps: IObject3DProps,
-                         newProps: IObject3DProps): void;
 }
 
 const lookAtSymbol = Symbol("r3rLookAtCallback");

@@ -1,9 +1,11 @@
-import {Camera, Object3D, Scene, WebGLRenderer} from "three";
+import {Object3D, Scene, WebGLRenderer} from "three";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 type SceneParents = Object3D | WebGLRenderer;
 
-export type SceneElementProps = IReactThreeRendererElement<Scene> & IObject3DProps;
+export type SceneElementProps = IThreeElementPropsBase<Scene> & IObject3DProps;
+
+export type SceneElement = JSX.IElement<Scene, "scene", SceneElementProps>;
 
 declare global {
   namespace JSX {

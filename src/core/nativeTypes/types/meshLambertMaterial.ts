@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import {Mesh, MeshLambertMaterial} from "three";
+import {MeshLambertMaterial} from "three";
 import {MaterialDescriptorBase} from "./material";
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      meshLambertMaterial: IReactThreeRendererElement<THREE.MeshLambertMaterial> & THREE.MeshLambertMaterialParameters;
+      meshLambertMaterial: IThreeElementPropsBase<THREE.MeshLambertMaterial> & THREE.MeshLambertMaterialParameters;
     }
   }
 }

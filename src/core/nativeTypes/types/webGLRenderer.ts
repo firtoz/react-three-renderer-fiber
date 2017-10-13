@@ -69,33 +69,35 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
 
     const property = Object.getOwnPropertyDescriptor(rendererInstance, "render");
 
+    const renderFunction = (scene: Scene, camera: Camera, renderTarget?: RenderTarget, forceClear?: boolean) => {
+      const oldWarn = window.console.warn;
+
+      // get rid of useless message but warn about everything else
+      window.console.warn = (...args: string[]) => {
+        if (args.length === 2
+          && args[0] === "THREE.WebGLProgram: gl.getProgramInfoLog()"
+          && args[1].match(/^\s*$/) !== null) {
+          return;
+        }
+
+        oldWarn.call(window.console, ...args);
+      };
+
+      rendererInstance.render(scene, camera, renderTarget, forceClear);
+
+      window.console.warn = oldWarn;
+
+      // redefine to wrap
+      Object.defineProperty(this.wrapper, "render", getWrappedAttributes(property, rendererInstance, "render"));
+    };
+
+    (renderFunction as any).displayName = "render";
+
     // if (propertyName === "render" && typeof window !== "undefined" && typeof window.console !== "undefined") {
     Object.defineProperty(this.wrapper, "render", {
       configurable: property.configurable,
       enumerable: property.enumerable,
-      get: () => {
-        return (scene: Scene, camera: Camera, renderTarget?: RenderTarget, forceClear?: boolean) => {
-          const oldWarn = window.console.warn;
-
-          // get rid of useless message but warn about everything else
-          window.console.warn = (...args: string[]) => {
-            if (args.length === 2
-              && args[0] === "THREE.WebGLProgram: gl.getProgramInfoLog()"
-              && args[1].match(/^\s*$/) !== null) {
-              return;
-            }
-
-            oldWarn.call(window.console, ...args);
-          };
-
-          rendererInstance.render(scene, camera, renderTarget, forceClear);
-
-          window.console.warn = oldWarn;
-
-          // redefine to wrap
-          Object.defineProperty(this.wrapper, "render", getWrappedAttributes(property, rendererInstance, "render"));
-        };
-      },
+      value: renderFunction,
     });
   }
 
@@ -145,7 +147,7 @@ interface IWebGLRendererProps extends WebGLRendererParameters {
   height: number;
 }
 
-export type WebGLRendererElementProps = IReactThreeRendererElement<WebGLRenderer> & IWebGLRendererProps;
+export type WebGLRendererElementProps = IThreeElementPropsBase<WebGLRenderer> & IWebGLRendererProps;
 
 declare global {
   namespace JSX {

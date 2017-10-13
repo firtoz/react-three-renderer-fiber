@@ -175,6 +175,8 @@ describe("context", () => {
       chai.expect(testContext.from).to.equal("constructor");
       chai.expect(testContext.testValue).to.equal("first-value");
 
+      ReactDOM.render(<span>test</span>, container);
+
       ReactDOM.render(<div>
         Test!
         <ContextParentDOM value={"second-value"}>

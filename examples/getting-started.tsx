@@ -32,6 +32,5 @@ ReactThreeRenderer.render(<webGLRenderer
         color={0xFFFF00}
       />
     </scene>}
-  >
-  </render>
+  />
 </webGLRenderer>, document.getElementById("example"));

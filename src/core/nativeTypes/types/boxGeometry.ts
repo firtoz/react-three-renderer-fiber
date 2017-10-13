@@ -14,7 +14,7 @@ interface IBoxGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      boxGeometry: IReactThreeRendererElement<THREE.BoxGeometry> & IBoxGeometryProps;
+      boxGeometry: IThreeElementPropsBase<THREE.BoxGeometry> & IBoxGeometryProps;
     }
   }
 }
