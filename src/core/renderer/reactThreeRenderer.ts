@@ -1,6 +1,7 @@
 import fiberSymbol, {default as r3rFiberSymbol} from "./utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
+import {IFiber} from "react-fiber-export";
 import {Scene} from "three";
 import {CameraElement} from "../nativeTypes/types/objects/perspectiveCamera";
 import {SceneElementProps} from "../nativeTypes/types/objects/scene";
@@ -138,6 +139,29 @@ class ReactThreeRenderer {
       // }
 
       return false;
+    }
+  }
+
+  public static findTHREEObject(componentOrElement: any) {
+    if (componentOrElement == null) {
+      return null;
+    }
+
+    if (componentOrElement[r3rFiberSymbol] !== undefined) {
+      // must be a host instance already then
+      return componentOrElement;
+    }
+
+    const fiber: IFiber = componentOrElement._reactInternalFiber;
+    if (fiber !== null && fiber !== undefined) {
+      return ReactThreeFiberRenderer.findHostInstance(fiber);
+    }
+
+    if (typeof componentOrElement.render === "function") {
+      throw new Error("Unable to find node on an unmounted component.");
+    } else {
+      throw new Error("Element appears to be" +
+        " neither ReactComponent nor DOMNode. Keys: %s" + Object.keys(componentOrElement));
     }
   }
 }

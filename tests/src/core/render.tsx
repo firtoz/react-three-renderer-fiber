@@ -5,13 +5,14 @@ import {
   BoxGeometry,
   Camera, Group,
   Mesh,
-  MeshLambertMaterial,
+  MeshLambertMaterial, Object3D,
   PerspectiveCamera,
-  Scene,
+  Scene, Vector3,
   WebGLRenderer,
 } from "three";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 
+import {RenderAction} from "../../../src/core/nativeTypes/types/render";
 import webGLRenderer from "../../../src/core/nativeTypes/types/webGLRenderer";
 import {mockConsole, testElements} from "../index";
 
@@ -47,7 +48,7 @@ describe("render", () => {
     const renderCallSpy = Sinon.spy(renderer, "render");
 
     ReactThreeRenderer.render(<render
-      camera={<perspectiveCamera name="perspective-camera" />}
+      camera={<perspectiveCamera />}
       scene={<scene>
         <mesh>
           <boxGeometry width={5} height={5} depth={5} />
@@ -91,7 +92,7 @@ describe("render", () => {
       ref={rendererSpy}
     >
       <render
-        camera={<perspectiveCamera name="perspective-camera" />}
+        camera={<perspectiveCamera />}
         scene={<scene>
           <mesh>
             <boxGeometry width={5} height={5} depth={5} />
@@ -324,15 +325,91 @@ describe("render", () => {
     done();
   });
 
-  it("should not trigger a render when an invisible element is added", (done) => {
-    // TODO
+  it("should not trigger a render when am invisible property is updated", (done) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
-    done();
-  });
+    const renderer = new WebGLRenderer();
 
-  it("should not trigger a render when am invisible element is updated", (done) => {
-    // TODO
+    let nameChangeEvent: any = null;
+    let positionChangeEvent: any = null;
 
-    done();
+    class ObjectStateChanger extends React.Component<any, {
+      name: string,
+      position: Vector3,
+    }> {
+      constructor() {
+        super();
+
+        this.state = {
+          name: "test",
+          position: new Vector3(),
+        };
+      }
+
+      public componentDidMount() {
+        nameChangeEvent = (newName: string, callback: () => {}) => {
+          this.setState({
+            name: newName,
+          }, callback);
+        };
+
+        positionChangeEvent = (newPosition: Vector3, callback: () => {}) => {
+          this.setState({
+            position: newPosition,
+          }, callback);
+        };
+      }
+
+      public render() {
+        return <object3D
+          position={this.state.position}
+          name={this.state.name}
+        />;
+      }
+    }
+
+    const changerSpy = Sinon.spy();
+
+    const renderRef = Sinon.spy();
+
+    ReactThreeRenderer.render(<render
+      ref={renderRef}
+      camera={<perspectiveCamera />}
+      scene={<scene>
+        <ObjectStateChanger ref={changerSpy} />
+      </scene>} />, renderer);
+
+    const render: RenderAction = renderRef.lastCall.args[0];
+
+    const renderCallSpy = Sinon.spy(render, "triggerRender");
+
+    expect(renderCallSpy.callCount).to.equal(0);
+
+    const obj: Object3D = ReactThreeRenderer.findTHREEObject(changerSpy.lastCall.args[0]);
+
+    positionChangeEvent(new Vector3(1, 2, 3), () => {
+      expect(renderCallSpy.callCount).to.equal(1);
+      expect(obj.position.equals(new Vector3(1, 2, 3))).to.equal(true);
+
+      nameChangeEvent("new name", () => {
+        expect(renderCallSpy.callCount).to.equal(1);
+        expect(obj.name).to.equal("new name");
+
+        positionChangeEvent(new Vector3(3, 2, 1), () => {
+          expect(renderCallSpy.callCount).to.equal(2);
+          expect(obj.position.equals(new Vector3(3, 2, 1))).to.equal(true);
+
+          nameChangeEvent("newer name", () => {
+            expect(renderCallSpy.callCount).to.equal(2);
+            expect(obj.name).to.equal("newer name");
+
+            ReactThreeRenderer.unmountComponentAtNode(renderer, () => {
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 });

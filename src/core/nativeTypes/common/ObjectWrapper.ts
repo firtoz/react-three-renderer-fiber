@@ -191,9 +191,9 @@ export class WrappedEntityDescriptor<TProps = any,
     return new this.wrapperType(props).wrapper;
   }
 
-  public applyInitialPropUpdates(instance: TInstance, props: TProps): void {
+  public internalApplyInitialPropUpdates(instance: TInstance, props: TProps): void {
     if (!this.delayPropUpdatesUntilMount) {
-      super.applyInitialPropUpdates(instance, props);
+      super.internalApplyInitialPropUpdates(instance, props);
     }
   }
 
@@ -203,7 +203,7 @@ export class WrappedEntityDescriptor<TProps = any,
     wrapperDetails.addedToParent(instance, container);
 
     if (this.delayPropUpdatesUntilMount) {
-      super.applyInitialPropUpdates(instance, wrapperDetails.props);
+      super.internalApplyInitialPropUpdates(instance, wrapperDetails.props);
     }
   }
 
@@ -243,6 +243,6 @@ export class WrappedEntityDescriptor<TProps = any,
   private remount(instance: TInstance, newProps: TProps) {
     this.wrapperType.get(instance).remount(newProps);
 
-    super.applyInitialPropUpdates(instance, newProps);
+    super.internalApplyInitialPropUpdates(instance, newProps);
   }
 }

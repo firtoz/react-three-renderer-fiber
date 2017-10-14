@@ -18,6 +18,10 @@ describe("props", () => {
       name={"updated-name"}
     />, target);
 
+    // TODO make sure the right names are set
+
     done();
   });
+
+  // TODO object3d position -> lookAt and rotation/quaternion property tests
 });

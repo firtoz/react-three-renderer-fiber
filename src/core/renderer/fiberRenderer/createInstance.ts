@@ -29,7 +29,6 @@ export default function createInstance(type: string,
   const createdInstance = descriptor.createInstance(props, rootContainerInstance);
 
   if (hostContext !== null) {
-    hostContext.triggerRender();
     createdInstance[r3rContextSymbol] = hostContext;
   }
 

@@ -25,8 +25,14 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
 
   public abstract createInstance(props: TProps): TType;
 
-  public applyInitialPropUpdates(instance: TType, props: TProps): void {
+  public internalApplyInitialPropUpdates(instance: TType, props: TProps): void {
     instance.setValues(props);
+
+    const context: IHostContext = (instance as any)[r3rContextSymbol];
+
+    if (context !== undefined) {
+      context.triggerRender();
+    }
   }
 
   public commitUpdate(instance: TType,

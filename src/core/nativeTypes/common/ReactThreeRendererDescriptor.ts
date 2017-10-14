@@ -44,7 +44,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
   protected propertyGroups: IPropertyGroupMap<TProps, TInstance>;
 
-  constructor() {
+  constructor(private wantsRepaint: boolean = true) {
     this.propertyDescriptors = {};
     this.propertyGroups = {};
   }
@@ -67,16 +67,32 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
     const groupNamesToUpdate: string[] = [];
 
+    let wantsRepaint = false;
+
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
       const key: string = updatePayload[keyIndex];
       const value: any = updatePayload[keyIndex + 1];
-      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false);
+      if (this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false)) {
+        wantsRepaint = true;
+      }
     }
 
     for (const groupName of groupNamesToUpdate) {
       const newData = groupedUpdates[groupName];
 
-      this.propertyGroups[groupName].updateFunction(instance, newData, oldProps, newProps);
+      const propertyGroup = this.propertyGroups[groupName];
+      propertyGroup.updateFunction(instance, newData, oldProps, newProps);
+      if (propertyGroup.wantsRepaint) {
+        wantsRepaint = true;
+      }
+    }
+
+    if (this.wantsRepaint && wantsRepaint) {
+      const context: IHostContext = (instance as any)[r3rContextSymbol];
+
+      if (context !== undefined) {
+        context.triggerRender();
+      }
     }
   }
 
@@ -90,34 +106,15 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     this.willBeRemovedFromParent(instance, container);
   }
 
-  public applyInitialPropUpdates(instance: TInstance, props: TProps) {
-    const groupedUpdates: {
-      [groupName: string]: {
-        [propertyName: string]: any;
-      },
-    } = {};
+  public applyInitialPropUpdates(instance: TInstance, props: TProps): void {
+    this.internalApplyInitialPropUpdates(instance, props);
 
-    /*
-    * TODO pass context / trigger render function here, is it even necessary actually?
-    */
+    if (this.wantsRepaint) {
+      const context: IHostContext = (instance as any)[r3rContextSymbol];
 
-    const groupNamesToUpdate: string[] = [];
-
-    const keys = Object.keys(props);
-    for (const key of keys) {
-      if (key === "children") {
-        continue;
+      if (context !== undefined) {
+        context.triggerRender();
       }
-
-      const value = (props as any)[key];
-
-      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, emptyObject, props, true);
-    }
-
-    for (const groupName of groupNamesToUpdate) {
-      const newData = groupedUpdates[groupName];
-
-      this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
     }
   }
 
@@ -140,6 +137,35 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
   public appendToContainer(instance: TInstance, container: TParent): void {
     this.addedToParent(instance, container);
+  }
+
+  protected internalApplyInitialPropUpdates(instance: TInstance, props: TProps) {
+    const groupedUpdates: {
+      [groupName: string]: {
+        [propertyName: string]: any;
+      },
+    } = {};
+
+    const groupNamesToUpdate: string[] = [];
+
+    const keys = Object.keys(props);
+    for (const key of keys) {
+      if (key === "children") {
+        continue;
+      }
+
+      const value = (props as any)[key];
+
+      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, emptyObject, props, true);
+    }
+
+    for (const groupName of groupNamesToUpdate) {
+      const newData = groupedUpdates[groupName];
+
+      if (this.propertyGroups[groupName].updateInitial) {
+        this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
+      }
+    }
   }
 
   protected abstract addedToParent(instance: TInstance, container: TParent): void;
@@ -185,10 +211,10 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     });
   }
 
-  protected hasSimpleProp(propName: string, updateInitial: boolean = true) {
+  protected hasSimpleProp(propName: string, updateInitial: boolean = true, wantsRepaint: boolean = true) {
     this.hasProp(propName, (instance: any, newValue: any): void => {
       (instance as any)[propName] = newValue;
-    }, updateInitial);
+    }, updateInitial, wantsRepaint);
   }
 
   private updateProperty(propName: string,
@@ -198,7 +224,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
                          instance: TInstance,
                          oldProps: TProps,
                          newProps: TProps,
-                         isInitialUpdate: boolean) {
+                         isInitialUpdate: boolean): boolean {
     const propertyDescriptor = this.propertyDescriptors[propName];
     if (propertyDescriptor === undefined) {
       throw new Error(`Cannot find property descriptor for ${this.constructor.name}#${propName}`);
@@ -208,7 +234,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
     if (groupName !== null) {
       if (isInitialUpdate && !this.propertyGroups[groupName].updateInitial) {
-        return;
+        return false;
       }
 
       if (groupedUpdates[groupName] === undefined) {
@@ -217,9 +243,11 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
       }
 
       groupedUpdates[groupName][propName] = value;
+
+      return false;
     } else {
       if (isInitialUpdate && propertyDescriptor.updateInitial !== true) {
-        return;
+        return false;
       }
 
       const updateFunction = propertyDescriptor.updateFunction;
@@ -231,13 +259,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
       updateFunction(instance, value, oldProps, newProps);
 
-      if (propertyDescriptor.wantsRepaint) {
-        const context: IHostContext = (instance as any)[r3rContextSymbol];
-
-        if (context !== undefined) {
-          context.triggerRender();
-        }
-      }
+      return propertyDescriptor.wantsRepaint;
     }
   }
 }

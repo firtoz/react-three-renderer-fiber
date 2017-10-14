@@ -251,6 +251,8 @@ declare module "react-fiber-export" {
     updateContainer(children: any, root: any, parentComponent: any, callback: () => void): void;
 
     getPublicRootInstance(root: any): any;
+
+    findHostInstance(componentOrElement: any): any;
   }
 
   export function ReactFiberReconciler(config: IReactFiberRendererConfig): IRenderer;

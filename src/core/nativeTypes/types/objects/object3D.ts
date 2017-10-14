@@ -22,46 +22,6 @@ declare global {
 
 const lookAtSymbol = Symbol("r3rLookAtCallback");
 
-const incompatiblePropsForLookAt = [
-  "rotation",
-  "quaternion",
-];
-
-class IncompatiblePropError extends Error {
-  constructor(firstProp: string, secondProp: string) {
-    super("An object has been detected"
-      + `with both "${firstProp}" and "${secondProp}" properties.`
-      + "Please remove either property.");
-  }
-}
-
-function resetRotation(instance: Object3D, props: IObject3DProps) {
-  // if any of the below are set, then other prop updates should deal with it
-  if (typeof props.lookAt !== "undefined"
-    && typeof props.rotation !== "undefined"
-    && typeof props.quaternion !== "undefined") {
-    instance.quaternion.set(0, 0, 0, 0);
-  }
-}
-
-function updateLookAt(instance: Object3D, value: Vector3 | null, props: IObject3DProps) {
-  if (value === null) {
-    (instance as any)[lookAtSymbol] = undefined;
-
-    resetRotation(instance, props);
-  } else {
-    for (let i = 0; i < 2; ++i) {
-      if (typeof (props as any)[incompatiblePropsForLookAt[i]] !== "undefined") {
-        throw new IncompatiblePropError("lookAt", incompatiblePropsForLookAt[i]);
-      }
-    }
-
-    (instance as any)[lookAtSymbol] = value;
-
-    instance.lookAt(value);
-  }
-}
-
 export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   T extends Object3D,
   TChild = Object3D,
@@ -75,8 +35,10 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   public constructor() {
     super();
 
-    this.hasSimpleProp("name");
-    this.hasProp<Vector3>("position", (instance: Object3D, newValue: Vector3 | null): void => {
+    this.hasSimpleProp("name", true, false);
+
+    // this.hasSimpleProp("name", true, true);
+    this.hasProp("position", (instance: Object3D, newValue: Vector3 | null): void => {
       if (newValue === null) {
         instance.position.set(0, 0, 0);
       } else {
@@ -90,33 +52,33 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       }
     });
 
-    this.hasProp<Euler>("rotation", (instance: Object3D,
-                                     newValue: Euler | null,
-                                     oldProps: IObject3DProps,
-                                     newProps: IObject3DProps): void => {
-      if (newValue === null) {
-        resetRotation(instance, newProps);
-      } else {
-        instance.rotation.copy(newValue);
+    this.hasPropGroup([
+      "rotation",
+      "quaternion",
+      "lookAt",
+    ], (instance: Object3D,
+        {rotation, quaternion, lookAt}: {
+          rotation?: Euler,
+          quaternion?: Quaternion,
+          lookAt?: Vector3,
+        }) => {
+      if (rotation === undefined && quaternion === undefined && lookAt === undefined) {
+        instance.quaternion.set(0, 0, 0, 0);
       }
-    });
 
-    this.hasProp<Quaternion>("quaternion", (instance: Object3D,
-                                            newValue: Quaternion | null,
-                                            oldProps: IObject3DProps,
-                                            newProps: IObject3DProps): void => {
-      if (newValue === null) {
-        resetRotation(instance, newProps);
-      } else {
-        instance.quaternion.copy(newValue);
+      if (lookAt !== undefined) {
+        instance.lookAt(lookAt);
+        return;
       }
-    });
 
-    this.hasProp<Vector3>("lookAt", (instance: Object3D,
-                                     newValue: Vector3 | null,
-                                     oldProps: IObject3DProps,
-                                     newProps: IObject3DProps): void => {
-      updateLookAt(instance, newValue, newProps);
+      if (quaternion !== undefined) {
+        instance.quaternion.copy(quaternion);
+        return;
+      }
+
+      if (rotation !== undefined) {
+        instance.rotation.copy(rotation);
+      }
     });
   }
 
