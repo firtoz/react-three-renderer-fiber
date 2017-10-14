@@ -281,11 +281,13 @@ describe("render", () => {
 
     ReactThreeRenderer.render(<webGLRenderer width={5} height={5}>
       <render
-        camera={null}
+        camera={<perspectiveCamera />}
         scene={scene}>
 
       </render>
     </webGLRenderer>, testDiv);
+
+    // TODO
 
     ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
   });
@@ -305,22 +307,32 @@ describe("render", () => {
       </render>
     </webGLRenderer>, testDiv);
 
+    // TODO
+
     ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
   });
 
   it("should trigger a render when a visible element is added", (done) => {
+    // TODO
+
     done();
   });
 
   it("should trigger a render when a visible element is updated", (done) => {
+    // TODO
+
     done();
   });
 
   it("should not trigger a render when an invisible element is added", (done) => {
+    // TODO
+
     done();
   });
 
   it("should not trigger a render when am invisible element is updated", (done) => {
+    // TODO
+
     done();
   });
 });
