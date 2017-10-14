@@ -1,9 +1,10 @@
 import * as React from "react";
-import {Mesh, Object3D} from "three";
+import {Euler, Mesh, Object3D, Quaternion, Vector3} from "three";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 
 import {expect} from "chai";
 import * as Sinon from "sinon";
+import {mockConsole} from "../index";
 
 describe("props", () => {
   const target = new Object3D();
@@ -58,29 +59,232 @@ describe("props", () => {
 
   describe("for object3D", () => {
     describe("lookAt", () => {
-      it("should be called when initially set", (done) => {
-        // TODO
-        done();
+      it("should be called when initially set", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(1, 2, 3)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(1);
+        expect(lookAtSpy.lastCall.args[0]).to.deep.equal(new Vector3(1, 2, 3));
       });
 
-      it("should be called when position property changes", (done) => {
-        // TODO
-        done();
+      it("should be called when updated", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(1, 2, 3)}
+        />, target);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(3, 4, 5)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(2);
+        expect(lookAtSpy.lastCall.args[0]).to.deep.equal(new Vector3(3, 4, 5));
       });
 
-      it("should be called when updated", (done) => {
-        // TODO
-        done();
+      it("should not be called when another property changes", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        const lookAtVector = new Vector3(1, 2, 3);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={lookAtVector}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(1);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          name="new name"
+
+          lookAt={lookAtVector}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(1);
       });
 
-      it("should not be called when replaced by another rotation property", (done) => {
-        // TODO
-        done();
+      it("should be called when position property changes", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        const lookAtVector = new Vector3(1, 2, 3);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={lookAtVector}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(1);
+
+        const positionVector = new Vector3(10, 20, 30);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          position={positionVector}
+
+          lookAt={lookAtVector}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(2);
+        expect(lookAtSpy.lastCall.args[0]).to.deep.equal(lookAtVector);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          name="new name"
+          position={positionVector}
+
+          lookAt={lookAtVector}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(2);
       });
 
-      it("should give a warning when other rotation properties exist", (done) => {
-        // TODO
-        done();
+      it("should not be called when the property is removed", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(1, 2, 3)}
+        />, target);
+
+        // even if the position property changes!
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          position={new Vector3(5, 10, 15)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(1);
+      });
+
+      it("should not be called when replaced by another rotation property", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(1, 2, 3)}
+        />, target);
+
+        // even if the position property changes!
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          rotation={new Euler(5, 10, 15)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(1);
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(20, 30, 40)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(2);
+        expect(lookAtSpy.lastCall.args[0]).to.deep.equal(new Vector3(20, 30, 40));
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          quaternion={new Quaternion(0, 1, 0, 1)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(2);
+      });
+
+      it("should give a warning when other rotation properties exist", () => {
+        const object3DRef = Sinon.spy();
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+        />, target);
+
+        const object3D: Object3D = object3DRef.lastCall.args[0];
+
+        const lookAtSpy = Sinon.spy(object3D, "lookAt");
+
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(1, 2, 3)}
+        />, target);
+
+        // even if the position property changes!
+
+        mockConsole.expectWarn("An object is being updated with both 'lookAt' and 'rotation' properties.\n" +
+          "Only 'lookAt' will be applied.");
+        ReactThreeRenderer.render(<object3D
+          ref={object3DRef}
+
+          lookAt={new Vector3(20, 30, 45)}
+          rotation={new Euler(5, 10, 15)}
+        />, target);
+
+        expect(lookAtSpy.callCount).to.equal(2);
       });
     });
   });

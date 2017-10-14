@@ -20,8 +20,6 @@ declare global {
   }
 }
 
-const lookAtSymbol = Symbol("r3rLookAtCallback");
-
 export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   T extends Object3D,
   TChild = Object3D,
@@ -38,17 +36,18 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("name", true, false);
 
     // this.hasSimpleProp("name", true, true);
-    this.hasProp("position", (instance: Object3D, newValue: Vector3 | null): void => {
+    this.hasProp("position", (instance: Object3D,
+                              newValue: Vector3 | null,
+                              oldProps: IObject3DProps,
+                              newProps: IObject3DProps): void => {
       if (newValue === null) {
         instance.position.set(0, 0, 0);
       } else {
         instance.position.copy(newValue);
       }
 
-      const lookingAt = (instance as any)[lookAtSymbol];
-
-      if (typeof lookingAt !== "undefined") {
-        instance.lookAt(lookingAt);
+      if (newProps.lookAt !== undefined && newProps.lookAt !== null) {
+        instance.lookAt(newProps.lookAt);
       }
     });
 
@@ -62,22 +61,24 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
           quaternion?: Quaternion,
           lookAt?: Vector3,
         }) => {
-      if (rotation === undefined && quaternion === undefined && lookAt === undefined) {
-        instance.quaternion.set(0, 0, 0, 0);
-      }
-
-      if (lookAt !== undefined) {
+      if (lookAt !== undefined && lookAt !== null) {
+        if (typeof process === "undefined" || process.env.NODE_ENV !== "production") {
+          if (quaternion !== undefined && quaternion !== null) {
+            console.warn("An object is being updated with both 'lookAt' and 'quaternion' properties.\n" +
+              "Only 'lookAt' will be applied.");
+          } else if (rotation !== undefined && rotation !== null) {
+            console.warn("An object is being updated with both 'lookAt' and 'rotation' properties.\n" +
+              "Only 'lookAt' will be applied.");
+          }
+        }
         instance.lookAt(lookAt);
-        return;
-      }
-
-      if (quaternion !== undefined) {
+      } else if (quaternion !== undefined && quaternion !== null) {
         instance.quaternion.copy(quaternion);
-        return;
-      }
-
-      if (rotation !== undefined) {
+      } else if (rotation !== undefined && rotation !== null) {
         instance.rotation.copy(rotation);
+      } else {
+        // looks like everything is unset
+        instance.quaternion.set(0, 0, 0, 0);
       }
     });
   }

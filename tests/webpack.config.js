@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const tslintLoaderRule = {
   test: /\.tsx?$/,
@@ -30,6 +31,16 @@ module.exports = {
     // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: [".ts", ".tsx", ".js", ".json", ".d.ts"]
   },
+
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': process.env.NODE_ENV ? `"${process.env.NODE_ENV}"` : undefined,
+        'ENABLE_REACT_ADDON_HOOKS': process.env.ENABLE_REACT_ADDON_HOOKS ? "true" : "false",
+        'DISABLE_REACT_ADDON_HOOKS': process.env.DISABLE_REACT_ADDON_HOOKS ? "true" : "false",
+      }
+    })
+  ],
 
   module: {
     rules: [
