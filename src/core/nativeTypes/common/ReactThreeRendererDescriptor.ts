@@ -59,6 +59,12 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
       },
     } = {};
 
+    /*
+    * TODO get and pass context / trigger render function here
+    * Also perhaps once render trigger has been activated, go for the "non-context-checking" updater function?
+    * TODO check perf of alternate functions vs. if conditions
+    */
+
     const groupNamesToUpdate: string[] = [];
 
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
@@ -90,6 +96,10 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
         [propertyName: string]: any;
       },
     } = {};
+
+    /*
+    * TODO pass context / trigger render function here, is it even necessary actually?
+    */
 
     const groupNamesToUpdate: string[] = [];
 
