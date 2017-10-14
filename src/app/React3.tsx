@@ -87,6 +87,9 @@ class React3 extends PureComponent<IReact3Properties, any> {
     };
 
     this.fakeDOMContainerInfo = {
+      appendChild(/* */) {
+        // Doing nothing here but still need to have a stub
+      },
       nodeType: document.ELEMENT_NODE,
       ownerDocument: {
         createElement: createFakeElement, // fake element gets created here
