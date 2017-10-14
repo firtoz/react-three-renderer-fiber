@@ -327,7 +327,6 @@ describe("render", () => {
 
   it("should not trigger a render when am invisible property is updated", (done) => {
     mockConsole.expectLog("THREE.WebGLRenderer", "87");
-    // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
     const renderer = new WebGLRenderer();
 

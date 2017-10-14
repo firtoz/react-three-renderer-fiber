@@ -3,7 +3,7 @@ import * as THREE from "three";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
 
 describe("generic", () => {
-  it("can render into another object", (done) => {
+  it("can render an object into another object", (done) => {
     const parentObject = new THREE.Object3D();
 
     let childObject: THREE.Object3D;

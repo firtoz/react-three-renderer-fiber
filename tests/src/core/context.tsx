@@ -162,8 +162,6 @@ describe("context", () => {
       }
     }
 
-    const container = testDiv;
-
     ReactDOM.render(<div>
       Test!
       <ContextParentDOM value={"first-value"}>
@@ -173,11 +171,11 @@ describe("context", () => {
               <ContextChild />
             </scene>
           </webGLRenderer>
-        </React3></ContextParentDOM></div>, container, () => {
+        </React3></ContextParentDOM></div>, testDiv, () => {
       chai.expect(testContext.from).to.equal("constructor");
       chai.expect(testContext.testValue).to.equal("first-value");
 
-      ReactDOM.render(<span>test</span>, container);
+      ReactDOM.render(<span>test</span>, testDiv);
 
       ReactDOM.render(<div>
         Test!
@@ -188,7 +186,7 @@ describe("context", () => {
                 <ContextChild />
               </scene>
             </webGLRenderer>
-          </React3></ContextParentDOM></div>, container, () => {
+          </React3></ContextParentDOM></div>, testDiv, () => {
         chai.expect(testContext.from).to.equal("update");
         chai.expect(testContext.testValue).to.equal("second-value");
 
@@ -201,43 +199,15 @@ describe("context", () => {
                   <ContextChild />
                 </scene>
               </webGLRenderer>
-            </React3></ContextParentDOM></div>, container, () => {
+            </React3></ContextParentDOM></div>, testDiv, () => {
           chai.expect(testContext.from).to.equal("update");
           chai.expect(testContext.testValue).to.equal("third-value");
 
-          ReactDOM.unmountComponentAtNode(container);
+          ReactDOM.unmountComponentAtNode(testDiv);
 
           done();
         });
       });
     });
-    //
-    // ReactThreeRenderer.render(<ContextParent
-    //   value={"first-value"}>
-    //   <ContextChild />
-    // </ContextParent>, container, () => {
-    //   chai.expect(testContext.from).to.equal("constructor");
-    //   chai.expect(testContext.testValue).to.equal("first-value");
-    //
-    //   ReactThreeRenderer.render(<ContextParent
-    //     value={"second-value"}>
-    //     <ContextChild />
-    //   </ContextParent>, container, () => {
-    //     chai.expect(testContext.from).to.equal("update");
-    //     chai.expect(testContext.testValue).to.equal("second-value");
-    //
-    //     ReactThreeRenderer.render(<ContextParent
-    //       value={"third-value"}>
-    //       <ContextPassThrough>
-    //         <ContextChild />
-    //       </ContextPassThrough>
-    //     </ContextParent>, container, () => {
-    //       chai.expect(testContext.from).to.equal("constructor");
-    //       chai.expect(testContext.testValue).to.equal("third-value");
-    //
-    //       done();
-    //     });
-    //   });
-    // });
   });
 });

@@ -18,7 +18,7 @@ describe("getting started", () => {
     ReactThreeRenderer.unmountComponentAtNode(document.body);
   });
 
-  it("works", () => {
+  it("does not produce errors and creates components as expected", () => {
     interface IRefProxy<T> {
       ref: T | null;
 

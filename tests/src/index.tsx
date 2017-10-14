@@ -19,7 +19,6 @@ document.body.appendChild(testElements.div);
 document.body.appendChild(testElements.canvas);
 
 describe("React Three Renderer", () => {
-
   beforeEach(() => {
     mockConsole.wrapConsole();
   });

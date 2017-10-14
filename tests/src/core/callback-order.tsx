@@ -8,10 +8,10 @@ import {testElements} from "../index";
 const testDiv = testElements.div;
 
 describe("callback order", () => {
-  it("should execute callbacks in the right order", (done) => {
+  it("should execute callbacks in the right order", () => {
     const callbackOrder: string[] = [];
 
-    class DOMCallbackTester extends React.Component<{ name: string }> {
+    class CallbackTesterComponent extends React.Component<{ name: string }> {
       public componentWillMount() {
         callbackOrder.push(`will mount ${this.props.name}`);
       }
@@ -31,20 +31,21 @@ describe("callback order", () => {
 
     let index = 0;
 
-    ReactDOM.render(<DOMCallbackTester name={`component-${index++}`}>
-      <DOMCallbackTester name={`component-${index++}`}>
-        <DOMCallbackTester name={`component-${index++}`}>
-          <DOMCallbackTester name={`component-${index++}`}>
-            <DOMCallbackTester name={`component-${index}`}>
+    ReactDOM.render(<CallbackTesterComponent name={`component-${index++}`}>
+      <CallbackTesterComponent name={`component-${index++}`}>
+        <CallbackTesterComponent name={`component-${index++}`}>
+          <CallbackTesterComponent name={`component-${index++}`}>
+            <CallbackTesterComponent name={`component-${index}`}>
               <div />
-            </DOMCallbackTester>
-          </DOMCallbackTester>
-        </DOMCallbackTester>
-      </DOMCallbackTester>
-    </DOMCallbackTester>, testDiv);
+            </CallbackTesterComponent>
+          </CallbackTesterComponent>
+        </CallbackTesterComponent>
+      </CallbackTesterComponent>
+    </CallbackTesterComponent>, testDiv);
 
     ReactDOM.unmountComponentAtNode(testDiv);
 
+    // have a baseline for expectations
     const domCallbackOrder = callbackOrder.concat();
 
     callbackOrder.splice(0);
@@ -53,49 +54,46 @@ describe("callback order", () => {
 
     index = 0;
 
-    ReactThreeRenderer.render(<DOMCallbackTester name={`component-${index++}`}>
-      <DOMCallbackTester name={`component-${index++}`}>
-        <DOMCallbackTester name={`component-${index++}`}>
-          <DOMCallbackTester name={`component-${index++}`}>
-            <DOMCallbackTester name={`component-${index}`}>
+    ReactThreeRenderer.render(<CallbackTesterComponent name={`component-${index++}`}>
+      <CallbackTesterComponent name={`component-${index++}`}>
+        <CallbackTesterComponent name={`component-${index++}`}>
+          <CallbackTesterComponent name={`component-${index++}`}>
+            <CallbackTesterComponent name={`component-${index}`}>
               <object3D />
-            </DOMCallbackTester>
-          </DOMCallbackTester>
-        </DOMCallbackTester>
-      </DOMCallbackTester>
-    </DOMCallbackTester>, obj3d);
+            </CallbackTesterComponent>
+          </CallbackTesterComponent>
+        </CallbackTesterComponent>
+      </CallbackTesterComponent>
+    </CallbackTesterComponent>, obj3d);
 
     ReactThreeRenderer.unmountComponentAtNode(obj3d);
 
     const r3rCallbackOrder = callbackOrder.concat();
 
+    chai.expect(r3rCallbackOrder).to.deep.equal(domCallbackOrder);
+
     callbackOrder.splice(0);
 
     index = 0;
 
-    ReactDOM.render(<DOMCallbackTester name={`component-${index++}`}>
-      <DOMCallbackTester name={`component-${index++}`}>
-        <DOMCallbackTester name={`component-${index++}`}>
+    ReactDOM.render(<CallbackTesterComponent name={`component-${index++}`}>
+      <CallbackTesterComponent name={`component-${index++}`}>
+        <CallbackTesterComponent name={`component-${index++}`}>
           <React3>
-            <DOMCallbackTester name={`component-${index++}`}>
-              <DOMCallbackTester name={`component-${index}`}>
+            <CallbackTesterComponent name={`component-${index++}`}>
+              <CallbackTesterComponent name={`component-${index}`}>
                 <webGLRenderer width={5} height={5} />
-              </DOMCallbackTester>
-            </DOMCallbackTester>
+              </CallbackTesterComponent>
+            </CallbackTesterComponent>
           </React3>
-        </DOMCallbackTester>
-      </DOMCallbackTester>
-    </DOMCallbackTester>, testDiv);
+        </CallbackTesterComponent>
+      </CallbackTesterComponent>
+    </CallbackTesterComponent>, testDiv);
 
     ReactDOM.unmountComponentAtNode(testDiv);
 
     const mixedCallbackOrder = callbackOrder.concat();
 
-    callbackOrder.splice(0);
-
-    chai.expect(r3rCallbackOrder).to.deep.equal(domCallbackOrder);
     chai.expect(mixedCallbackOrder).to.deep.equal(domCallbackOrder);
-
-    done();
   });
 });
