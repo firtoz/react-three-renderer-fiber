@@ -40,6 +40,10 @@ class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeometry> 
     /* */
   }
 
+  public addedToParentBefore(instance: BoxGeometry, container: Mesh, before: any): void {
+    this.addedToParent(instance, container);
+  }
+
   public willBeRemovedFromParent(instance: BoxGeometry, container: Mesh): void {
     if (this.container === container) {
       this.container = null;

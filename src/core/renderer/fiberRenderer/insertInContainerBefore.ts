@@ -1,5 +1,5 @@
-export default function insertInContainerBefore(): any {
-  // console.log("insertInContainerBefore");
-  throw new Error("insertInContainerBefore");
-  // return false;
+import getDescriptorForInstance from "../utils/getDescriptorForInstance";
+
+export default function insertInContainerBefore(container: any, childInstance: any, before: any): any {
+  getDescriptorForInstance(childInstance).insertInContainerBefore(childInstance, container, before);
 }

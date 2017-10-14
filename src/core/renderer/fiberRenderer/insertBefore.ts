@@ -1,5 +1,5 @@
-export default function insertBefore(): any {
-  // console.log("insertBefore");
-  throw new Error("insertBefore");
-  // return false;
+import getDescriptorForInstance from "../utils/getDescriptorForInstance";
+
+export default function insertBefore(parentInstance: any, childInstance: any, before: any): any {
+  getDescriptorForInstance(parentInstance).insertBefore(parentInstance, childInstance, before);
 }

@@ -59,8 +59,6 @@ export class RenderAction implements IHostContext {
     this.regenerateCameraRef(null);
 
     this.animationFrameRequest = 0;
-
-    this.triggerRender();
   }
 
   public triggerRender() {
@@ -80,7 +78,15 @@ export class RenderAction implements IHostContext {
   }
 
   public render = () => {
-    if (this.renderer == null || this.internalScene == null || this.internalCamera == null) {
+    if (this.renderer === null ||
+      this.internalScene === null ||
+      this.internalCamera === null) {
+      return;
+    }
+
+    if (this.renderer === undefined ||
+      this.internalScene === undefined ||
+      this.internalCamera === undefined) {
       return;
     }
 
@@ -98,7 +104,7 @@ export class RenderAction implements IHostContext {
     let sceneElementToRender: React.ReactElement<SceneElementProps> | null = null;
     let cameraElementToRender: React.ReactElement<CameraElementProps> | null = null;
 
-    if (scene !== null && !(scene instanceof Scene)) {
+    if (scene !== null && scene !== undefined && !(scene instanceof Scene)) {
       // then it must be a react element
 
       const sceneRefFromElement: React.Ref<Scene> | null = (scene).ref || null;
@@ -115,7 +121,7 @@ export class RenderAction implements IHostContext {
       } as any /* partial props won't match type completely */);
     }
 
-    if (camera !== null && !(camera instanceof Camera)) {
+    if (camera !== null && camera !== undefined && !(camera instanceof Camera)) {
       // then it must be a react element
       const cameraRefFromElement: React.Ref<Camera> | null = (camera).ref || null;
 
@@ -131,7 +137,7 @@ export class RenderAction implements IHostContext {
       } as any /* partial props won't match type completely */);
     }
 
-    ReactThreeRenderer.render([sceneElementToRender, cameraElementToRender], this.group, this.render);
+    ReactThreeRenderer.render([sceneElementToRender, cameraElementToRender], this.group);
   }
 
   private rafCallback = () => {
@@ -205,8 +211,11 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
   }
 
   protected addedToParent(instance: RenderAction, container: WebGLRenderer): void {
-    // TODO
     instance.mountedIntoRenderer(container);
+  }
+
+  protected addedToParentBefore(instance: RenderAction, parentInstance: WebGLRenderer, before: any): void {
+    this.addedToParent(instance, parentInstance);
   }
 }
 

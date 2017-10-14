@@ -1,5 +1,6 @@
 import {
-  Camera, PerspectiveCamera,
+  Camera,
+  PerspectiveCamera,
   RenderTarget,
   Scene,
   WebGLRenderer,
@@ -30,20 +31,37 @@ function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebG
 class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
   private containerIsCanvas: boolean;
 
-  public addedToParent(instance: WebGLRenderer, container: Node): void {
+  public addedToParent(instance: WebGLRenderer, parent: Node): void {
     const propsToUse: IWebGLRendererProps = Object.assign({}, this.props);
 
-    if (container instanceof HTMLCanvasElement) {
+    if (parent instanceof HTMLCanvasElement) {
       this.containerIsCanvas = true;
-      // canvas = container;
 
-      propsToUse.canvas = container;
+      propsToUse.canvas = parent;
     }
 
     const webglRenderer = createRendererWithoutLogging(propsToUse);
 
     if (!this.containerIsCanvas) {
-      container.appendChild(webglRenderer.domElement);
+      parent.appendChild(webglRenderer.domElement);
+    }
+
+    this.wrapObject(webglRenderer);
+  }
+
+  public addedToParentBefore(instance: WebGLRenderer, parent: Node, before: any): void {
+    const propsToUse: IWebGLRendererProps = Object.assign({}, this.props);
+
+    if (parent instanceof HTMLCanvasElement) {
+      this.containerIsCanvas = true;
+
+      propsToUse.canvas = parent;
+    }
+
+    const webglRenderer = createRendererWithoutLogging(propsToUse);
+
+    if (!this.containerIsCanvas) {
+      parent.insertBefore(webglRenderer.domElement, before);
     }
 
     this.wrapObject(webglRenderer);

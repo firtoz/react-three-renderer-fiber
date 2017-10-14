@@ -120,13 +120,19 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
 
   public appendInitialChild(instance: TInstance, child: TChild): void {
     (getDescriptorForInstance(child) as ReactThreeRendererDescriptor).addedToParent(child, instance);
-    // throw new Error("tried to append a child initial to " + (instance as any)[r3rFiberSymbol].type);
   }
 
   public appendChild(instance: TInstance, child: TChild): void {
     (getDescriptorForInstance(child) as ReactThreeRendererDescriptor).addedToParent(child, instance);
+  }
 
-    // throw new Error("tried to append a child to " + (instance as any)[r3rFiberSymbol].type);
+  public insertBefore(parentInstance: TInstance, childInstance: TChild, before: TChild): void {
+    (getDescriptorForInstance(childInstance) as ReactThreeRendererDescriptor)
+      .addedToParentBefore(childInstance, parentInstance, before);
+  }
+
+  public insertInContainerBefore(instance: TInstance, container: TParent, before: any): void {
+    this.addedToParentBefore(instance, container, before);
   }
 
   public removeChild(instance: TInstance, child: TChild): void {
@@ -167,6 +173,8 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
       }
     }
   }
+
+  protected abstract addedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void;
 
   protected abstract addedToParent(instance: TInstance, container: TParent): void;
 

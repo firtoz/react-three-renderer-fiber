@@ -15,6 +15,10 @@ export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer ext
 
   appendChild(instance: T, child: TChild): void;
 
+  insertBefore(parentInstance: T, childInstance: TChild, before: TChild): void;
+
+  insertInContainerBefore(childInstance: T, container: TParent, before: any): void;
+
   removeChild(instance: T, child: TChild): void;
 
   appendToContainer(instance: T, container: TParent): void;

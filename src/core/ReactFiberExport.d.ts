@@ -53,9 +53,9 @@ declare module "react-fiber-export" {
 
     appendChildToContainer(parent: any, child: any): any;
 
-    insertBefore(): any;
+    insertBefore(parentInstance: any, childInstance: any, before: any): any;
 
-    insertInContainerBefore(): any;
+    insertInContainerBefore(container: any, childInstance: any, before: any): any;
 
     removeChild(parent: any, child: any): any;
 

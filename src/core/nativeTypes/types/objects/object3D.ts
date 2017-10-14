@@ -20,6 +20,12 @@ declare global {
   }
 }
 
+declare const process: {
+  env: {
+    NODE_ENV: string,
+  };
+};
+
 export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   T extends Object3D,
   TChild = Object3D,
@@ -99,6 +105,17 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
+  public insertBefore(instance: T, child: TChild, before: any): void {
+    if (child instanceof Object3D) {
+      // instance.add(child);
+    } else {
+      throw new Error("cannot insert " +
+        (child as any)[r3rFiberSymbol].type +
+        " as a childInstance to " +
+        (instance as any)[r3rFiberSymbol].type);
+    }
+  }
+
   public removeChild(instance: T, child: TChild): void {
     super.removeChild(instance, child);
     if (child instanceof Object3D) {
@@ -115,6 +132,21 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     if (parentInstance instanceof Object3D) {
       // console.log("well the parent should contain us: ", parentInstance.children.indexOf(instance));
       parentInstance.add(instance);
+    } else {
+      throw new Error("Trying to add a child into a non-object parent...");
+    }
+  }
+
+  public addedToParentBefore(instance: T, parentInstance: TParent, before: any): void {
+    if (parentInstance instanceof Object3D) {
+      parentInstance.add(instance);
+
+      const instanceIndex = parentInstance.children.indexOf(instance);
+      const otherIndex = parentInstance.children.indexOf(before);
+
+      parentInstance.children.splice(otherIndex,
+        0,
+        parentInstance.children.splice(instanceIndex, 1)[1]);
     } else {
       throw new Error("Trying to add a child into a non-object parent...");
     }

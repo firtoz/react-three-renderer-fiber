@@ -20,7 +20,7 @@ const {div: testDiv} = testElements;
 
 describe("render", () => {
   function verifyRenderCall(rendererSpy: Sinon.SinonSpy) {
-    expect(rendererSpy.callCount).to.equal(1);
+    expect(rendererSpy.callCount, "Render should only be called once").to.equal(1);
 
     const lastCall = rendererSpy.lastCall;
 
@@ -29,7 +29,7 @@ describe("render", () => {
     expect(scene).to.be.instanceOf(Scene);
     expect(lastCall.args[1]).to.be.instanceOf(Camera);
 
-    expect(scene.children.length).to.equal(1);
+    expect(scene.children.length, "Scene should only have one child").to.equal(1);
 
     const mesh = scene.children[0] as Mesh;
 
@@ -56,10 +56,12 @@ describe("render", () => {
         </mesh>
       </scene>} />, renderer);
 
-    verifyRenderCall(renderCallSpy);
+    requestAnimationFrame(() => {
+      verifyRenderCall(renderCallSpy);
 
-    ReactThreeRenderer.unmountComponentAtNode(renderer, () => {
-      done();
+      ReactThreeRenderer.unmountComponentAtNode(renderer, () => {
+        done();
+      });
     });
   });
 
@@ -101,13 +103,66 @@ describe("render", () => {
         </scene>} />
     </webGLRenderer>, testCanvas);
 
-    verifyRenderCall(renderCallSpy);
+    requestAnimationFrame(() => {
+      verifyRenderCall(renderCallSpy);
 
-    ReactThreeRenderer.unmountComponentAtNode(testCanvas, done);
+      ReactThreeRenderer.unmountComponentAtNode(testCanvas, done);
+    });
   });
 
-  it("should not render if scene or camera are null", () => {
-    /* TODO */
+  it("should not render if scene or camera are null", (done: () => {}) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+
+    const renderer = new WebGLRenderer();
+
+    const renderCallSpy = Sinon.spy(renderer, "render");
+
+    ReactThreeRenderer.render(<render
+      camera={null}
+      scene={null}
+    />, renderer);
+
+    requestAnimationFrame(() => {
+      expect(renderCallSpy.callCount).to.equal(0);
+
+      ReactThreeRenderer.render(<render
+        camera={null}
+        scene={<scene>
+          <mesh>
+            <boxGeometry width={5} height={5} depth={5} />
+            <meshLambertMaterial />
+          </mesh>
+        </scene>} />, renderer);
+
+      requestAnimationFrame(() => {
+        expect(renderCallSpy.callCount).to.equal(0);
+
+        ReactThreeRenderer.render(<render
+          camera={<perspectiveCamera />}
+          scene={null} />, renderer);
+
+        requestAnimationFrame(() => {
+          expect(renderCallSpy.callCount).to.equal(0);
+
+          mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
+
+          ReactThreeRenderer.render(<render
+            camera={<perspectiveCamera />}
+            scene={<scene>
+              <mesh>
+                <boxGeometry width={5} height={5} depth={5} />
+                <meshLambertMaterial />
+              </mesh>
+            </scene>} />, renderer);
+
+          requestAnimationFrame(() => {
+            expect(renderCallSpy.callCount).to.equal(1);
+
+            ReactThreeRenderer.unmountComponentAtNode(renderer, done);
+          });
+        });
+      });
+    });
   });
 
   it("should call the camera and scene refs with the correct objects", (done) => {
