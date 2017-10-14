@@ -1,4 +1,4 @@
-import fiberSymbol from "./utils/r3rFiberSymbol";
+import fiberSymbol, {default as r3rFiberSymbol} from "./utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import {Scene} from "three";
@@ -102,7 +102,8 @@ class ReactThreeRenderer {
       // Unmount should not be batched.
       ReactThreeFiberRenderer.unbatchedUpdates(() => {
         renderSubtreeIntoContainer(null, null, container, false, () => {
-          container[r3rRootContainerSymbol] = null;
+          delete container[r3rRootContainerSymbol];
+          delete container[r3rFiberSymbol];
 
           if (callback != null) {
             callback();

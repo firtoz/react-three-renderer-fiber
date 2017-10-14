@@ -12,7 +12,10 @@ import {
 } from "three";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 
-import {mockConsole} from "../index";
+import webGLRenderer from "../../../src/core/nativeTypes/types/webGLRenderer";
+import {mockConsole, testElements} from "../index";
+
+const {div: testDiv} = testElements;
 
 describe("render", () => {
   function verifyRenderCall(rendererSpy: Sinon.SinonSpy) {
@@ -60,16 +63,16 @@ describe("render", () => {
   });
 
   it("should be able to be rendered into a container within a renderer", (done) => {
-    const container = document.createElement("canvas");
-
     const rendererSpy = Sinon.spy();
+
+    const {canvas: testCanvas} = testElements;
 
     ReactThreeRenderer.render(<webGLRenderer
       width={800}
       height={600}
 
       ref={rendererSpy}
-    />, container);
+    />, testCanvas);
 
     expect(rendererSpy.callCount).to.equal(1);
 
@@ -95,18 +98,22 @@ describe("render", () => {
             <meshLambertMaterial />
           </mesh>
         </scene>} />
-    </webGLRenderer>, container);
+    </webGLRenderer>, testCanvas);
 
     verifyRenderCall(renderCallSpy);
 
-    done();
+    ReactThreeRenderer.unmountComponentAtNode(testCanvas, done);
+  });
+
+  it("should not render if scene or camera are null", () => {
+    /* TODO */
   });
 
   it("should call the camera and scene refs with the correct objects", (done) => {
-    const container = document.createElement("canvas");
-
     const perspectiveCameraRef = Sinon.spy();
     const sceneRef = Sinon.spy();
+
+    const {canvas: testCanvas} = testElements;
 
     ReactThreeRenderer.render(<webGLRenderer
       width={800}
@@ -120,7 +127,7 @@ describe("render", () => {
             <meshLambertMaterial />
           </mesh>
         </scene>} />
-    </webGLRenderer>, container);
+    </webGLRenderer>, testCanvas);
 
     expect(perspectiveCameraRef.callCount).to.equal(1);
     expect(sceneRef.callCount).to.equal(1);
@@ -149,7 +156,7 @@ describe("render", () => {
             <meshLambertMaterial />
           </mesh>
         </scene>} />
-    </webGLRenderer>, container);
+    </webGLRenderer>, testCanvas);
 
     // the refs should not be called again
     expect(perspectiveCameraRef.callCount).to.equal(1);
@@ -173,7 +180,7 @@ describe("render", () => {
             <meshLambertMaterial />
           </mesh>
         </scene>} />
-    </webGLRenderer>, container);
+    </webGLRenderer>, testCanvas);
 
     // but for different keys, they should be!
     expect(perspectiveCameraRef.callCount).to.equal(3);
@@ -211,7 +218,7 @@ describe("render", () => {
             <meshLambertMaterial />
           </mesh>
         </scene>} />
-    </webGLRenderer>, container);
+    </webGLRenderer>, testCanvas);
 
     expect(perspectiveCameraRef.callCount).to.equal(4);
     expect(sceneRef.callCount).to.equal(4);
@@ -242,7 +249,7 @@ describe("render", () => {
             <meshLambertMaterial />
           </mesh>
         </scene>} />
-    </webGLRenderer>, container);
+    </webGLRenderer>, testCanvas);
 
     expect(perspectiveCameraRef.callCount).to.equal(4);
     expect(sceneRef.callCount).to.equal(4);
@@ -266,39 +273,39 @@ describe("render", () => {
     expect(thirdCamera.name).to.equal("third camera");
     expect(thirdScene.name).to.equal("third scene");
 
-    done();
+    ReactThreeRenderer.unmountComponentAtNode(testCanvas, done);
   });
 
   it("should accept a scene as a parameter", (done) => {
     const scene = new Scene();
 
-    ReactThreeRenderer.render(<render
-      camera={null}
-      scene={scene}>
+    ReactThreeRenderer.render(<webGLRenderer width={5} height={5}>
+      <render
+        camera={null}
+        scene={scene}>
 
-    </render>, document.body);
+      </render>
+    </webGLRenderer>, testDiv);
 
-    done();
-  });
-
-  it("should accept a scene element as a parameter", (done) => {
-    done();
+    ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
   });
 
   it("should accept a camera as a parameter", (done) => {
     const camera = new PerspectiveCamera();
 
-    ReactThreeRenderer.render(<render
-      camera={camera}
-      scene={null}>
+    ReactThreeRenderer.render(<webGLRenderer width={5} height={5}>
+      <render
+        camera={camera}
+        scene={<scene>
+          <mesh>
+            <boxGeometry width={5} height={5} depth={5} />
+            <meshLambertMaterial />
+          </mesh>
+        </scene>}>
+      </render>
+    </webGLRenderer>, testDiv);
 
-    </render>, document.body);
-
-    done();
-  });
-
-  it("should accept a camera element as a parameter", (done) => {
-    done();
+    ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
   });
 
   it("should trigger a render when a visible element is added", (done) => {

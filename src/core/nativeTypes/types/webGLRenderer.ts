@@ -18,6 +18,10 @@ function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebG
 
   const renderer = new WebGLRenderer(parameters);
 
+  if (renderer.getContext().isContextLost()) {
+    throw new Error("WebGL context is lost already...");
+  }
+
   window.console.log = oldLog;
 
   return renderer;
@@ -49,16 +53,16 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
     const actualRenderer = this.wrappedObject;
 
     if (actualRenderer !== null) {
-      const contextLossExtension = actualRenderer.extensions.get("WEBGL_lose_context");
-
-      if (contextLossExtension) {
-        // noinspection JSUnresolvedFunction
-        contextLossExtension.loseContext();
-      }
 
       actualRenderer.dispose();
 
       if (!this.containerIsCanvas && actualRenderer.domElement.parentNode !== null) {
+        const contextLossExtension = actualRenderer.extensions.get("WEBGL_lose_context");
+
+        if (contextLossExtension !== undefined) {
+          contextLossExtension.loseContext();
+        }
+
         actualRenderer.domElement.parentNode.removeChild(actualRenderer.domElement);
       }
     }

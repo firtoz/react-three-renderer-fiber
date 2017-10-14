@@ -3,6 +3,9 @@ import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
 import React3 from "../../../src/app/React3";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
+import {testElements} from "../index";
+
+const testDiv = testElements.div;
 
 describe("callback order", () => {
   it("should execute callbacks in the right order", (done) => {
@@ -26,9 +29,6 @@ describe("callback order", () => {
       }
     }
 
-    const container = document.createElement("div");
-    document.body.appendChild(container);
-
     let index = 0;
 
     ReactDOM.render(<DOMCallbackTester name={`component-${index++}`}>
@@ -41,9 +41,9 @@ describe("callback order", () => {
           </DOMCallbackTester>
         </DOMCallbackTester>
       </DOMCallbackTester>
-    </DOMCallbackTester>, container);
+    </DOMCallbackTester>, testDiv);
 
-    ReactDOM.unmountComponentAtNode(container);
+    ReactDOM.unmountComponentAtNode(testDiv);
 
     const domCallbackOrder = callbackOrder.concat();
 
@@ -85,9 +85,9 @@ describe("callback order", () => {
           </React3>
         </DOMCallbackTester>
       </DOMCallbackTester>
-    </DOMCallbackTester>, container);
+    </DOMCallbackTester>, testDiv);
 
-    ReactDOM.unmountComponentAtNode(container);
+    ReactDOM.unmountComponentAtNode(testDiv);
 
     const mixedCallbackOrder = callbackOrder.concat();
 

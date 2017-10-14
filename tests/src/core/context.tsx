@@ -4,6 +4,9 @@ import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
 import React3 from "../../../src/app/React3";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
+import {testElements} from "../index";
+
+const {div: testDiv} = testElements;
 
 describe("context", () => {
   it("should pass context within components", (done) => {
@@ -159,8 +162,7 @@ describe("context", () => {
       }
     }
 
-    const container = document.createElement("div");
-    document.body.appendChild(container);
+    const container = testDiv;
 
     ReactDOM.render(<div>
       Test!

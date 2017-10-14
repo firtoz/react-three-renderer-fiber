@@ -70,6 +70,10 @@ export class RenderAction implements IHostContext {
   }
 
   public mountedIntoRenderer(renderer: WebGLRenderer) {
+    if (!(renderer instanceof WebGLRenderer)) {
+      console.error(renderer);
+      throw new Error("You are trying to add a <render/> into an object that is not a THREEJS renderer.");
+    }
     // console.log("mounted");
     this.renderer = renderer;
     // console.log("yep this is my renderer now", renderer);
