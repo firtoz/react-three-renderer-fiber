@@ -1,4 +1,5 @@
 import {Camera, PerspectiveCamera} from "three";
+import {IElement} from "../../common/RefWrapper";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 // tslint:disable-next-line no-empty-interface
@@ -15,7 +16,7 @@ export interface IPerspectiveCameraProps extends ICameraProps {
 
 export type CameraElementProps = IThreeElementPropsBase<Camera> & ICameraProps;
 
-export type CameraElement = JSX.IElement<Camera, "camera", CameraElementProps>;
+export type CameraElement = IElement<Camera, CameraElementProps>;
 
 export type PerspectiveCameraElement =
   CameraElementProps

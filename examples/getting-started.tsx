@@ -1,36 +1,40 @@
-// Following https://github.com/mrdoob/three.js/wiki/Getting-Started
+// Following https://threejs.org/docs/index.html#manual/introduction/Creating-a-scene
 
 import * as React from "react";
 import * as THREE from "three";
 import ReactThreeRenderer from "../src/core/renderer/reactThreeRenderer";
 
+const container = document.createElement("div");
+
+document.body.appendChild(container);
+
 ReactThreeRenderer.render(<webGLRenderer
-  width={800}
-  height={600}
+  width={window.innerWidth}
+  height={window.innerHeight}
 
   clearColor={0xdddddd}
   clearAlpha={1}
 >
   <render
     camera={<perspectiveCamera
-      fov={35}
-      aspect={800 / 600}
+      fov={75}
+      aspect={window.innerWidth / window.innerHeight}
       near={0.1}
-      far={10000}
+      far={1000}
       position={new THREE.Vector3(-15, 10, 10)}
       lookAt={new THREE.Vector3(0, 0, 0)}
     />}
     scene={<scene>
-      <mesh>
-        <boxGeometry width={5} height={5} depth={5} />
-        <meshLambertMaterial
-          color={0xFF0000}
-        />
-      </mesh>
+      <mesh
+        geometry={<boxGeometry width={1} height={1} depth={1} />}
+        material={<meshBasicMaterial
+          color={0x00ff00}
+        />}
+      />
       <pointLight
         position={new THREE.Vector3(10, 0, 10)}
         color={0xFFFF00}
       />
     </scene>}
   />
-</webGLRenderer>, document.getElementById("example"));
+</webGLRenderer>, container);
