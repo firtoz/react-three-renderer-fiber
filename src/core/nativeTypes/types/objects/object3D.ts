@@ -24,7 +24,7 @@ declare const process: {
   env: {
     NODE_ENV: string,
   };
-};
+} | undefined;
 
 export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   T extends Object3D,
