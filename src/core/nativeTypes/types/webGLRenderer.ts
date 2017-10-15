@@ -31,7 +31,11 @@ function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebG
 class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
   private containerIsCanvas: boolean;
 
-  public addedToParent(instance: WebGLRenderer, parent: Node): void {
+  public addedToParent(instance: WebGLRenderer, parent: Node): boolean {
+    if (this.wrappedObject !== undefined && this.wrappedObject !== null) {
+      throw new Error("Something really funky is going on here");
+    }
+
     const propsToUse: IWebGLRendererProps = Object.assign({}, this.props);
 
     if (parent instanceof HTMLCanvasElement) {
@@ -47,9 +51,15 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
     }
 
     this.wrapObject(webglRenderer);
+
+    return true;
   }
 
-  public addedToParentBefore(instance: WebGLRenderer, parent: Node, before: any): void {
+  public addedToParentBefore(instance: WebGLRenderer, parent: Node, before: any): boolean {
+    if (this.wrappedObject !== null || this.wrappedObject !== undefined) {
+      throw new Error("Something really funky is going on here");
+    }
+
     const propsToUse: IWebGLRendererProps = Object.assign({}, this.props);
 
     if (parent instanceof HTMLCanvasElement) {
@@ -65,6 +75,8 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
     }
 
     this.wrapObject(webglRenderer);
+
+    return true;
   }
 
   public willBeRemovedFromParent(instance: WebGLRenderer, container: any): void {

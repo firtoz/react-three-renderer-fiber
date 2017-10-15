@@ -68,6 +68,10 @@ export class RenderAction implements IHostContext {
   }
 
   public mountedIntoRenderer(renderer: WebGLRenderer) {
+    if (this.renderer === renderer) {
+      return;
+    }
+
     if (!(renderer instanceof WebGLRenderer)) {
       console.error(renderer);
       throw new Error("You are trying to add a <render/> into an object that is not a THREEJS renderer.");
@@ -107,9 +111,9 @@ export class RenderAction implements IHostContext {
     if (scene !== null && scene !== undefined && !(scene instanceof Scene)) {
       // then it must be a react element
 
-      const sceneRefFromElement: React.Ref<Scene> | null = (scene).ref || null;
+      const sceneRefFromElement: React.Ref<Scene> | null = scene.ref == null ? null : scene.ref;
 
-      const originalKey = scene.key || "";
+      const originalKey = scene.key == null ? "" : scene.key;
 
       if (this.wrappedSceneRef !== sceneRefFromElement) {
         this.regenerateSceneRef(sceneRefFromElement);
@@ -123,9 +127,9 @@ export class RenderAction implements IHostContext {
 
     if (camera !== null && camera !== undefined && !(camera instanceof Camera)) {
       // then it must be a react element
-      const cameraRefFromElement: React.Ref<Camera> | null = (camera).ref || null;
+      const cameraRefFromElement: React.Ref<Camera> | null = camera.ref == null ? null : scene.ref;
 
-      const originalKey = camera.key || "";
+      const originalKey = camera.key == null ? "" : camera.key;
 
       if (this.wrappedCameraRef !== cameraRefFromElement) {
         this.regenerateCameraRef(cameraRefFromElement);

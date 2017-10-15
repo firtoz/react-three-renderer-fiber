@@ -35,13 +35,18 @@ class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeometry> 
       props.depthSegments));
   }
 
-  public addedToParent(instance: BoxGeometry, container: Mesh): void {
+  public addedToParent(instance: BoxGeometry, container: Mesh): boolean {
+    if (this.container === container) {
+      return false;
+    }
+
     this.container = container;
-    /* */
+
+    return true;
   }
 
-  public addedToParentBefore(instance: BoxGeometry, container: Mesh, before: any): void {
-    this.addedToParent(instance, container);
+  public addedToParentBefore(instance: BoxGeometry, container: Mesh, before: any): boolean {
+    return this.addedToParent(instance, container);
   }
 
   public willBeRemovedFromParent(instance: BoxGeometry, container: Mesh): void {

@@ -132,9 +132,9 @@ export abstract class WrapperDetails<TProps, TWrapped> {
     }
   }
 
-  public abstract addedToParent(instance: TWrapped, parentInstance: any): void;
+  public abstract addedToParent(instance: TWrapped, parentInstance: any): boolean;
 
-  public abstract addedToParentBefore(instance: TWrapped, parentInstance: any, before: any): void;
+  public abstract addedToParentBefore(instance: TWrapped, parentInstance: any, before: any): boolean;
 
   public abstract willBeRemovedFromParent(instance: TWrapped, container: any): void;
 
@@ -202,9 +202,7 @@ export class WrappedEntityDescriptor<TProps = any,
   public addedToParent(instance: TInstance, parentInstance: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 
-    wrapperDetails.addedToParent(instance, parentInstance);
-
-    if (this.delayPropUpdatesUntilMount) {
+    if (wrapperDetails.addedToParent(instance, parentInstance) && this.delayPropUpdatesUntilMount) {
       super.internalApplyInitialPropUpdates(instance, wrapperDetails.props);
     }
   }

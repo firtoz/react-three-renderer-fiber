@@ -21,6 +21,7 @@ document.body.appendChild(testElements.canvas);
 describe("React Three Renderer", () => {
   beforeEach(() => {
     mockConsole.wrapConsole();
+    // mockConsole.revert();
   });
 
   afterEach("ensure no unwanted console messages have been logged", function(this: Mocha.IBeforeAndAfterContext) {

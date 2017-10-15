@@ -4,4 +4,5 @@ describe("core", () => {
   require("./core/props");
   require("./core/context");
   require("./core/render");
+  require("./core/children");
 });

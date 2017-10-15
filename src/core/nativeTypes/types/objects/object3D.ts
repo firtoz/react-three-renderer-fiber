@@ -130,8 +130,15 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
 
   public addedToParent(instance: T, parentInstance: TParent): void {
     if (parentInstance instanceof Object3D) {
-      // console.log("well the parent should contain us: ", parentInstance.children.indexOf(instance));
-      parentInstance.add(instance);
+      const indexInParent = parentInstance.children.indexOf(instance);
+      if (indexInParent !== -1) {
+        // need to move within the parent to the last index
+        const spliced = parentInstance.children.splice(indexInParent, 1)[0];
+
+        parentInstance.children.push(spliced);
+      } else {
+        parentInstance.add(instance);
+      }
     } else {
       throw new Error("Trying to add a child into a non-object parent...");
     }
@@ -139,14 +146,19 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
 
   public addedToParentBefore(instance: T, parentInstance: TParent, before: any): void {
     if (parentInstance instanceof Object3D) {
-      parentInstance.add(instance);
+      let instanceIndex = parentInstance.children.indexOf(instance);
 
-      const instanceIndex = parentInstance.children.indexOf(instance);
+      if (instanceIndex === -1) {
+        parentInstance.add(instance);
+
+        instanceIndex = parentInstance.children.length - 1;
+      }
+
+      const spliced = parentInstance.children.splice(instanceIndex, 1)[0];
+
       const otherIndex = parentInstance.children.indexOf(before);
 
-      parentInstance.children.splice(otherIndex,
-        0,
-        parentInstance.children.splice(instanceIndex, 1)[1]);
+      parentInstance.children.splice(otherIndex, 0, spliced);
     } else {
       throw new Error("Trying to add a child into a non-object parent...");
     }
