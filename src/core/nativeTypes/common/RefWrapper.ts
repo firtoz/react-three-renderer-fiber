@@ -1,4 +1,5 @@
 import * as React from "react";
+import {ReactElement} from "react";
 
 export interface IElement<T, Props> extends React.ReactElement<Props> {
   ref?: React.Ref<T>;
@@ -31,11 +32,11 @@ export class RefWrapper {
     });
   }
 
-  protected getInstance<T>(identifier: string): T | null {
+  public getInstance<T>(identifier: string): T | null {
     return this.internalInstances[identifier] as T;
   }
 
-  protected wrapElementAndReturn<T>(identifier: string, element: IElement<T, any>) {
+  public wrapElementAndReturn<T, TProps>(identifier: string, element: IElement<T, TProps>): ReactElement<TProps> {
     const refFromElement: React.Ref<T> | null = element.ref == null ? null : element.ref;
 
     const originalKey = element.key == null ? "" : element.key;

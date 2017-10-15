@@ -1,6 +1,7 @@
 import {Geometry, Material, MaterialParameters, Mesh} from "three";
+import ReactThreeRenderer from "../../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../../renderer/utils/getDescriptorForInstance";
-import {IElement} from "../../common/RefWrapper";
+import {IElement, RefWrapper} from "../../common/RefWrapper";
 import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 // tslint:disable-next-line
@@ -22,7 +23,20 @@ declare global {
 
 type MeshChildType = Geometry | Material;
 
-class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
+class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
+  private refWrapper: RefWrapper;
+
+  constructor() {
+    super();
+
+    this.refWrapper = new RefWrapper(["material", "geometry"]);
+
+    this.hasPropGroup(["material", "geometry"],
+      (instance: Mesh, newValue: any, oldProps: IMeshProps, newProps: IMeshProps) => {
+        this.updateGeometryAndMaterial(instance, newProps);
+      });
+  }
+
   public createInstance(props: IMeshProps) {
     let geometry: Geometry | undefined;
     let material: Material | undefined;
@@ -47,7 +61,30 @@ class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType
       instance.material = child;
     } else {
       super.appendInitialChild(instance, child);
-      // throw new Error('cannot add ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance to mesh');
+    }
+  }
+
+  public appendChild(instance: Mesh, child: MeshChildType): void {
+    (getDescriptorForInstance(child) as any).addedToParent(child, instance);
+
+    if (child instanceof Geometry) {
+      instance.geometry = child;
+    } else if (child instanceof Material) {
+      instance.material = child;
+    } else {
+      super.appendChild(instance, child);
+    }
+  }
+
+  public insertBefore(instance: Mesh, child: MeshChildType, before: any): void {
+    (getDescriptorForInstance(child) as any).addedToParent(child, instance);
+
+    if (child instanceof Geometry) {
+      instance.geometry = child;
+    } else if (child instanceof Material) {
+      instance.material = child;
+    } else {
+      super.insertBefore(instance, child, before);
     }
   }
 
@@ -63,6 +100,46 @@ class MeshCreator extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType
       // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');
     }
   }
+
+  private updateGeometryAndMaterial(instance: Mesh, props: IMeshProps) {
+    const material = props.material;
+    const geometry = props.geometry;
+
+    let materialElement: React.ReactElement<MaterialParameters> | null = null;
+    let geometryElement: React.ReactElement<IGeometryElementProps> | null = null;
+
+    if (material !== undefined && material !== null) {
+      if ((material instanceof Material)) {
+        instance.material = material;
+      } else {
+        materialElement = this.refWrapper.wrapElementAndReturn("material", material);
+      }
+    }
+
+    if (geometry !== undefined && geometry !== null) {
+      if ((geometry instanceof Geometry)) {
+        instance.geometry = geometry;
+      } else {
+        geometryElement = this.refWrapper.wrapElementAndReturn("geometry", geometry);
+      }
+    }
+
+    if (props.children !== undefined) {
+      throw new Error("There is a mesh object" +
+        " with both material/geometry properties and material/property children.\n" +
+        "This is not allowed.");
+    }
+
+    ReactThreeRenderer.render([materialElement, geometryElement], instance, () => {
+      if (geometry !== undefined && geometry !== null && geometry instanceof Geometry) {
+        instance.geometry = geometry;
+      }
+
+      if (material !== undefined && material !== null && material instanceof Material) {
+        instance.material = material;
+      }
+    });
+  }
 }
 
-export default new MeshCreator();
+export default new MeshDescriptor();

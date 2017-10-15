@@ -1,6 +1,6 @@
 import {
   Material, MaterialParameters,
-  Mesh,
+  Mesh, MeshBasicMaterial,
 } from "three";
 import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
@@ -59,6 +59,20 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
 
   public willBeRemovedFromParent(instance: Material, parent: Mesh): void {
     /* NO-OP */
+  }
+
+  public insertInContainerBefore(instance: TType, container: Mesh, before: any): void {
+    container.material = instance;
+  }
+
+  public appendToContainer(instance: TType, container: Mesh): void {
+    container.material = instance;
+  }
+
+  public willBeRemovedFromContainer(instance: TType, container: Mesh): void {
+    if (container.material === instance) {
+      (container as any).material = new MeshBasicMaterial();
+    }
   }
 }
 

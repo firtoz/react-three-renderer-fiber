@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {BoxGeometry, Mesh} from "three";
+import {BoxGeometry, BufferGeometry, Mesh} from "three";
 import {WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
 
 interface IBoxGeometryProps {
@@ -93,6 +93,20 @@ class BoxGeometryDescriptor extends WrappedEntityDescriptor<IBoxGeometryProps,
       "depth",
       "widthSegments",
       "heightSegments");
+  }
+
+  public insertInContainerBefore(instance: BoxGeometry, container: Mesh, before: any): void {
+    container.geometry = instance;
+  }
+
+  public appendToContainer(instance: BoxGeometry, container: Mesh): void {
+    container.geometry = instance;
+  }
+
+  public willBeRemovedFromContainer(instance: BoxGeometry, container: Mesh): void {
+    if (container.geometry === instance) {
+      (container as any).geometry = new BufferGeometry();
+    }
   }
 }
 

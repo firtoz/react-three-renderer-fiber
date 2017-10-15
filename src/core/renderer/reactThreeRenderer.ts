@@ -1,4 +1,4 @@
-import fiberSymbol, {default as r3rFiberSymbol} from "./utils/r3rFiberSymbol";
+import {default as r3rFiberSymbol} from "./utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import {IFiber} from "react-fiber-export";
@@ -29,7 +29,6 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
     const newRoot = ReactThreeFiberRenderer.createContainer(container);
 
     container[r3rRootContainerSymbol] = newRoot;
-    container[fiberSymbol] = newRoot;
 
     const renderActionsForContainer: RenderAction[] = [];
 
@@ -104,7 +103,6 @@ class ReactThreeRenderer {
       ReactThreeFiberRenderer.unbatchedUpdates(() => {
         renderSubtreeIntoContainer(null, null, container, false, () => {
           delete container[r3rRootContainerSymbol];
-          delete container[r3rFiberSymbol];
 
           if (callback != null) {
             callback();
