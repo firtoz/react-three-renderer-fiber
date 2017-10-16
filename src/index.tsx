@@ -1,37 +1,65 @@
-// Following https://github.com/mrdoob/three.js/wiki/Getting-Started
+// Following https://threejs.org/docs/index.html#manual/introduction/Creating-a-scene
 
 import * as React from "react";
 import * as THREE from "three";
+import {Euler} from "three";
 import ReactThreeRenderer from "../src/core/renderer/reactThreeRenderer";
 
-ReactThreeRenderer.render(<webGLRenderer
-  width={800}
-  height={600}
+class Demo extends React.Component<any, {
+  cubeRotation: Euler,
+}> {
+  constructor() {
+    super();
 
-  clearColor={0xdddddd}
-  clearAlpha={1}
->
-  <render
-    camera={<perspectiveCamera
-      fov={35}
-      aspect={800 / 600}
-      near={0.1}
-      far={10000}
-      position={new THREE.Vector3(-15, 10, 10)}
-      lookAt={new THREE.Vector3(0, 0, 0)}
-    />}
-    scene={<scene>
-      <mesh>
-        <boxGeometry width={25} height={5} depth={5} />
-        <meshLambertMaterial
-          color={0xFF0000}
-        />
-      </mesh>
-      <pointLight
-        position={new THREE.Vector3(10, 0, 10)}
-        color={0xFFFF00}
+    this.state = {
+      cubeRotation: new Euler(),
+    };
+  }
+
+  public render() {
+    return <webGLRenderer
+      width={window.innerWidth}
+      height={window.innerHeight}
+
+      clearColor={0xdddddd}
+      clearAlpha={1}
+    >
+      <render
+        autoRender
+        onAnimationFrame={this.onAnimationFrame}
+        scene={<scene>
+          <mesh
+            rotation={this.state.cubeRotation}
+            geometry={<boxGeometry width={1} height={1} depth={1} />}
+            material={<meshBasicMaterial
+              color={0x00ff00}
+            />}
+          />
+          <pointLight
+            position={new THREE.Vector3(10, 0, 10)}
+            color={0xFFFF00}
+          />
+        </scene>}
+        camera={<perspectiveCamera
+          fov={75}
+          aspect={window.innerWidth / window.innerHeight}
+          near={0.1}
+          far={1000}
+          position={new THREE.Vector3(0, 0, 5)}
+        />}
       />
-    </scene>}
-  >
-  </render>
-</webGLRenderer>, document.getElementById("example"));
+    </webGLRenderer>;
+  }
+
+  private onAnimationFrame = () => {
+    this.setState({
+      cubeRotation: new Euler(
+        this.state.cubeRotation.x + 0.1,
+        this.state.cubeRotation.y + 0.1,
+        this.state.cubeRotation.z,
+      ),
+    });
+  }
+}
+
+ReactThreeRenderer.render(<Demo />, document.getElementById("example"));

@@ -38,7 +38,10 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
     super();
 
     this.hasSimpleProp("fov", false);
-    this.hasSimpleProp("aspect", false);
+    this.hasProp("aspect", (instance: PerspectiveCamera, newValue: number) => {
+      instance.aspect = newValue;
+      instance.updateProjectionMatrix();
+    });
     this.hasSimpleProp("near", false);
     this.hasSimpleProp("far", false);
   }

@@ -13,6 +13,8 @@ import {SceneElementProps} from "./objects/scene";
 interface IRenderProps extends WebGLRendererParameters {
   camera: IElement<Camera, CameraElementProps> | Camera | null;
   scene: IElement<Scene, SceneElementProps> | Scene | null;
+  onAnimationFrame?: () => void;
+  autoRender?: boolean;
 }
 
 export const wrappedRefSymbol = Symbol("r3r-wrapped-ref");
@@ -31,9 +33,11 @@ export class RenderAction extends RefWrapper implements IHostContext {
   private group: Group;
 
   private animationFrameRequest: number;
+  private autoRender: boolean = false;
 
   private internalScene: Scene | null;
   private internalCamera: Camera | null;
+  private onAnimationFrame: (() => void) | null;
 
   constructor() {
     super([
@@ -43,6 +47,9 @@ export class RenderAction extends RefWrapper implements IHostContext {
 
     this.internalScene = null;
     this.internalCamera = null;
+
+    this.onAnimationFrame = null;
+    this.autoRender = false;
 
     this.group = new Group();
     (this.group as any)[r3rContextSymbol] = this;
@@ -94,7 +101,7 @@ export class RenderAction extends RefWrapper implements IHostContext {
     this.renderer.render(sceneToUse, cameraToUse);
   }
 
-  public updateProperties(newValue: IRenderProps) {
+  public updateSceneAndCamera(newValue: IRenderProps) {
     const {
       scene,
       camera,
@@ -124,10 +131,32 @@ export class RenderAction extends RefWrapper implements IHostContext {
     ReactThreeRenderer.render([sceneElementToRender, cameraElementToRender], this.group);
   }
 
+  public setOnAnimationFrame(newValue: (() => void) | null) {
+    this.onAnimationFrame = newValue;
+  }
+
+  public setAutoRender(newValue: boolean) {
+    this.autoRender = newValue;
+
+    if (newValue === true) {
+      if (this.animationFrameRequest === 0) {
+        this.triggerRender();
+      }
+    }
+  }
+
   private rafCallback = () => {
+    if (this.onAnimationFrame !== null) {
+      this.onAnimationFrame();
+    }
+
     this.render();
 
     this.animationFrameRequest = 0;
+
+    if (this.autoRender) {
+      this.triggerRender();
+    }
   }
 }
 
@@ -137,7 +166,17 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
 
     this.hasPropGroup(["scene", "camera"],
       (instance: RenderAction, newValue: IRenderProps) => {
-        instance.updateProperties(newValue);
+        instance.updateSceneAndCamera(newValue);
+      });
+
+    this.hasProp("onAnimationFrame",
+      (instance: RenderAction, newValue: (() => void) | null) => {
+        instance.setOnAnimationFrame(newValue);
+      });
+
+    this.hasProp("autoRender",
+      (instance: RenderAction, newValue: boolean) => {
+        instance.setAutoRender(newValue);
       });
   }
 
