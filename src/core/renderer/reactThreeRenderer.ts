@@ -113,6 +113,9 @@ class ReactThreeRenderer {
       // get `true` twice. That's probably fine?
       return true;
     } else {
+      if (callback != null) {
+        callback();
+      }
       // if (__DEV__) {
       //   const rootEl = getReactRootElementInContainer(container);
       //   const hasNonRootReactChild = !!(rootEl &&

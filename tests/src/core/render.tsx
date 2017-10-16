@@ -333,19 +333,30 @@ describe("render", () => {
   });
 
   it("should accept a scene as a parameter", (done) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+
+    const renderer = new WebGLRenderer();
+
+    const renderCallSpy = Sinon.spy(renderer, "render");
+    const perspectiveCameraSpy = Sinon.spy();
+
     const scene = new Scene();
 
-    ReactThreeRenderer.render(<webGLRenderer width={5} height={5}>
-      <render
-        camera={<perspectiveCamera />}
-        scene={scene}>
+    ReactThreeRenderer.render(<render
+      camera={<perspectiveCamera ref={perspectiveCameraSpy} />}
+      scene={scene}
+    />, renderer);
 
-      </render>
-    </webGLRenderer>, testDiv);
+    requestAnimationFrame(() => {
+      const lastCall = renderCallSpy.lastCall;
 
-    // TODO
+      expect(lastCall.args[0], "Scene from object reference should have been used")
+        .to.equal(scene);
+      expect(lastCall.args[1], "Camera from element should have been used")
+        .to.equal(perspectiveCameraSpy.lastCall.args[0]);
 
-    ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
+      ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
+    });
   });
 
   it("should accept a camera as a parameter", (done) => {

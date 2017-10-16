@@ -8,11 +8,11 @@ import {IElement, RefWrapper} from "../common/RefWrapper";
 import {
   CameraElementProps,
 } from "./objects/perspectiveCamera";
-import {SceneElement, SceneElementProps} from "./objects/scene";
+import {SceneElementProps} from "./objects/scene";
 
 interface IRenderProps extends WebGLRendererParameters {
   camera: IElement<Camera, CameraElementProps> | Camera | null;
-  scene: any | SceneElement | Scene | null;
+  scene: IElement<Scene, SceneElementProps> | Scene | null;
 }
 
 export const wrappedRefSymbol = Symbol("r3r-wrapped-ref");
@@ -32,11 +32,17 @@ export class RenderAction extends RefWrapper implements IHostContext {
 
   private animationFrameRequest: number;
 
+  private internalScene: Scene | null;
+  private internalCamera: Camera | null;
+
   constructor() {
     super([
       "scene",
       "camera",
     ]);
+
+    this.internalScene = null;
+    this.internalCamera = null;
 
     this.group = new Group();
     (this.group as any)[r3rContextSymbol] = this;
@@ -66,24 +72,26 @@ export class RenderAction extends RefWrapper implements IHostContext {
   }
 
   public render = () => {
-    const internalScene: Scene | null = this.getInstance("scene");
-    const internalCamera: Camera | null = this.getInstance("camera");
+    let sceneToUse: Scene | null = this.internalScene;
+    let cameraToUse: Camera | null = this.internalCamera;
 
-    if (this.renderer === null ||
-      internalScene === null ||
-      internalCamera === null) {
-      return;
+    if (sceneToUse == null) {
+      sceneToUse = this.getInstance("scene");
     }
 
-    if (this.renderer === undefined ||
-      internalScene === undefined ||
-      internalCamera === undefined) {
+    if (cameraToUse == null) {
+      cameraToUse = this.getInstance("camera");
+    }
+
+    if (this.renderer == null ||
+      sceneToUse == null ||
+      cameraToUse == null) {
       return;
     }
 
     this.group.updateMatrixWorld(false);
 
-    this.renderer.render(internalScene, internalCamera);
+    this.renderer.render(sceneToUse, cameraToUse);
   }
 
   public updateProperties(newValue: IRenderProps) {
@@ -95,12 +103,22 @@ export class RenderAction extends RefWrapper implements IHostContext {
     let sceneElementToRender: React.ReactElement<SceneElementProps> | null = null;
     let cameraElementToRender: React.ReactElement<CameraElementProps> | null = null;
 
-    if (scene !== null && scene !== undefined && !(scene instanceof Scene)) {
-      sceneElementToRender = this.wrapElementAndReturn("scene", scene);
+    this.internalScene = null;
+
+    if (scene != null) {
+      if ((scene instanceof Scene)) {
+        this.internalScene = scene;
+      } else {
+        sceneElementToRender = this.wrapElementAndReturn("scene", scene);
+      }
     }
 
-    if (camera !== null && camera !== undefined && !(camera instanceof Camera)) {
-      cameraElementToRender = this.wrapElementAndReturn("camera", camera);
+    if (camera != null) {
+      if ((camera instanceof Camera)) {
+        this.internalCamera = camera;
+      } else {
+        cameraElementToRender = this.wrapElementAndReturn("camera", camera);
+      }
     }
 
     ReactThreeRenderer.render([sceneElementToRender, cameraElementToRender], this.group);
@@ -117,9 +135,10 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
   constructor() {
     super();
 
-    this.hasPropGroup(["scene", "camera"], (instance: RenderAction, newValue: IRenderProps) => {
-      instance.updateProperties(newValue);
-    });
+    this.hasPropGroup(["scene", "camera"],
+      (instance: RenderAction, newValue: IRenderProps) => {
+        instance.updateProperties(newValue);
+      });
   }
 
   public createInstance(props: IRenderProps, rootContainerInstance: HTMLCanvasElement): RenderAction {
