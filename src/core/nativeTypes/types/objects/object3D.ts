@@ -164,7 +164,7 @@ export abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public willBeRemovedFromParent(instance: T, parent: TParent): void {
+  public willBeRemovedFromParentInternal(instance: T, parent: TParent): void {
     if (parent instanceof Object3D) {
       parent.remove(instance);
     } else {

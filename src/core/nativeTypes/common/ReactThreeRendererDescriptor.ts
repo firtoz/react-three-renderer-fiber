@@ -99,11 +99,23 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
   public abstract createInstance(props: TProps, rootContainerInstance: HTMLCanvasElement): TInstance;
 
   public willBeRemovedFromParent(instance: TInstance, parent: TParent): void {
+    this.willBeRemovedFromParentInternal(instance, parent);
+
+    if (this.wantsRepaint) {
+      const context: IHostContext = (instance as any)[r3rContextSymbol];
+
+      if (context !== undefined) {
+        context.triggerRender();
+      }
+    }
+  }
+
+  public willBeRemovedFromParentInternal(instance: TInstance, parent: TParent): void {
     /* noop by default */
   }
 
   public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
-    this.willBeRemovedFromParent(instance, container);
+    this.willBeRemovedFromParentInternal(instance, container);
   }
 
   public applyInitialPropUpdates(instance: TInstance, props: TProps): void {

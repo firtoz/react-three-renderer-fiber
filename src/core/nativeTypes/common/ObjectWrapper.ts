@@ -217,8 +217,8 @@ export class WrappedEntityDescriptor<TProps = any,
     }
   }
 
-  public willBeRemovedFromParent(instance: TInstance, parent: TParent): void {
-    // super.willBeRemovedFromParent(instance, parent);
+  public willBeRemovedFromParentInternal(instance: TInstance, parent: TParent): void {
+    // super.willBeRemovedFromParentInternal(instance, parent);
     const wrapperDetails = this.wrapperType.get(instance);
 
     wrapperDetails.willBeRemovedFromParent(instance, parent);

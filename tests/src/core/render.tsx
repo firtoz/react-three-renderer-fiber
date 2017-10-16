@@ -12,6 +12,7 @@ import {
 } from "three";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 
+import object3D from "../../../src/core/nativeTypes/types/objects/object3D";
 import {RenderAction} from "../../../src/core/nativeTypes/types/render";
 import webGLRenderer from "../../../src/core/nativeTypes/types/webGLRenderer";
 import {mockConsole, testElements} from "../index";
@@ -360,38 +361,121 @@ describe("render", () => {
   });
 
   it("should accept a camera as a parameter", (done) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+
+    const renderer = new WebGLRenderer();
+
+    const renderCallSpy = Sinon.spy(renderer, "render");
+    const sceneRef = Sinon.spy();
+
     const camera = new PerspectiveCamera();
 
-    ReactThreeRenderer.render(<webGLRenderer width={5} height={5}>
-      <render
-        camera={camera}
-        scene={<scene>
-          <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
-          </mesh>
-        </scene>}>
-      </render>
-    </webGLRenderer>, testDiv);
+    ReactThreeRenderer.render(<render
+      camera={camera}
+      scene={<scene ref={sceneRef} />}
+    />, renderer);
 
-    // TODO
+    requestAnimationFrame(() => {
+      const lastCall = renderCallSpy.lastCall;
 
-    ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
+      expect(lastCall.args[0], "Scene from element should have been used")
+        .to.equal(sceneRef.lastCall.args[0]);
+      expect(lastCall.args[1], "Camera from element should have been used")
+        .to.equal(camera);
+
+      ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
+    });
   });
 
-  it("should trigger a render when a visible element is added", (done) => {
-    // TODO
+  it("should trigger a render when a visible element is added or removed", (done) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "87");
 
-    done();
+    const renderer = new WebGLRenderer();
+
+    const renderCallSpy = Sinon.spy(renderer, "render");
+
+    let setChildren: ((childCount: number, callback: () => void) => void) | null = null;
+
+    class TestContainer extends React.Component<any, { childCount: number }> {
+      constructor() {
+        super();
+
+        this.state = {
+          childCount: 0,
+        };
+
+        setChildren = (childCount: number, callback: () => void) => {
+          this.setState({
+            childCount,
+          }, () => {
+            requestAnimationFrame(callback);
+          });
+        };
+      }
+
+      public render() {
+        const children = [];
+
+        for (let i = 0; i < this.state.childCount; ++i) {
+          children.push(<object3D key={`${i}`} />);
+        }
+
+        return <object3D>
+          {children}
+        </object3D>;
+      }
+    }
+
+    ReactThreeRenderer.render(<render
+      camera={<perspectiveCamera />}
+      scene={<scene>
+        <TestContainer />
+      </scene>}
+    />, renderer);
+
+    if (setChildren == null) {
+      return;
+    }
+
+    const updateChildren = setChildren;
+
+    requestAnimationFrame(() => {
+      expect(renderCallSpy.callCount).to.equal(1);
+
+      requestAnimationFrame(() => {
+        // nothing has changed!
+        expect(renderCallSpy.callCount).to.equal(1);
+
+        // add a child
+        updateChildren(1, () => {
+          // it should render
+          expect(renderCallSpy.callCount).to.equal(2);
+
+          // do not add a child
+          updateChildren(1, () => {
+            // should not have rendered!
+            expect(renderCallSpy.callCount).to.equal(2);
+
+            // add another child
+            updateChildren(2, () => {
+              // should have rendered!
+              expect(renderCallSpy.callCount).to.equal(3);
+
+              // remove children
+              updateChildren(0, () => {
+                // should have rendered!
+                expect(renderCallSpy.callCount).to.equal(4);
+
+                ReactThreeRenderer.unmountComponentAtNode(testDiv, done);
+              });
+            });
+          });
+        });
+      });
+    });
   });
 
-  it("should trigger a render when a visible element is updated", (done) => {
-    // TODO
-
-    done();
-  });
-
-  it("should not trigger a render when am invisible property is updated", (done) => {
+  it("should trigger a render only when a visible property is updated", (done) => {
     mockConsole.expectLog("THREE.WebGLRenderer", "87");
 
     const renderer = new WebGLRenderer();
