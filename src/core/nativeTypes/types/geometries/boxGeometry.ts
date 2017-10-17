@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {BoxGeometry, BufferGeometry, Mesh} from "three";
-import {WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
+import {WrappedEntityDescriptor, WrapperDetails} from "../../common/ObjectWrapper";
 
 interface IBoxGeometryProps {
   width: number;
