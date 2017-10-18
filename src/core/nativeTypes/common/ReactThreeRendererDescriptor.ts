@@ -6,35 +6,91 @@ import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInsta
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 
-type IPropertyUpdater<TProps, TInstance, TPropType> = (instance: TInstance,
-                                                       newValue: TPropType,
-                                                       oldProps: TProps,
-                                                       newProps: TProps) => void;
+/**
+ * A property updater function.
+ * @param {TInstance} instance The host instance.
+ * @param {TPropType} newValue A value to set for the property.
+ * @param {PropertyUpdater.TProps} oldProps What the properties of the element were before the update.
+ * @param {TProps} newProps What the current properties of the element are.
+ *
+ * @type {function (instance: TInstance,
+ *               newValue: TPropType,
+ *               oldProps: TProps,
+ *               newProps: TProps): number}
+ */
+type PropertyUpdater< //
+  /**
+   * The property types for the host instance.
+   * @type ReactThreeRendererDescriptor.TProps
+   */
+  TProps,
+  /**
+   * The instance type to be created and updated
+   * @type ReactThreeRendererDescriptor.TInstance
+   */
+  TInstance,
+  /**
+   * @typedef {any} TPropType
+   * @type TPropType
+   * The property type to update.
+   */
+  TPropType> = (instance: TInstance,
+                newValue: TPropType,
+                oldProps: TProps,
+                newProps: TProps) => void;
+
+interface IPropertyDescriptor<TProps, TInstance> {
+  updateFunction?: PropertyUpdater<TProps, TInstance, any>;
+  groupName: string | null;
+  updateInitial: boolean;
+  wantsRepaint: boolean;
+}
 
 interface IPropertyUpdaterMap<TProps, TInstance> {
-  [key: string]: {
-    updateFunction?: IPropertyUpdater<TProps, TInstance, any>,
-    groupName: string | null,
-    updateInitial: boolean,
-    wantsRepaint: boolean;
-  } | undefined;
+  [key: string]: IPropertyDescriptor<TProps, TInstance> | undefined;
+}
+
+interface IPropertyGroupDescriptor<TProps, TInstance> {
+  properties: string[];
+  updateInitial: boolean;
+  updateFunction: PropertyUpdater<TProps, TInstance, any>;
+  wantsRepaint: boolean;
 }
 
 interface IPropertyGroupMap<TProps, TInstance> {
-  [key: string]: {
-    properties: string[],
-    updateInitial: boolean,
-    updateFunction: IPropertyUpdater<TProps, TInstance, any>,
-    wantsRepaint: boolean,
-  };
+  [key: string]: IPropertyGroupDescriptor<TProps, TInstance>;
 }
 
 const emptyObject: any = {};
 
-export abstract class ReactThreeRendererDescriptor<TProps = any,
+/**
+ * A base type for all ReactThreeRenderer element descriptors.
+ */
+export abstract class ReactThreeRendererDescriptor< //
+  /**
+   * @typedef {any} ReactThreeRendererDescriptor.TProps
+   * @type ReactThreeRendererDescriptor.TProps
+   * The expected property types to be used for host instance creation and property updates.
+   */
+  TProps = any,
+  /**
+   * @typedef {any} ReactThreeRendererDescriptor.TInstance
+   * @type ReactThreeRendererDescriptor.TInstance
+   * The instance type to be created and updated.
+   */
   TInstance = any,
+  /**
+   * @typedef {any} ReactThreeRendererDescriptor.TParent
+   * @type ReactThreeRendererDescriptor.TParent
+   * The parent types that the host instances can be mounted into.
+   */
   TParent = any,
-  TChild = never>
+  /**
+   * @typedef {any} ReactThreeRendererDescriptor.TParent
+   * @type ReactThreeRendererDescriptor.TParent
+   * The types of objects the host instance will accept as children.
+   */
+  TChild = any>
   implements INativeElement<TProps,
     TInstance,
     TParent,
@@ -58,12 +114,6 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
         [propertyName: string]: any;
       },
     } = {};
-
-    /*
-    * TODO get and pass context / trigger render function here
-    * Also perhaps once render trigger has been activated, go for the "non-context-checking" updater function?
-    * TODO check perf of alternate functions vs. if conditions
-    */
 
     const groupNamesToUpdate: string[] = [];
 
@@ -96,7 +146,15 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     }
   }
 
-  public abstract createInstance(props: TProps, rootContainerInstance: HTMLCanvasElement): TInstance;
+  /**
+   * This function should create a host instance using the properties.
+   * @param {TProps} props
+   * The properties of the element
+   * @param {any} rootContainerInstance
+   * The object that `ReactTHREERenderer.render` was called upon.
+   * @return {TInstance} The new host instance
+   */
+  public abstract createInstance(props: TProps, rootContainerInstance: any): TInstance;
 
   public willBeRemovedFromParent(instance: TInstance, parent: TParent): void {
     this.willBeRemovedFromParentInternal(instance, parent);
@@ -186,14 +244,34 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     }
   }
 
-  protected abstract addedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void;
+  protected addedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void {
+    this.addedToParent(instance, parentInstance);
+  }
 
+  // What does it mean for this object to be added into a container, (as a last sibling)?
+  // For example, geometries and materials can set container.material = instance
+  //              and object types can ensure they are added as children
   protected abstract addedToParent(instance: TInstance, container: TParent): void;
 
-  protected hasProp<TProp>(propName: string,
-                           updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
-                           updateInitial: boolean = true,
-                           wantsRepaint: boolean = true) {
+  /**
+   * Allows you to define an update function for a single property.
+   * @param {string} propName
+   * The name of the property
+   * @param {PropertyUpdater<TProps, TInstance, TProp>}updateFunction
+   * Handle updating of the property here.
+   * @param {boolean} updateInitial
+   * Does this property need to be updated right after host instance creation?
+   * @param {boolean} wantsRepaint
+   * Should the modification of this property trigger a re-render?
+   */
+  protected hasProp< //
+    /**
+     * The property type to be updated.
+     */
+    TProp>(propName: string,
+           updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
+           updateInitial: boolean = true,
+           wantsRepaint: boolean = true) {
     if (this.propertyDescriptors[propName] !== undefined) {
       throw new Error(`Property type for ${this.constructor.name}#${propName} is already defined.`);
     }
@@ -205,8 +283,19 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     };
   }
 
+  /**
+   * Helps to update multiple properties at once.
+   * @param {string[]} propNames
+   * The names of the properties
+   * @param {PropertyUpdater<TProps, TInstance, TProp>} updateFunction
+   * Similar to `hasProp`s updateFunction, but it will expect a key-value pair of `propertyName` to `newValue`
+   * @param {boolean} updateInitial
+   * Handle updating of the property here.
+   * @param {boolean} wantsRepaint
+   * Does this property need to be updated right after host instance creation?
+   */
   protected hasPropGroup<TProp>(propNames: string[],
-                                updateFunction: IPropertyUpdater<TProps, TInstance, TProp>,
+                                updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
                                 updateInitial: boolean = true,
                                 wantsRepaint: boolean = true) {
     const groupName = propNames.join(",");
@@ -231,6 +320,15 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
     });
   }
 
+  /**
+   * Declares that this property can be updated with simple assignments.
+   * @param {string} propName
+   * The name of the property
+   * @param {boolean} updateInitial
+   * Does this property need to be updated right after host instance creation?
+   * @param {boolean} wantsRepaint
+   * Should the modification of this property trigger a re-render?
+   */
   protected hasSimpleProp(propName: string, updateInitial: boolean = true, wantsRepaint: boolean = true) {
     this.hasProp(propName, (instance: any, newValue: any): void => {
       (instance as any)[propName] = newValue;
@@ -245,7 +343,7 @@ export abstract class ReactThreeRendererDescriptor<TProps = any,
                          oldProps: TProps,
                          newProps: TProps,
                          isInitialUpdate: boolean): boolean {
-    const propertyDescriptor = this.propertyDescriptors[propName];
+    const propertyDescriptor: IPropertyDescriptor<TProps, TInstance> | undefined = this.propertyDescriptors[propName];
     if (propertyDescriptor === undefined) {
       throw new Error(`Cannot find property descriptor for ${this.constructor.name}#${propName}`);
     }

@@ -28,14 +28,6 @@ class SceneDescriptor extends Object3DDescriptorBase<IObject3DProps, Scene, Scen
       super.addedToParent(instance, parentInstance);
     }
   }
-
-  public addedToParentBefore(instance: Scene, parentInstance: Object3D, before: any): void {
-    if (parentInstance instanceof WebGLRenderer) {
-      // no-op
-    } else {
-      super.addedToParent(instance, parentInstance);
-    }
-  }
 }
 
 export default new SceneDescriptor();

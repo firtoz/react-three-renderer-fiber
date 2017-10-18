@@ -53,10 +53,6 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     /* NO-OP */
   }
 
-  public addedToParentBefore(instance: Material, container: Mesh, before: any): void {
-    /* NO-OP */
-  }
-
   public willBeRemovedFromParentInternal(instance: Material, parent: Mesh): void {
     /* NO-OP */
   }

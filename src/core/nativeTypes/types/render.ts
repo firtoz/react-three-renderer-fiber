@@ -197,10 +197,6 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
   protected addedToParent(instance: RenderAction, container: WebGLRenderer): void {
     instance.mountedIntoRenderer(container);
   }
-
-  protected addedToParentBefore(instance: RenderAction, parentInstance: WebGLRenderer, before: any): void {
-    this.addedToParent(instance, parentInstance);
-  }
 }
 
 export default new RenderDescriptor();
