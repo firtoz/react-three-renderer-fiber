@@ -46,8 +46,8 @@ You can find the tests in the "tests" directory.
   - documentation
   - adding prop type hints to existing properties (TODO: create guide for this)
   - (once enough types and properties are defined), trying to implement examples from THREEjs documentation
-  - [implementing property updates for existing descriptors e.g. adding an "intensity" parameter to pointLight](https://github.com/toxicFork/react-three-renderer-fiber/wiki/Guide:-Adding-a-new-property-to-an-existing-descriptor)
-  - [adding new descriptor types for classes such as `mesh`, `pointLight`, `boxGeometry`](https://github.com/toxicFork/react-three-renderer-fiber/wiki/Guide:-Adding-a-new-descriptor)
+  - [implementing property updates for existing descriptors e.g. adding an "intensity" parameter to pointLight](https://github.com/toxicFork/react-three-renderer-fiber/wiki/updating-descriptor-properties)
+  - [adding new descriptor types for classes such as `mesh`, `pointLight`, `boxGeometry`](https://github.com/toxicFork/react-three-renderer-fiber/wiki/adding-a-new-descriptor)
   - implementing advanced descriptors e.g. `shape` / `moveTo` / `lineTo`
   - resources (TODO: create ticket)?
   - modules/extensions (TODO: sigh)
