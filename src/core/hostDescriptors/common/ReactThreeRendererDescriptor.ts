@@ -70,7 +70,7 @@ export abstract class ReactThreeRendererDescriptor< //
   /**
    * @typedef {any} ReactThreeRendererDescriptor.TProps
    * @type ReactThreeRendererDescriptor.TProps
-   * The expected property types to be used for host instance creation and property updates.
+   * The expected property types to be used for createInstance and property updates.
    */
   TProps = any,
   /**
@@ -260,7 +260,7 @@ export abstract class ReactThreeRendererDescriptor< //
    * @param {PropertyUpdater<TProps, TInstance, TProp>}updateFunction
    * Handle updating of the property here.
    * @param {boolean} updateInitial
-   * Does this property need to be updated right after host instance creation?
+   * Does this property need to be updated right after createInstance?
    * @param {boolean} wantsRepaint
    * Should the modification of this property trigger a re-render?
    */
@@ -292,7 +292,7 @@ export abstract class ReactThreeRendererDescriptor< //
    * @param {boolean} updateInitial
    * Handle updating of the property here.
    * @param {boolean} wantsRepaint
-   * Does this property need to be updated right after host instance creation?
+   * Does this property need to be updated right after createInstance?
    */
   protected hasPropGroup<TProp>(propNames: string[],
                                 updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
@@ -325,7 +325,7 @@ export abstract class ReactThreeRendererDescriptor< //
    * @param {string} propName
    * The name of the property
    * @param {boolean} updateInitial
-   * Does this property need to be updated right after host instance creation?
+   * Does this property need to be updated right after createInstance?
    * @param {boolean} wantsRepaint
    * Should the modification of this property trigger a re-render?
    */
