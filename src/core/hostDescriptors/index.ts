@@ -9,7 +9,7 @@ context
   .forEach((key: string) => {
     const name = key.match(/(\w+)\.ts$/);
     if (name !== null) {
-      nativeTypes[name[1]] = context(key).default;
+      nativeTypes[name[1]] = new (context(key).default)();
     }
   });
 

@@ -1,11 +1,6 @@
-import {Camera, PerspectiveCamera} from "three";
-import {IElement} from "../../common/RefWrapper";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
-
-// tslint:disable-next-line no-empty-interface
-export interface ICameraProps extends IObject3DProps {
-
-}
+import {PerspectiveCamera} from "three";
+import {CameraElementProps, ICameraProps} from "../../common/cameraBase";
+import {default as Object3DDescriptorBase} from "../../common/object3DBase";
 
 export interface IPerspectiveCameraProps extends ICameraProps {
   fov?: number;
@@ -13,10 +8,6 @@ export interface IPerspectiveCameraProps extends ICameraProps {
   near?: number;
   far?: number;
 }
-
-export type CameraElementProps = IThreeElementPropsBase<Camera> & ICameraProps;
-
-export type CameraElement = IElement<Camera, CameraElementProps>;
 
 export type PerspectiveCameraElement =
   CameraElementProps
@@ -58,4 +49,4 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
   }
 }
 
-export default new PerspectiveCameraDescriptor();
+export default PerspectiveCameraDescriptor;

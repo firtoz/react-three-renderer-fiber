@@ -1,8 +1,8 @@
 import {Geometry, Material, MaterialParameters, Mesh} from "three";
 import ReactThreeRenderer from "../../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../../renderer/utils/getDescriptorForInstance";
+import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IElement, RefWrapper} from "../../common/RefWrapper";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
 
 // tslint:disable-next-line
 interface IGeometryElementProps {
@@ -142,4 +142,4 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 }
 
-export default new MeshDescriptor();
+export default MeshDescriptor;

@@ -83,4 +83,4 @@ export class MaterialDescriptor extends MaterialDescriptorBase<MaterialParameter
   }
 }
 
-export default new MaterialDescriptor();
+export default MaterialDescriptor;

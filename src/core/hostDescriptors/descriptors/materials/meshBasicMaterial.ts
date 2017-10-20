@@ -18,4 +18,4 @@ class MeshBasicMaterialDescriptor extends MaterialDescriptorBase<THREE.MeshBasic
   }
 }
 
-export default new MeshBasicMaterialDescriptor();
+export default MeshBasicMaterialDescriptor;

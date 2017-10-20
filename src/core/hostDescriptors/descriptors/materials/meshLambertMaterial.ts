@@ -18,4 +18,4 @@ class MeshLambertMaterialDescriptor extends MaterialDescriptorBase<THREE.MeshLam
   }
 }
 
-export default new MeshLambertMaterialDescriptor();
+export default MeshLambertMaterialDescriptor;

@@ -1,3 +1,5 @@
+import {ReactNode} from "react";
+
 export type ChildType<TChildProps> =
   React.ReactElement<TChildProps>
   | ((...args: any[]) => ChildType<TChildProps>)
@@ -10,5 +12,5 @@ export interface IPropsWithChild<TChildProps = any> {
 }
 
 export interface IPropsWithChildren<TChildProps = any> {
-  children?: ChildType<TChildProps> | Array<ChildType<TChildProps>>;
+  children?: ReactNode | ChildType<TChildProps> | Array<ChildType<TChildProps>>;
 }

@@ -244,4 +244,4 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProp
   }
 }
 
-export default new WebGLRendererDescriptor();
+export default WebGLRendererDescriptor;

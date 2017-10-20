@@ -1,6 +1,6 @@
 import {Object3D, Scene, WebGLRenderer} from "three";
 import {IElement} from "../../common/RefWrapper";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
+import {IObject3DProps, default as Object3DDescriptorBase} from "../../common/object3DBase";
 
 type SceneParents = Object3D | WebGLRenderer;
 
@@ -30,4 +30,4 @@ class SceneDescriptor extends Object3DDescriptorBase<IObject3DProps, Scene, Scen
   }
 }
 
-export default new SceneDescriptor();
+export default SceneDescriptor;

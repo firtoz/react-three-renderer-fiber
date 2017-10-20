@@ -3,11 +3,9 @@ import {Camera, Group, Scene, WebGLRenderer, WebGLRendererParameters} from "thre
 import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
+import {CameraElementProps} from "../common/cameraBase";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
 import {IElement, RefWrapper} from "../common/RefWrapper";
-import {
-  CameraElementProps,
-} from "./objects/perspectiveCamera";
 import {SceneElementProps} from "./objects/scene";
 
 interface IRenderProps extends WebGLRendererParameters {
@@ -199,4 +197,4 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
   }
 }
 
-export default new RenderDescriptor();
+export default RenderDescriptor;

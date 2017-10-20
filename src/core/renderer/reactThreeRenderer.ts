@@ -3,16 +3,12 @@ import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import {IFiber} from "react-fiber-export";
 import {Scene} from "three";
-import {CameraElement} from "../hostDescriptors/descriptors/objects/perspectiveCamera";
 import {SceneElementProps} from "../hostDescriptors/descriptors/objects/scene";
 import {RenderAction} from "../hostDescriptors/descriptors/render";
-import {WebGLRendererElementProps} from "../hostDescriptors/descriptors/webGLRenderer";
 import ReactThreeFiberRenderer from "./fiberRenderer";
 import {IHostContext} from "./fiberRenderer/createInstance";
 import "./utils/DevtoolsHelpers";
 import r3rContextSymbol from "./utils/r3rContextSymbol";
-
-// const renderActionsSymbol = Symbol("r3r-render-actions");
 
 function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> | null,
                                     children: any,
@@ -63,26 +59,25 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
   return ReactThreeFiberRenderer.getPublicRootInstance(root);
 }
 
-type TRenderables = SceneElementProps | WebGLRendererElementProps | CameraElement;
-
 class ReactThreeRenderer {
   public static render(element: React.ReactElement<SceneElementProps>,
                        container: any,
                        callback?: any): Scene | null;
 
-  public static render<TProps extends TRenderables>(element: React.ReactElement<TProps> | null,
-                                                    container: any,
-                                                    callback?: any): any | null;
+  public static render<TProps>(element: React.ReactElement<TProps> | null,
+                               container: any,
+                               callback?: any): any | null;
 
   public static render(elements: Array<React.ReactElement<any> | null>,
                        container: any,
                        callback?: any): any[] | null ;
 
-  public static render<TProps extends TRenderables>(element: React.ReactElement<TProps>
-    | Array<React.ReactElement<any> | null>
-    | null,
-                                                    container: any,
-                                                    callback?: any): any | null {
+  public static render<TProps>(element: //
+                                 React.ReactElement<TProps>
+                                 | Array<React.ReactElement<any> | null>
+                                 | null,
+                               container: any,
+                               callback?: any): any | null {
     return renderSubtreeIntoContainer(null, element, container, false, callback);
   }
 

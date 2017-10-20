@@ -110,4 +110,4 @@ class BoxGeometryDescriptor extends WrappedEntityDescriptor<IBoxGeometryProps,
   }
 }
 
-export default new BoxGeometryDescriptor();
+export default BoxGeometryDescriptor;

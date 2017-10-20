@@ -168,6 +168,7 @@ export class WrappedEntityDescriptor<TProps = any,
       const currentType = current;
 
       Object.defineProperty(currentType, Symbol.hasInstance, {
+        configurable: true,
         value: (type: any) => {
           // yes let's completely abuse javascript
           return currentInstanceOf.call(currentType, type) || type instanceof wrappedType;

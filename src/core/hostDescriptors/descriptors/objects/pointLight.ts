@@ -1,10 +1,8 @@
 import * as THREE from "three";
 import {PointLight} from "three";
-import {IObject3DProps, Object3DDescriptorBase} from "./object3D";
+import LightDescriptorBase, {ILightProps} from "../../common/lightBase";
 
-interface IPointLightProps extends IObject3DProps {
-  color?: number | string;
-  intensity?: number;
+interface IPointLightProps extends ILightProps {
   distance?: number;
   decay?: number;
 }
@@ -17,18 +15,10 @@ declare global {
   }
 }
 
-class PointLightDescriptor extends Object3DDescriptorBase<IPointLightProps,
-  PointLight> {
-
+class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLight> {
   constructor() {
     super();
 
-    this.hasProp("color", (instance: PointLight,
-                           newValue: any): void => {
-      instance.color.set(newValue);
-    }, false);
-
-    this.hasSimpleProp("intensity", false);
     this.hasSimpleProp("distance", false);
     this.hasSimpleProp("decay", false);
   }
@@ -38,4 +28,4 @@ class PointLightDescriptor extends Object3DDescriptorBase<IPointLightProps,
   }
 }
 
-export default new PointLightDescriptor();
+export default PointLightDescriptor;
