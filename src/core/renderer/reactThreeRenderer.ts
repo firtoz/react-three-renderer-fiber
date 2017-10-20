@@ -3,10 +3,10 @@ import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import {IFiber} from "react-fiber-export";
 import {Scene} from "three";
-import {CameraElement} from "../nativeTypes/types/objects/perspectiveCamera";
-import {SceneElementProps} from "../nativeTypes/types/objects/scene";
-import {RenderAction} from "../nativeTypes/types/render";
-import {WebGLRendererElementProps} from "../nativeTypes/types/webGLRenderer";
+import {CameraElement} from "../hostDescriptors/descriptors/objects/perspectiveCamera";
+import {SceneElementProps} from "../hostDescriptors/descriptors/objects/scene";
+import {RenderAction} from "../hostDescriptors/descriptors/render";
+import {WebGLRendererElementProps} from "../hostDescriptors/descriptors/webGLRenderer";
 import ReactThreeFiberRenderer from "./fiberRenderer";
 import {IHostContext} from "./fiberRenderer/createInstance";
 import "./utils/DevtoolsHelpers";

@@ -1,5 +1,5 @@
 import {IFiber} from "react-fiber-export";
-import nativeTypes from "../../nativeTypes";
+import nativeTypes from "../../hostDescriptors";
 import {IPropMap} from "./prepareUpdate";
 
 export default function commitUpdate(instance: any,

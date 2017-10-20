@@ -12,9 +12,9 @@ import {
 } from "three";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 
-import object3D from "../../../src/core/nativeTypes/types/objects/object3D";
-import {RenderAction} from "../../../src/core/nativeTypes/types/render";
-import webGLRenderer from "../../../src/core/nativeTypes/types/webGLRenderer";
+import object3D from "../../../src/core/hostDescriptors/descriptors/objects/object3D";
+import {RenderAction} from "../../../src/core/hostDescriptors/descriptors/render";
+import webGLRenderer from "../../../src/core/hostDescriptors/descriptors/webGLRenderer";
 import {mockConsole, testElements} from "../index";
 
 const {div: testDiv} = testElements;

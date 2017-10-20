@@ -1,7 +1,7 @@
 import {IFiber} from "react-fiber-export";
 
-import nativeTypes from "../../nativeTypes/index";
-import {RenderAction} from "../../nativeTypes/types/render";
+import {RenderAction} from "../../hostDescriptors/descriptors/render";
+import nativeTypes from "../../hostDescriptors/index";
 import r3rContextSymbol from "../utils/r3rContextSymbol";
 import fiberSymbol from "../utils/r3rFiberSymbol";
 

@@ -2,7 +2,7 @@ import {INativeElement} from "../customRenderer/customRenderer";
 
 const nativeTypes: { [key: string]: INativeElement<any, any, any, any, any, any>; } = {};
 
-const context = (require as any).context("./types/", true, /\.ts$/);
+const context = (require as any).context("./descriptors/", true, /\.ts$/);
 
 context
   .keys()

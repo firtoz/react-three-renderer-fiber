@@ -1,6 +1,6 @@
 import {IFiber} from "react-fiber-export";
 import {INativeElement} from "../../customRenderer/customRenderer";
-import nativeTypes from "../../nativeTypes";
+import nativeTypes from "../../hostDescriptors";
 import {default as r3rFiberSymbol} from "./r3rFiberSymbol";
 
 export default function getDescriptorForInstance(instance: any): INativeElement<any, any, any, any, any, any> {
