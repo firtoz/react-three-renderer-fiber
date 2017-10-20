@@ -1,6 +1,6 @@
 import {Object3D, Scene, WebGLRenderer} from "three";
+import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IElement} from "../../common/RefWrapper";
-import {IObject3DProps, default as Object3DDescriptorBase} from "../../common/object3DBase";
 
 type SceneParents = Object3D | WebGLRenderer;
 

@@ -5,12 +5,12 @@ import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import {CameraElementProps} from "../common/cameraBase";
 import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
-import {IElement, RefWrapper} from "../common/RefWrapper";
+import {IRenderableProp, RefWrapper} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
 
 interface IRenderProps extends WebGLRendererParameters {
-  camera: IElement<Camera, CameraElementProps> | Camera | null;
-  scene: IElement<Scene, SceneElementProps> | Scene | null;
+  camera: IRenderableProp<Camera, CameraElementProps>;
+  scene: IRenderableProp<Scene, SceneElementProps>;
   onAnimationFrame?: () => void;
   autoRender?: boolean;
 }

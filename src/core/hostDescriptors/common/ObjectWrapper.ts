@@ -1,5 +1,9 @@
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
-import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
+import {
+  PropertyGroupDescriptor,
+  ReactThreeRendererDescriptor,
+  ReactThreeRendererPropertyDescriptor,
+} from "./ReactThreeRendererDescriptor";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;
@@ -228,12 +232,11 @@ export class WrappedEntityDescriptor<TProps = any,
   protected hasRemountProps(...propNames: string[]): void {
     const groupName = "#remount";
     if (this.propertyGroups[groupName] === undefined) {
-      this.propertyGroups[groupName] = {
-        properties: [],
-        updateFunction: this.remountTrigger,
-        updateInitial: false,
-        wantsRepaint: true,
-      };
+      this.propertyGroups[groupName] = new PropertyGroupDescriptor(
+        [],
+        this.remountTrigger,
+        false,
+        true);
     }
 
     for (const propName of propNames) {
@@ -243,11 +246,12 @@ export class WrappedEntityDescriptor<TProps = any,
         throw new Error(`Property type for ${propName} is already defined.`);
       }
 
-      this.propertyDescriptors[propName] = {
+      this.propertyDescriptors[propName] = new ReactThreeRendererPropertyDescriptor(
         groupName,
-        updateInitial: false,
-        wantsRepaint: false,
-      };
+        null,
+        false,
+        false,
+      );
     }
   }
 

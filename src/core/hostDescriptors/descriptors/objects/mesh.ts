@@ -1,16 +1,19 @@
 import {Geometry, Material, MaterialParameters, Mesh} from "three";
-import ReactThreeRenderer from "../../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../../renderer/utils/getDescriptorForInstance";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
-import {IElement, RefWrapper} from "../../common/RefWrapper";
+import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
 
 // tslint:disable-next-line
-interface IGeometryElementProps {
+export interface ITestProps<TInstance> {
+}
+
+// tslint:disable-next-line
+interface IGeometryElementProps extends ITestProps<Geometry> {
 }
 
 interface IMeshProps extends IObject3DProps {
-  geometry?: IElement<Geometry, IGeometryElementProps> | Geometry | null;
-  material?: IElement<Material, MaterialParameters> | Material | null;
+  geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
+  material?: IRenderableProp<Material, MaterialParameters>;
 }
 
 declare global {
@@ -29,12 +32,13 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   constructor() {
     super();
 
-    this.refWrapper = new RefWrapper(["material", "geometry"]);
+    this.refWrapper = new RefWrapper(["material", "geometry"], this);
 
-    this.hasPropGroup(["material", "geometry"],
-      (instance: Mesh, newValue: any, oldProps: IMeshProps, newProps: IMeshProps) => {
-        this.updateGeometryAndMaterial(instance, newProps);
-      });
+    this.refWrapper.wrapProperties([
+        new SimplePropertyWrapper("material", Material),
+        new SimplePropertyWrapper("geometry", Geometry),
+      ],
+    );
   }
 
   public createInstance(props: IMeshProps) {
@@ -99,46 +103,6 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
       super.removeChild(instance, child);
       // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');
     }
-  }
-
-  private updateGeometryAndMaterial(instance: Mesh, props: IMeshProps) {
-    const material = props.material;
-    const geometry = props.geometry;
-
-    let materialElement: React.ReactElement<MaterialParameters> | null = null;
-    let geometryElement: React.ReactElement<IGeometryElementProps> | null = null;
-
-    if (material !== undefined && material !== null) {
-      if ((material instanceof Material)) {
-        instance.material = material;
-      } else {
-        materialElement = this.refWrapper.wrapElementAndReturn("material", material);
-      }
-    }
-
-    if (geometry !== undefined && geometry !== null) {
-      if ((geometry instanceof Geometry)) {
-        instance.geometry = geometry;
-      } else {
-        geometryElement = this.refWrapper.wrapElementAndReturn("geometry", geometry);
-      }
-    }
-
-    if (props.children !== undefined) {
-      throw new Error("There is a mesh object" +
-        " with both material/geometry properties and material/property children.\n" +
-        "This is not allowed.");
-    }
-
-    ReactThreeRenderer.render([materialElement, geometryElement], instance, () => {
-      if (geometry !== undefined && geometry !== null && geometry instanceof Geometry) {
-        instance.geometry = geometry;
-      }
-
-      if (material !== undefined && material !== null && material instanceof Material) {
-        instance.material = material;
-      }
-    });
   }
 }
 

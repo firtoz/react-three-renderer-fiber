@@ -22,19 +22,20 @@ declare global {
   }
 }
 
+const defaultCamera = new PerspectiveCamera();
+
 class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCameraProps,
   PerspectiveCamera> {
-
   public constructor() {
     super();
 
-    this.hasSimpleProp("fov", false);
+    this.hasSimpleProp("fov", false).withDefault(defaultCamera.fov);
     this.hasProp("aspect", (instance: PerspectiveCamera, newValue: number) => {
       instance.aspect = newValue;
       instance.updateProjectionMatrix();
-    });
-    this.hasSimpleProp("near", false);
-    this.hasSimpleProp("far", false);
+    }).withDefault(defaultCamera.aspect);
+    this.hasSimpleProp("near", false).withDefault(defaultCamera.near);
+    this.hasSimpleProp("far", false).withDefault(defaultCamera.far);
   }
 
   public createInstance(props: IPerspectiveCameraProps) {
