@@ -44,10 +44,9 @@ You can find the tests in the "tests" directory.
 - create a branch
 - there are a few different kinds of work, from easy to difficult:
   - documentation
-  - adding prop type hints to existing properties (TODO: create guide for this)
   - (once enough types and properties are defined), trying to implement examples from THREEjs documentation
   - [implementing property updates for existing descriptors e.g. adding an "intensity" parameter to pointLight](https://github.com/toxicFork/react-three-renderer-fiber/wiki/updating-descriptor-properties)
   - [adding new descriptor types for classes such as `mesh`, `pointLight`, `boxGeometry`](https://github.com/toxicFork/react-three-renderer-fiber/wiki/adding-a-new-descriptor)
   - implementing advanced descriptors e.g. `shape` / `moveTo` / `lineTo`
-  - resources (TODO: create ticket)?
-  - modules/extensions (TODO: sigh)
+  - resources - [#28](https://github.com/toxicFork/react-three-renderer-fiber/issues/28)
+  - modules/extensions - [#29](https://github.com/toxicFork/react-three-renderer-fiber/issues/29)
