@@ -8,6 +8,8 @@ import {
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;
 
+const remountGroupName = "#r3r-remount#";
+
 export interface IWrapperType<TProps, TWrapped, TWrapperDetails extends WrapperDetails<TProps, TWrapped>> {
   new(props: TProps): TWrapperDetails;
 
@@ -230,9 +232,8 @@ export class WrappedEntityDescriptor<TProps = any,
   }
 
   protected hasRemountProps(...propNames: string[]): void {
-    const groupName = "#remount";
-    if (this.propertyGroups[groupName] === undefined) {
-      this.propertyGroups[groupName] = new PropertyGroupDescriptor(
+    if (this.propertyGroups[remountGroupName] === undefined) {
+      this.propertyGroups[remountGroupName] = new PropertyGroupDescriptor(
         [],
         this.remountTrigger,
         false,
@@ -240,14 +241,14 @@ export class WrappedEntityDescriptor<TProps = any,
     }
 
     for (const propName of propNames) {
-      this.propertyGroups[groupName].properties.push(propName);
+      this.propertyGroups[remountGroupName].properties.push(propName);
 
       if (typeof this.propertyDescriptors[propName] !== "undefined") {
         throw new Error(`Property type for ${propName} is already defined.`);
       }
 
       this.propertyDescriptors[propName] = new ReactThreeRendererPropertyDescriptor(
-        groupName,
+        remountGroupName,
         null,
         false,
         false,
