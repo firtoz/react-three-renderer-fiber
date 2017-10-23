@@ -256,6 +256,8 @@ describe("for object3D", () => {
         rotation={new Euler(5, 10, 15)}
       />, propsTarget);
 
+      mockConsole.revert();
+
       expect(lookAtSpy.callCount).to.equal(2);
     });
   });

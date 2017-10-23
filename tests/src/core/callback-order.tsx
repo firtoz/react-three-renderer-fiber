@@ -3,9 +3,9 @@ import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
 import React3 from "../../../src/app/React3";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
-import {testElements} from "../index";
+import {testContainers} from "../index";
 
-const testDiv = testElements.div;
+const testDiv = testContainers.div;
 
 describe("callback order", () => {
   it("should execute callbacks in the right order", () => {

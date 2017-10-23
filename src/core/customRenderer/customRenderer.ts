@@ -1,8 +1,15 @@
+import {Validator} from "prop-types";
 import {IPropMap} from "../renderer/fiberRenderer/prepareUpdate";
 
 export type ICustomReactRenderer<TRootContainer> = any;
 
+export interface IPropTypeMap {
+  [propName: string]: Validator<any>;
+}
+
 export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
+  propTypes: IPropTypeMap;
+
   createInstance(props: TProps, rootContainerInstance: TRoot): T;
 
   applyInitialPropUpdates(instance: T, props: TProps): void;

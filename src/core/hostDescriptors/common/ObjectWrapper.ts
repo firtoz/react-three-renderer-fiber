@@ -237,7 +237,8 @@ export class WrappedEntityDescriptor<TProps = any,
         [],
         this.remountTrigger,
         false,
-        true);
+        true,
+        null);
     }
 
     for (const propName of propNames) {
@@ -252,6 +253,7 @@ export class WrappedEntityDescriptor<TProps = any,
         null,
         false,
         false,
+        null,
       );
     }
   }

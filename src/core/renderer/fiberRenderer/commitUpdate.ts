@@ -1,5 +1,5 @@
 import {IFiber} from "react-fiber-export";
-import nativeTypes from "../../hostDescriptors";
+import hostDescriptors from "../../hostDescriptors";
 import {IPropMap} from "./prepareUpdate";
 
 export default function commitUpdate(instance: any,
@@ -9,5 +9,5 @@ export default function commitUpdate(instance: any,
                                      oldProps: IPropMap,
                                      newProps: IPropMap,
                                      fiber: IFiber) {
-  nativeTypes[fiber.type].commitUpdate(instance, updatePayload, oldProps, newProps);
+  hostDescriptors[fiber.type].commitUpdate(instance, updatePayload, oldProps, newProps);
 }

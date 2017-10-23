@@ -281,4 +281,8 @@ declare module "react-fiber-export" {
                                              internalContextTag: number,
                                              debugOwner?: IFiber | React.ReactInstance | null): IFiber;
   }
+
+  export class ReactDebugCurrentFiber {
+    public static getCurrentFiberStackAddendum(): string | null;
+  }
 }

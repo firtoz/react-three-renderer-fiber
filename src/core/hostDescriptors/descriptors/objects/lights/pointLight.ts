@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {PointLight, PointLightShadow} from "three";
+import isNonProduction from "../../../../renderer/utils/isNonProduction";
 import {default as LightDescriptorBase, ILightProps} from "../../../common/lightBase";
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../../common/RefWrapper";
 import {IPointLightShadowProps} from "./shadows/pointLightShadow";
@@ -18,12 +19,6 @@ declare global {
     }
   }
 }
-
-declare const process: {
-  env: {
-    NODE_ENV: string,
-  };
-} | undefined;
 
 class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLight> {
   private refWrapper: RefWrapper;
@@ -50,9 +45,9 @@ class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLi
     intensity?: number;
     power?: number;
   }) => {
-    if (newValue.power !== undefined && newValue.power !== null) {
-      if (typeof process !== "undefined" && process.env.NODE_ENV !== "production") {
-        if (newValue.intensity !== undefined && newValue.intensity !== null) {
+    if ((newValue.power != null)) {
+      if (isNonProduction) {
+        if ((newValue.intensity != null)) {
           console.warn("A light has both `intensity` and `power` parameters.\n" +
             "This is not allowed, only the `power` parameter will be used.");
         }
@@ -60,7 +55,7 @@ class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLi
 
       instance.power = newValue.power;
     } else {
-      if (newValue.intensity !== undefined && newValue.intensity !== null) {
+      if ((newValue.intensity != null)) {
         instance.intensity = newValue.intensity;
       } else {
         // both null...

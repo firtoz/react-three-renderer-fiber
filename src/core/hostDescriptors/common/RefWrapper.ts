@@ -92,7 +92,7 @@ export class RefWrapper {
 
         let valueElement: React.ReactElement<any> | null = null;
 
-        if (value !== undefined && value !== null) {
+        if ((value != null)) {
           if ((value instanceof wrapper.type)) {
             wrapper.updateFunction(instance, value);
           } else {
@@ -107,7 +107,7 @@ export class RefWrapper {
         wrappers.forEach((wrapper, i) => {
           const value = newMap[wrapper.propertyName];
 
-          if (value !== undefined && value !== null && (value instanceof wrapper.type)) {
+          if ((value != null) && (value instanceof wrapper.type)) {
             wrapper.updateFunction(instance, value);
           }
         });
@@ -134,7 +134,7 @@ export class RefWrapper {
 
       let valueElement: React.ReactElement<any> | null = null;
 
-      if (value !== undefined && value !== null) {
+      if ((value != null)) {
         if ((value instanceof propType)) {
           updateFunction(instance, value);
         } else {
@@ -143,7 +143,7 @@ export class RefWrapper {
       }
 
       ReactThreeRenderer.render(valueElement, containerFunction(instance), () => {
-        if (value !== undefined && value !== null && (value instanceof propType)) {
+        if ((value != null) && (value instanceof propType)) {
           updateFunction(instance, value);
         }
       });

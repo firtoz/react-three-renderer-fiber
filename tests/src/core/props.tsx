@@ -35,7 +35,6 @@ describe("props", () => {
 
   require("./props/object3d");
   require("./props/mesh");
-
-  // TODO check default value restoration for perspective camera
-  // TODO check default value restoration for property groups (alpha / color for renderers?)
+  require("./props/default-values");
+  require("./props/validation");
 });

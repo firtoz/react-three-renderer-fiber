@@ -15,9 +15,9 @@ import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 import object3D from "../../../src/core/hostDescriptors/descriptors/objects/object3D";
 import {RenderAction} from "../../../src/core/hostDescriptors/descriptors/render";
 import webGLRenderer from "../../../src/core/hostDescriptors/descriptors/webGLRenderer";
-import {mockConsole, testElements} from "../index";
+import {mockConsole, testContainers} from "../index";
 
-const {div: testDiv} = testElements;
+const {div: testDiv} = testContainers;
 
 describe("render", () => {
   function verifyRenderCall(rendererSpy: Sinon.SinonSpy) {
@@ -69,7 +69,7 @@ describe("render", () => {
   it("should be able to be rendered into a container within a renderer", (done) => {
     const rendererSpy = Sinon.spy();
 
-    const {canvas: testCanvas} = testElements;
+    const {canvas: testCanvas} = testContainers;
 
     ReactThreeRenderer.render(<webGLRenderer
       width={800}
@@ -170,7 +170,7 @@ describe("render", () => {
     const perspectiveCameraRef = Sinon.spy();
     const sceneRef = Sinon.spy();
 
-    const {canvas: testCanvas} = testElements;
+    const {canvas: testCanvas} = testContainers;
 
     ReactThreeRenderer.render(<webGLRenderer
       width={800}

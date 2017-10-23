@@ -4,9 +4,9 @@ import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
 import React3 from "../../../src/app/React3";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
-import {testElements} from "../index";
+import {testContainers} from "../index";
 
-const {div: testDiv} = testElements;
+const {div: testDiv} = testContainers;
 
 describe("context", () => {
   it("should pass context within components", (done) => {

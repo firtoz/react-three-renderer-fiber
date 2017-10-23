@@ -32,7 +32,7 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
   private containerIsCanvas: boolean;
 
   public addedToParent(instance: WebGLRenderer, parent: Node): boolean {
-    if (this.wrappedObject !== undefined && this.wrappedObject !== null) {
+    if ((this.wrappedObject != null)) {
       throw new Error("Something really funky is going on here");
     }
 

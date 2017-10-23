@@ -1,19 +1,19 @@
 import {IFiber, ReactFiberDevToolsHook} from "react-fiber-export";
 
+import isNonProduction from "./isNonProduction";
 import r3rFiberSymbol from "./r3rFiberSymbol";
 
 const {injectInternals} = ReactFiberDevToolsHook;
 
 declare const process: {
   env: {
-    NODE_ENV: string,
     ENABLE_REACT_ADDON_HOOKS: string;
     DISABLE_REACT_ADDON_HOOKS: string;
   };
 };
 
 if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
-  (process.env.NODE_ENV !== "production" || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
+  ((isNonProduction) || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
   // Inject the runtime into a devtools global hook regardless of browser.
   // Allows for debugging when the hook is injected on the page.
   if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined") {
@@ -89,7 +89,7 @@ if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
       version: R3RVersion,
     };
 
-    if (process.env.NODE_ENV === "production") {
+    if (!isNonProduction) {
       hookConfig.bundleType = BundleType.PROD;
     }
 

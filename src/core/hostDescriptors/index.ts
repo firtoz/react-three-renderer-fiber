@@ -1,6 +1,6 @@
 import {INativeElement} from "../customRenderer/customRenderer";
 
-const nativeTypes: { [key: string]: INativeElement<any, any, any, any, any, any>; } = {};
+const hostDescriptors: { [key: string]: INativeElement<any, any, any, any, any, any>; } = {};
 
 const context = (require as any).context("./descriptors/", true, /\.ts$/);
 
@@ -9,8 +9,8 @@ context
   .forEach((key: string) => {
     const name = key.match(/(\w+)\.ts$/);
     if (name !== null) {
-      nativeTypes[name[1]] = new (context(key).default)();
+      hostDescriptors[name[1]] = new (context(key).default)();
     }
   });
 
-export default nativeTypes;
+export default hostDescriptors;

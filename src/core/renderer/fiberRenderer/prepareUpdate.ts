@@ -1,13 +1,28 @@
+import * as PropTypes from "prop-types";
+import {ReactDebugCurrentFiber} from "react-fiber-export";
+import hostDescriptors from "../../hostDescriptors";
+import isNonProduction from "../utils/isNonProduction";
+
 export interface IPropMap {
   [key: string]: any;
 }
 
 export type TUpdatePayload = any[];
 
-function diffProperties(lastProps: IPropMap, nextProps: IPropMap): TUpdatePayload | null {
-  // if (process.env.NODE_ENV !== 'production') {
-  //   validatePropertiesInDevelopment(tag, nextRawProps); // TODO
-  // }
+const checkPropTypes: (typeSpecs: any,
+                       values: any,
+                       location: string,
+                       componentName: string,
+                       getStack?: any) => void = (PropTypes as any).checkPropTypes;
+
+function diffProperties(type: string, lastProps: IPropMap, nextProps: IPropMap): TUpdatePayload | null {
+  if (isNonProduction) {
+    checkPropTypes(hostDescriptors[type].propTypes,
+      nextProps,
+      "prop",
+      type,
+      ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+  }
 
   let updatePayload: TUpdatePayload | null = null;
 
@@ -28,7 +43,7 @@ function diffProperties(lastProps: IPropMap, nextProps: IPropMap): TUpdatePayloa
 
   const nextPropsKeys = Object.keys(nextProps);
 
-  const hasLastProps = lastProps !== undefined && lastProps !== null;
+  const hasLastProps = (lastProps != null);
 
   for (const propKey of nextPropsKeys) {
     const nextProp = nextProps[propKey];
@@ -68,6 +83,7 @@ export default function prepareUpdate(instance: any,
                                       /* rootContainerInstance: any, */
                                       /* hostContext: any, */) {
   return diffProperties(
+    type,
     oldProps,
     newProps,
   );

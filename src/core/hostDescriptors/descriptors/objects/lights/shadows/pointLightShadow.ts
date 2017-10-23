@@ -21,12 +21,6 @@ declare global {
   }
 }
 
-declare const process: {
-  env: {
-    NODE_ENV: string,
-  };
-} | undefined;
-
 const defaultPointLightCamera = new PointLight().shadow.camera;
 
 class PointLightShadowDescriptor extends ReactThreeRendererDescriptor<IPointLightShadowProps,

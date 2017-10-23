@@ -1,8 +1,10 @@
-import {INativeElement} from "../../customRenderer/customRenderer";
+import {Validator} from "prop-types";
+import {INativeElement, IPropTypeMap} from "../../customRenderer/customRenderer";
 import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInstance";
+import isNonProduction from "../../renderer/utils/isNonProduction";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 
@@ -40,12 +42,13 @@ type PropertyUpdater< //
                 newProps: TProps) => void;
 
 export class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
-  public defaultValue: TProp | null = null;
+  public defaultValue?: TProp = undefined;
 
   constructor(public groupName: string | null,
               public updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
               public updateInitial: boolean,
-              public wantsRepaint: boolean) {
+              public wantsRepaint: boolean,
+              private validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
 
   }
 
@@ -54,19 +57,56 @@ export class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
 
     return this;
   }
+
+  public withType(validator: Validator<TProp>): this {
+    if (this.validatorAcceptor === null) {
+      throw new Error("This property cannot have type validation");
+    }
+
+    this.validatorAcceptor(validator);
+
+    return this;
+  }
 }
 
 export class PropertyGroupDescriptor<TProps, TInstance, TProp> {
-  public defaultValue: TProp | null = null;
+  public defaultValue?: TProp = undefined;
 
   constructor(public properties: string[],
               public updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
               public updateInitial: boolean,
-              public wantsRepaint: boolean) {
+              public wantsRepaint: boolean,
+              private validatorAcceptor: ((validator: IPropTypeMap) => void) | null) {
   }
 
   public withDefault(defaultValue: TProp): this {
     this.defaultValue = defaultValue;
+
+    if (isNonProduction) {
+      const keys = Object.keys(defaultValue);
+
+      const missingPropertyNames = this.properties.filter((propName) => !defaultValue.hasOwnProperty(propName));
+      if (missingPropertyNames.length > 0) {
+        console.warn(`${this.constructor.name} is declaring a property group with properties ` +
+          `[${this.properties.map((propertyName: string) => {
+            return `"${propertyName}"`;
+          }).join(", ")}] with default values, but is missing the default values for [${
+            missingPropertyNames
+              .map((propertName) => `"${propertName}"`)
+              .join(", ")}].`);
+      }
+    }
+    // TODO in non prod check if defaultvalue has keys to match properties
+
+    return this;
+  }
+
+  public withTypes(validator: IPropTypeMap): this {
+    if (this.validatorAcceptor === null) {
+      throw new Error("This property group cannot have type validation");
+    }
+
+    this.validatorAcceptor(validator);
 
     return this;
   }
@@ -116,12 +156,15 @@ export abstract class ReactThreeRendererDescriptor< //
     TChild,
     HTMLCanvasElement,
     ReactThreeRenderer> {
+  public propTypes: IPropTypeMap;
+
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
   protected propertyGroups: IPropertyGroupMap<TProps, TInstance>;
 
   constructor(private wantsRepaint: boolean = true) {
     this.propertyDescriptors = {};
     this.propertyGroups = {};
+    this.propTypes = {};
   }
 
   public commitUpdate(instance: TInstance,
@@ -261,6 +304,9 @@ export abstract class ReactThreeRendererDescriptor< //
       updateFunction,
       updateInitial,
       wantsRepaint,
+      (validator: Validator<TProp>) => {
+        this.propTypes[propName] = validator;
+      },
     );
 
     this.propertyDescriptors[propName] = propertyDescriptor;
@@ -272,17 +318,17 @@ export abstract class ReactThreeRendererDescriptor< //
    * Helps to update multiple properties at once.
    * @param {string[]} propNames
    * The names of the properties
-   * @param {PropertyUpdater<TProps, TInstance, TProp>} updateFunction
+   * @param {PropertyUpdater<TProps, TInstance, TPropMap>} updateFunction
    * Similar to `hasProp`s updateFunction, but it will expect a key-value pair of `propertyName` to `newValue`
    * @param {boolean} updateInitial
    * Handle updating of the property here.
    * @param {boolean} wantsRepaint
    * Does this property need to be updated right after createInstance?
    */
-  public hasPropGroup<TProp>(propNames: string[],
-                             updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
-                             updateInitial: boolean = true,
-                             wantsRepaint: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TProp> {
+  public hasPropGroup<TPropMap>(propNames: string[],
+                                updateFunction: PropertyUpdater<TProps, TInstance, TPropMap>,
+                                updateInitial: boolean = true,
+                                wantsRepaint: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TPropMap> {
     const groupName = propNames.join(",");
 
     this.propertyGroups[groupName] = new PropertyGroupDescriptor(
@@ -290,6 +336,11 @@ export abstract class ReactThreeRendererDescriptor< //
       updateFunction,
       updateInitial,
       wantsRepaint,
+      (validatorMap: IPropTypeMap) => {
+        Object.keys(validatorMap).forEach((propName: string) => {
+          this.propTypes[propName] = validatorMap[propName];
+        });
+      },
     );
 
     propNames.forEach((propName) => {
@@ -302,6 +353,7 @@ export abstract class ReactThreeRendererDescriptor< //
         null,
         false,
         false,
+        null,
       );
     });
 
@@ -314,6 +366,15 @@ export abstract class ReactThreeRendererDescriptor< //
         [propertyName: string]: any;
       },
     } = {};
+
+    const allDescriptorNamesWithDefaultValuesMissingFromProps = Object.keys(this.propertyDescriptors)
+      .filter((key: string) => {
+        const descriptor = (this.propertyDescriptors[key] as any);
+
+        return (props as any)[key] === undefined &&
+          descriptor.updateInitial &&
+          descriptor.defaultValue !== undefined;
+      });
 
     const groupNamesToUpdate: string[] = [];
 
@@ -328,12 +389,39 @@ export abstract class ReactThreeRendererDescriptor< //
       this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, emptyObject, props, true);
     }
 
+    const updatedGroupsMap: {
+      [idx: string]: boolean,
+    } = {};
+
     for (const groupName of groupNamesToUpdate) {
+      updatedGroupsMap[groupName] = true;
+
       const newData = groupedUpdates[groupName];
 
       if (this.propertyGroups[groupName].updateInitial) {
         this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
       }
+    }
+
+    allDescriptorNamesWithDefaultValuesMissingFromProps.forEach((name) => {
+      const value = (this.propertyDescriptors[name] as any).defaultValue;
+
+      this.updateProperty(name, groupedUpdates, null, value, instance, emptyObject, props, true);
+    });
+
+    const allGroupNamesWithDefaultValuesMissingFromProps = Object.keys(this.propertyGroups)
+      .filter((key: string) => {
+        const groupDescriptor = (this.propertyGroups[key] as any);
+
+        return updatedGroupsMap[key] !== true &&
+          groupDescriptor.updateInitial &&
+          groupDescriptor.defaultValue !== undefined;
+      });
+
+    for (const groupName of allGroupNamesWithDefaultValuesMissingFromProps) {
+      const newData = (this.propertyGroups[groupName] as any).defaultValue;
+
+      this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
     }
   }
 
@@ -344,7 +432,9 @@ export abstract class ReactThreeRendererDescriptor< //
   // What does it mean for this object to be added into a container, (as a last sibling)?
   // For example, geometries and materials can set container.material = instance
   //              and object types can ensure they are added as children
-  protected abstract addedToParent(instance: TInstance, container: TParent): void;
+  protected addedToParent(instance: TInstance, container: TParent): void {
+    /* NO-OP by default */
+  }
 
   protected removeProp(propName: string) {
     const propertyDescriptor: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined
@@ -381,7 +471,7 @@ export abstract class ReactThreeRendererDescriptor< //
 
   private updateProperty(propName: string,
                          groupedUpdates: { [p: string]: { [p: string]: any } },
-                         groupNamesToUpdate: string[],
+                         groupNamesToUpdate: null | (string[]),
                          value: any,
                          instance: TInstance,
                          oldProps: TProps,
@@ -395,7 +485,7 @@ export abstract class ReactThreeRendererDescriptor< //
 
     const groupName = propertyDescriptor.groupName;
 
-    if (groupName !== null) {
+    if (groupNamesToUpdate !== null && groupName !== null) {
       if (isInitialUpdate && !this.propertyGroups[groupName].updateInitial) {
         return false;
       }

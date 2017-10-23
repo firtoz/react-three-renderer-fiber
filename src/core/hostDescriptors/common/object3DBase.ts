@@ -1,4 +1,6 @@
+import * as PropTypes from "prop-types";
 import {Euler, Object3D, Quaternion, Vector3} from "three";
+import isNonProduction from "../../renderer/utils/isNonProduction";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 import {IPropsWithChildren} from "./IPropsWithChildren";
 import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
@@ -10,12 +12,6 @@ export interface IObject3DProps extends IPropsWithChildren {
   quaternion?: Quaternion;
   lookAt?: Vector3;
 }
-
-declare const process: {
-  env: {
-    NODE_ENV: string,
-  };
-} | undefined;
 
 abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   T extends Object3D,
@@ -30,7 +26,8 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
   public constructor() {
     super();
 
-    this.hasSimpleProp("name", true, false);
+    this.hasSimpleProp("name", true, false)
+      .withType(PropTypes.string);
 
     // this.hasSimpleProp("name", true, true);
     this.hasProp("position", (instance: Object3D,
@@ -43,10 +40,10 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
         instance.position.copy(newValue);
       }
 
-      if (newProps.lookAt !== undefined && newProps.lookAt !== null) {
+      if ((newProps.lookAt != null)) {
         instance.lookAt(newProps.lookAt);
       }
-    });
+    }).withType(PropTypes.instanceOf(Vector3));
 
     this.hasPropGroup([
       "rotation",
@@ -58,25 +55,29 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
           quaternion?: Quaternion,
           lookAt?: Vector3,
         }) => {
-      if (lookAt !== undefined && lookAt !== null) {
-        if (typeof process === "undefined" || process.env.NODE_ENV !== "production") {
-          if (quaternion !== undefined && quaternion !== null) {
+      if (lookAt != null) {
+        if (isNonProduction) {
+          if (quaternion != null) {
             console.warn("An object is being updated with both 'lookAt' and 'quaternion' properties.\n" +
               "Only 'lookAt' will be applied.");
-          } else if (rotation !== undefined && rotation !== null) {
+          } else if (rotation != null) {
             console.warn("An object is being updated with both 'lookAt' and 'rotation' properties.\n" +
               "Only 'lookAt' will be applied.");
           }
         }
         instance.lookAt(lookAt);
-      } else if (quaternion !== undefined && quaternion !== null) {
+      } else if ((quaternion != null)) {
         instance.quaternion.copy(quaternion);
-      } else if (rotation !== undefined && rotation !== null) {
+      } else if ((rotation != null)) {
         instance.rotation.copy(rotation);
       } else {
         // looks like everything is unset
         instance.quaternion.set(0, 0, 0, 0);
       }
+    }).withTypes({
+      lookAt: PropTypes.instanceOf(Vector3),
+      quaternion: PropTypes.instanceOf(Quaternion),
+      rotation: PropTypes.instanceOf(Euler),
     });
   }
 

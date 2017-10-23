@@ -23,8 +23,6 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     super();
   }
 
-  public abstract createInstance(props: TProps): TType;
-
   public internalApplyInitialPropUpdates(instance: TType, props: TProps): void {
     instance.setValues(props);
 
@@ -47,14 +45,6 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     if (context !== undefined) {
       context.triggerRender();
     }
-  }
-
-  public addedToParent(instance: Material, container: Mesh): void {
-    /* NO-OP */
-  }
-
-  public willBeRemovedFromParentInternal(instance: Material, parent: Mesh): void {
-    /* NO-OP */
   }
 
   public insertInContainerBefore(instance: TType, container: Mesh, before: any): void {

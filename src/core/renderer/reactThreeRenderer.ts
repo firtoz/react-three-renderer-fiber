@@ -149,7 +149,7 @@ class ReactThreeRenderer {
     }
 
     const fiber: IFiber = componentOrElement._reactInternalFiber;
-    if (fiber !== null && fiber !== undefined) {
+    if ((fiber != null)) {
       return ReactThreeFiberRenderer.findHostInstance(fiber);
     }
 

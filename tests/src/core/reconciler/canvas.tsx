@@ -3,7 +3,7 @@ import * as THREE from "three";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
 
 import dirtyChai = require("dirty-chai");
-import {testElements} from "../../index";
+import {testContainers} from "../../index";
 
 chai.use(dirtyChai);
 
@@ -15,7 +15,7 @@ describe("with a canvas", () => {
       rendererInstance = renderer;
     }
 
-    const testCanvas = testElements.canvas;
+    const testCanvas = testContainers.canvas;
 
     ReactThreeRenderer.render(<webGLRenderer ref={webGLRendererRef} width={5} height={5} />, testCanvas, () => {
       chai.expect(rendererInstance).to.be.an.instanceOf(THREE.WebGLRenderer);
