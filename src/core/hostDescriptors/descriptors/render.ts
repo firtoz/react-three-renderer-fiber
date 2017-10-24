@@ -4,7 +4,7 @@ import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import {CameraElementProps} from "../common/cameraBase";
-import {ReactThreeRendererDescriptor} from "../common/ReactThreeRendererDescriptor";
+import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
 import {IRenderableProp, RefWrapper} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
 

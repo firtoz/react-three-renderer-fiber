@@ -2,7 +2,7 @@ import {expect} from "chai";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import hostDescriptors from "../../../../src/core/hostDescriptors";
-import {ReactThreeRendererDescriptor} from "../../../../src/core/hostDescriptors/common/ReactThreeRendererDescriptor";
+import ReactThreeRendererDescriptor from "../../../../src/core/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
 import {mockConsole, testContainers} from "../../index";
 

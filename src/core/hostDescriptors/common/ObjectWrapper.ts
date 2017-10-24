@@ -1,9 +1,7 @@
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
-import {
-  PropertyGroupDescriptor,
-  ReactThreeRendererDescriptor,
-  ReactThreeRendererPropertyDescriptor,
-} from "./ReactThreeRendererDescriptor";
+import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
+import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
+import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;

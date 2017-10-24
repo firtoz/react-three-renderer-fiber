@@ -4,113 +4,11 @@ import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
 import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInstance";
-import isNonProduction from "../../renderer/utils/isNonProduction";
 import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
-
-/**
- * A property updater function.
- * @param {TInstance} instance The host instance.
- * @param {TPropType} newValue A value to set for the property.
- * @param {PropertyUpdater.TProps} oldProps What the properties of the element were before the update.
- * @param {TProps} newProps What the current properties of the element are.
- *
- * @type {function (instance: TInstance,
- *               newValue: TPropType,
- *               oldProps: TProps,
- *               newProps: TProps): number}
- */
-type PropertyUpdater< //
-  /**
-   * The property types for the host instance.
-   * @type ReactThreeRendererDescriptor.TProps
-   */
-  TProps,
-  /**
-   * The instance type to be created and updated
-   * @type ReactThreeRendererDescriptor.TInstance
-   */
-  TInstance,
-  /**
-   * @typedef {any} TPropType
-   * @type TPropType
-   * The property type to update.
-   */
-  TPropType> = (instance: TInstance,
-                newValue: TPropType,
-                oldProps: TProps,
-                newProps: TProps) => void;
-
-export class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
-  public defaultValue?: TProp = undefined;
-
-  constructor(public groupName: string | null,
-              public updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
-              public updateInitial: boolean,
-              public wantsRepaint: boolean,
-              private validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
-
-  }
-
-  public withDefault(defaultValue: TProp): this {
-    this.defaultValue = defaultValue;
-
-    return this;
-  }
-
-  public withType(validator: Validator<TProp>): this {
-    if (this.validatorAcceptor === null) {
-      throw new Error("This property cannot have type validation");
-    }
-
-    this.validatorAcceptor(validator);
-
-    return this;
-  }
-}
-
-export class PropertyGroupDescriptor<TProps, TInstance, TProp> {
-  public defaultValue?: TProp = undefined;
-
-  constructor(public properties: string[],
-              public updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
-              public updateInitial: boolean,
-              public wantsRepaint: boolean,
-              private validatorAcceptor: ((validator: IPropTypeMap) => void) | null) {
-  }
-
-  public withDefault(defaultValue: TProp): this {
-    this.defaultValue = defaultValue;
-
-    if (isNonProduction) {
-      const keys = Object.keys(defaultValue);
-
-      const missingPropertyNames = this.properties.filter((propName) => !defaultValue.hasOwnProperty(propName));
-      if (missingPropertyNames.length > 0) {
-        console.warn(`${this.constructor.name} is declaring a property group with properties ` +
-          `[${this.properties.map((propertyName: string) => {
-            return `"${propertyName}"`;
-          }).join(", ")}] with default values, but is missing the default values for [${
-            missingPropertyNames
-              .map((propertName) => `"${propertName}"`)
-              .join(", ")}].`);
-      }
-    }
-    // TODO in non prod check if defaultvalue has keys to match properties
-
-    return this;
-  }
-
-  public withTypes(validator: IPropTypeMap): this {
-    if (this.validatorAcceptor === null) {
-      throw new Error("This property group cannot have type validation");
-    }
-
-    this.validatorAcceptor(validator);
-
-    return this;
-  }
-}
+import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
+import {PropertyUpdater} from "./properties/PropertyUpdater";
+import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 
 interface IPropertyUpdaterMap<TProps, TInstance> {
   [key: string]: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined;
@@ -125,7 +23,7 @@ const emptyObject: any = {};
 /**
  * A base type for all ReactThreeRenderer element descriptors.
  */
-export abstract class ReactThreeRendererDescriptor< //
+export default abstract class ReactThreeRendererDescriptor< //
   /**
    * @typedef {any} ReactThreeRendererDescriptor.TProps
    * @type ReactThreeRendererDescriptor.TProps

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {ReactElement} from "react";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
-import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
+import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 
 export interface IElement<T, Props> extends React.ReactElement<Props> {
   ref?: React.Ref<T>;

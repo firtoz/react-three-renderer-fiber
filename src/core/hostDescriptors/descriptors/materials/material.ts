@@ -5,7 +5,7 @@ import {
 import {IHostContext} from "../../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../../renderer/fiberRenderer/prepareUpdate";
 import r3rContextSymbol from "../../../renderer/utils/r3rContextSymbol";
-import {ReactThreeRendererDescriptor} from "../../common/ReactThreeRendererDescriptor";
+import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 
 declare global {
   namespace JSX {

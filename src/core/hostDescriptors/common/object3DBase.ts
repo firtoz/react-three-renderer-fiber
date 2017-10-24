@@ -3,7 +3,7 @@ import {Euler, Object3D, Quaternion, Vector3} from "three";
 import isNonProduction from "../../renderer/utils/isNonProduction";
 import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 import {IPropsWithChildren} from "./IPropsWithChildren";
-import {ReactThreeRendererDescriptor} from "./ReactThreeRendererDescriptor";
+import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 
 export interface IObject3DProps extends IPropsWithChildren {
   name?: string;
