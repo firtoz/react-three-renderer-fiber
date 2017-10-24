@@ -19,7 +19,8 @@
     "lint": "tslint --project tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}'",
     "pretest": "npm run lint",
     "test": "karma start tests/karma.conf.js --single-run",
-    "tdd": "karma start tests/karma.conf.js"
+    "tdd": "karma start tests/karma.conf.js",
+    "tdd-prod": "cross-env NODE_ENV=production karma start tests/karma.conf.js"
   },
   "devDependencies": {
     "@types/chai": "^4.0.4",
@@ -33,7 +34,7 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "chai": "^4.1.2",
-    "console-expect": "^2.0.0",
+    "console-expect": "^2.1.0",
     "cross-env": "^5.0.5",
     "dirty-chai": "^2.0.1",
     "karma": "^1.7.1",

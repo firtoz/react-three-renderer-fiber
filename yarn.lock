@@ -1367,9 +1367,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
 
-console-expect@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/console-expect/-/console-expect-2.0.0.tgz#742afd6ca39397d6104171f74d79dddbccdb0754"
+console-expect@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/console-expect/-/console-expect-2.1.0.tgz#a55c3e8cfeae88adbc8c4b70c9d0934885ba7f21"
   dependencies:
     assert "^1.4.1"
 

@@ -337,9 +337,34 @@ export abstract class ReactThreeRendererDescriptor< //
       updateInitial,
       wantsRepaint,
       (validatorMap: IPropTypeMap) => {
+        const missingKeys = propNames.concat().reduce((map, name) => {
+          map[name] = true;
+          return map;
+        }, {} as { [index: string]: boolean });
+
+        const errors: string[] = [];
+
         Object.keys(validatorMap).forEach((propName: string) => {
+          if (missingKeys[propName] === true) {
+            missingKeys[propName] = false;
+          } else {
+            errors.push(
+              `Found property type for unknown property "${propName}"`);
+          }
           this.propTypes[propName] = validatorMap[propName];
         });
+
+        propNames.forEach((propName) => {
+          if (missingKeys[propName]) {
+            errors.push(`Missing type for property "${propName}"`);
+          }
+        });
+
+        if (errors.length > 0) {
+          throw new Error(`Property group for [${propNames
+            .map((name) => `"${name}"`)
+            .join(", ")}] has mismatching types:\n` + errors.join("\n"));
+        }
       },
     );
 

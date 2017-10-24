@@ -3,7 +3,9 @@ import "source-map-support/register";
 import {expect} from "chai";
 import MockConsole from "console-expect";
 import dirtyChai = require("dirty-chai");
+import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
+import ReactThreeRenderer from "../../src/core/renderer/reactThreeRenderer";
 import r3rFiberSymbol from "../../src/core/renderer/utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "../../src/core/renderer/utils/r3rRootContainerSymbol";
 
@@ -11,7 +13,7 @@ chai.use(dirtyChai);
 
 export const mockConsole = new MockConsole();
 
-export const testContainers = {
+export const testContainers: { [index: string]: any } = {
   canvas: document.createElement("canvas"),
   div: document.createElement("div"),
   object3D: new Object3D(),
@@ -39,10 +41,20 @@ describe("React Three Renderer", () => {
   Object.keys(testContainers).forEach((keyName: string) => {
     afterEach(`ensure ${keyName} is clean`, function(this: Mocha.IBeforeAndAfterContext) {
       if (this.currentTest.state !== "passed") {
+        try {
+          ReactThreeRenderer.unmountComponentAtNode(testContainers[keyName]);
+        } catch (e) {
+          // ignore
+        }
+        try {
+          ReactDOM.unmountComponentAtNode(testContainers[keyName]);
+        } catch (e) {
+          // ignore
+        }
         return;
       }
 
-      const container = (testContainers as any)[keyName] as any;
+      const container = testContainers[keyName] as any;
 
       expect(container._reactRootContainer === null
         || container._reactRootContainer === undefined,

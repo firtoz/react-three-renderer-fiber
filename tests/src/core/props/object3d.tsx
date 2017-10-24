@@ -247,7 +247,7 @@ describe("for object3D", () => {
 
       // even if the position property changes!
 
-      mockConsole.expectWarn("An object is being updated with both 'lookAt' and 'rotation' properties.\n" +
+      mockConsole.expectWarnDev("An object is being updated with both 'lookAt' and 'rotation' properties.\n" +
         "Only 'lookAt' will be applied.");
       ReactThreeRenderer.render(<object3D
         ref={object3DRef}
