@@ -1,10 +1,12 @@
+// tell karma to use puppeteer's version of Chrome
 process.env.CHROME_BIN = require('puppeteer').executablePath()
 
-// list of browsers to test with, ordered from most to least preferential
+// list of all browsers that can run the tests,
+// ordered from most to least preferred option
 const browserPreferences = [
   'FirefoxNightly',
   'Firefox',
-  'Chrome',
+  'Chrome', // will usually stop here (puppeteer)
   'SafariTechPreview',
   'Safari',
   'Edge'
@@ -39,9 +41,9 @@ module.exports = function(config) {
       enabled: true,
       usePhantomJS: false,
       postDetection: function(availableBrowsers) {
-        // check installed browsers, run tests using the most preferential
-        // one defined in browserPreferences list
-        for (browser of browserPreferences) {
+        // check installed browsers, run tests using the most
+        // preferred one defined in browserPreferences array
+        for (const browser of browserPreferences) {
           if (availableBrowsers.indexOf(browser) >= 0) {
             console.log(`Testing with ${browser}`)
             return [browser]
