@@ -2,6 +2,9 @@ process.env.CHROME_BIN = require('puppeteer').executablePath()
 
 // list of browsers to test with, ordered from most to least preferential
 const browserPreferences = [
+  'FirefoxNightly',
+  'Firefox',
+  'Chrome',
   'SafariTechPreview',
   'Safari',
   'Edge'
