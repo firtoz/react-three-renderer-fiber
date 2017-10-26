@@ -4,6 +4,7 @@
     "noImplicitAny": true,
     "declaration": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es5",
     "jsx": "react",
     "lib": [
@@ -12,9 +13,9 @@
       "esnext"
     ],
     "strictNullChecks": true,
+    "noImplicitReturns": true,
     "inlineSources": true,
-    "sourceMap": true,
-    "noImplicitReturns": true
+    "sourceMap": true
   },
   "exclude": [
     "../node_modules"
