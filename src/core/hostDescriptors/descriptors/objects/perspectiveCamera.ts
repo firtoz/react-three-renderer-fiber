@@ -1,5 +1,6 @@
 import {PerspectiveCamera} from "three";
 import {CameraElementProps, ICameraProps} from "../../common/cameraBase";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
 
 export interface IPerspectiveCameraProps extends ICameraProps {

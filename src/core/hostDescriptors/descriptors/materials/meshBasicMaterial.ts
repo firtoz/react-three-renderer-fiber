@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {MeshBasicMaterial} from "three";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {MaterialDescriptorBase} from "./material";
 
 declare global {

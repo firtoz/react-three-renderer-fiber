@@ -1,5 +1,6 @@
 import {Camera} from "three";
 import {ITestProps} from "../descriptors/objects/mesh";
+import {IThreeElementPropsBase} from "./IReactThreeRendererElement";
 import {IObject3DProps} from "./object3DBase";
 import {IElement} from "./RefWrapper";
 

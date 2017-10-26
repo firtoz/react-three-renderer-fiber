@@ -5,7 +5,7 @@ import MockConsole from "console-expect";
 import dirtyChai = require("dirty-chai");
 import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
-import ReactThreeRenderer from "../../src/core/renderer/reactThreeRenderer";
+import {ReactThreeRenderer} from "../../src";
 import r3rFiberSymbol from "../../src/core/renderer/utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "../../src/core/renderer/utils/r3rRootContainerSymbol";
 

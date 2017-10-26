@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {Object3D} from "three";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import Object3DDescriptorBase, {IObject3DProps} from "../../common/object3DBase";
 
 declare global {

@@ -1,0 +1,15 @@
+{
+  "name": "react-three-renderer-fiber-examples",
+  "version": "0.0.0",
+  "description": "React-three-renderer-fiber examples",
+  "main": "./index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  }
+}

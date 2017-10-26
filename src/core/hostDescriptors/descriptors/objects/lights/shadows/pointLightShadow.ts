@@ -1,5 +1,6 @@
 import {LightShadow, Matrix4, PerspectiveCamera, Vector2} from "three";
 import {PointLight, PointLightShadow} from "three";
+import {IThreeElementPropsBase} from "../../../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../../../common/ReactThreeRendererDescriptor";
 import {IRenderableProp, PropertyWrapper, RefWrapper} from "../../../../common/RefWrapper";
 import {IPerspectiveCameraProps} from "../../perspectiveCamera";

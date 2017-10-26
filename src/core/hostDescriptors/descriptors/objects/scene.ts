@@ -1,4 +1,5 @@
 import {Object3D, Scene, WebGLRenderer} from "three";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IElement} from "../../common/RefWrapper";
 

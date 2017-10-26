@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {BoxGeometry, BufferGeometry, Mesh} from "three";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor, WrapperDetails} from "../../common/ObjectWrapper";
 
 interface IBoxGeometryProps {

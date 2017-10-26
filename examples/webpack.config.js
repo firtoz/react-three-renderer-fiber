@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: "./examples/src/index.tsx",
+  entry: require.resolve("./src/index.tsx"),
   output: {
     filename: "bundle.js",
     path: path.join(__dirname, "dist")
@@ -12,7 +12,7 @@ module.exports = {
   devtool: "cheap-module-eval-source-map",
 
   devServer: {
-    publicPath: "/examples/dist/"
+    publicPath: "/dist/"
   },
 
   resolve: {
@@ -23,7 +23,11 @@ module.exports = {
   module: {
     rules: [
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+      {
+        test: /\.tsx?$/, loader: "awesome-typescript-loader", options: {
+          configFileName: require.resolve("./tsconfig"),
+        }
+      },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }

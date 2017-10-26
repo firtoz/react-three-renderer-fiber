@@ -5,6 +5,7 @@ import {
 import {IHostContext} from "../../../renderer/fiberRenderer/createInstance";
 import {TUpdatePayload} from "../../../renderer/fiberRenderer/prepareUpdate";
 import r3rContextSymbol from "../../../renderer/utils/r3rContextSymbol";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 
 declare global {

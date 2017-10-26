@@ -1,5 +1,6 @@
-import {IFiber, ReactFiberDevToolsHook} from "react-fiber-export";
+import {IFiber, IHookConfig, ReactFiberDevToolsHook} from "react-fiber-export";
 
+import {ReactDevtools} from "../../dependencies-shim";
 import isNonProduction from "./isNonProduction";
 import r3rFiberSymbol from "./r3rFiberSymbol";
 
@@ -11,6 +12,8 @@ declare const process: {
     DISABLE_REACT_ADDON_HOOKS: string;
   };
 };
+
+declare function require(filename: string): any;
 
 if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
   ((isNonProduction) || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
@@ -74,7 +77,7 @@ if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
 
     // import interface Fiber from 'R'
 
-    const hookConfig: ReactDevtools.IHookConfig = {
+    const hookConfig: IHookConfig = {
       findFiberByHostInstance(hostInstance: any): IFiber {
         // debugger;
         console.log("getClosestInstanceFromNode", hostInstance);
