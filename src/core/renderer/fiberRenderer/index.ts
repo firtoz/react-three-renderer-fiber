@@ -1,4 +1,4 @@
-import {ReactDOMFrameScheduling, ReactFiberReconciler} from "react-fiber-export";
+import {IRenderer, ReactDOMFrameScheduling, ReactFiberReconciler} from "react-fiber-export";
 
 import appendChild from "./appendChild";
 import appendChildToContainer from "./appendChildToContainer";
@@ -23,7 +23,7 @@ import resetTextContent from "./resetTextContent";
 import shouldDeprioritizeSubtree from "./shouldDeprioritizeSubtree";
 import shouldSetTextContent from "./shouldSetTextContent";
 
-const ReactThreeFiberRenderer = ReactFiberReconciler({
+const ReactThreeFiberRenderer: IRenderer = ReactFiberReconciler({
   appendChild,
   appendChildToContainer,
   appendInitialChild,

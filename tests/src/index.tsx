@@ -19,9 +19,6 @@ export const testContainers: { [index: string]: any } = {
   object3D: new Object3D(),
 };
 
-document.body.appendChild(testContainers.div);
-document.body.appendChild(testContainers.canvas);
-
 describe("React Three Renderer", () => {
   beforeEach(() => {
     mockConsole.wrapConsole();
@@ -68,4 +65,14 @@ describe("React Three Renderer", () => {
 
   require("./core");
   require("./examples");
+
+  before("place test elements", () => {
+    document.body.appendChild(testContainers.div);
+    document.body.appendChild(testContainers.canvas);
+  });
+
+  after("clean test elements", () => {
+    document.body.removeChild(testContainers.div);
+    document.body.removeChild(testContainers.canvas);
+  });
 });

@@ -3,7 +3,7 @@ import {BoxGeometry, BufferGeometry, Mesh} from "three";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor, WrapperDetails} from "../../common/ObjectWrapper";
 
-interface IBoxGeometryProps {
+export interface IBoxGeometryProps {
   width: number;
   height: number;
   depth: number;
@@ -20,7 +20,7 @@ declare global {
   }
 }
 
-class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeometry> {
+export class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeometry> {
   private container: Mesh | null;
 
   constructor(props: IBoxGeometryProps) {

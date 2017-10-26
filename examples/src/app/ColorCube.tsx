@@ -1,7 +1,7 @@
 import * as React from "react";
 import {PureComponent} from "react";
 
-interface IColorCubeProps {
+export interface IColorCubeProps {
   rotation: any;
 }
 

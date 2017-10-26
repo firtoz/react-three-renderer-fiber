@@ -18,6 +18,7 @@
     "noImplicitReturns": true
   },
   "include": [
-    "examples/**/*"
+    "./src/**/*",
+    "../src/**/*"
   ]
 }

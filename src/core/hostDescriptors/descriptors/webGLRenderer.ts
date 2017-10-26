@@ -29,7 +29,7 @@ function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebG
   return renderer;
 }
 
-class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
+export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
   private containerIsCanvas: boolean;
 
   public addedToParent(instance: WebGLRenderer, parent: Node): boolean {
@@ -177,7 +177,7 @@ class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRe
   }
 }
 
-interface IWebGLRendererProps extends WebGLRendererParameters {
+export interface IWebGLRendererProps extends WebGLRendererParameters {
   width: number;
   height: number;
 }

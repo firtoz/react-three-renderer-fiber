@@ -57,7 +57,7 @@ class ReactThreeRendererContext extends React.Component<IContextForwarderProps> 
   }
 }
 
-interface IReact3Properties {
+export interface IReact3Properties {
   contextPassThrough?: any;
 }
 

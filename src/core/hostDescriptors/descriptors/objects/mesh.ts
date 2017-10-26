@@ -9,10 +9,10 @@ export interface ITestProps<TInstance> {
 }
 
 // tslint:disable-next-line
-interface IGeometryElementProps extends ITestProps<Geometry> {
+export interface IGeometryElementProps extends ITestProps<Geometry> {
 }
 
-interface IMeshProps extends IObject3DProps {
+export interface IMeshProps extends IObject3DProps {
   geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
   material?: IRenderableProp<Material, MaterialParameters>;
 }
@@ -25,7 +25,7 @@ declare global {
   }
 }
 
-type MeshChildType = Geometry | Material;
+export type MeshChildType = Geometry | Material;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   private refWrapper: RefWrapper;

@@ -9,7 +9,7 @@ import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor
 import {IRenderableProp, RefWrapper} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
 
-interface IRenderProps extends WebGLRendererParameters {
+export interface IRenderProps extends WebGLRendererParameters {
   camera: IRenderableProp<Camera, CameraElementProps>;
   scene: IRenderableProp<Scene, SceneElementProps>;
   onAnimationFrame?: () => void;

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "./lib/",
-    "allowJs": true,
     "noImplicitAny": true,
+    "declaration": true,
     "module": "commonjs",
     "target": "es5",
     "jsx": "react",
@@ -16,8 +16,10 @@
     "sourceMap": true,
     "noImplicitReturns": true
   },
+  "exclude": [
+    "../node_modules"
+  ],
   "include": [
-    "src/**/*",
-    "examples/**/*"
+    "src/**/*"
   ]
 }

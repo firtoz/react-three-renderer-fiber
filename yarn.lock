@@ -3973,9 +3973,9 @@ react-dom@16.0.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-fiber-export@^1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/react-fiber-export/-/react-fiber-export-1.3.5.tgz#cf6462318ea2a5e5410e51d3d6b4d4412d85e08e"
+react-fiber-export@^1.3.6:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/react-fiber-export/-/react-fiber-export-1.3.6.tgz#cc8e410beecf5cdd9c0b0b4efed33ab2f0fd018f"
   dependencies:
     fbjs "0.8.16"
 

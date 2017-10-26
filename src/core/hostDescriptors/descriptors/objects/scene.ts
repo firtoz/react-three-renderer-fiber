@@ -3,7 +3,7 @@ import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IElement} from "../../common/RefWrapper";
 
-type SceneParents = Object3D | WebGLRenderer;
+export type SceneParents = Object3D | WebGLRenderer;
 
 export type SceneElementProps = IThreeElementPropsBase<Scene> & IObject3DProps;
 

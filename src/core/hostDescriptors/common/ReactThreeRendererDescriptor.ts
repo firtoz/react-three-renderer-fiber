@@ -10,11 +10,11 @@ import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
 import {PropertyUpdater} from "./properties/PropertyUpdater";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 
-interface IPropertyUpdaterMap<TProps, TInstance> {
+export interface IPropertyUpdaterMap<TProps, TInstance> {
   [key: string]: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined;
 }
 
-interface IPropertyGroupMap<TProps, TInstance> {
+export interface IPropertyGroupMap<TProps, TInstance> {
   [key: string]: PropertyGroupDescriptor<TProps, TInstance, any>;
 }
 

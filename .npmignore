@@ -1,2 +1,4 @@
 examples/
 .idea/
+tests/
+tslint.json

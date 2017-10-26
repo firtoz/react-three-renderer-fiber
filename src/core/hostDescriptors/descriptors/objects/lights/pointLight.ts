@@ -6,7 +6,7 @@ import {default as LightDescriptorBase, ILightProps} from "../../../common/light
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../../common/RefWrapper";
 import {IPointLightShadowProps} from "./shadows/pointLightShadow";
 
-interface IPointLightProps extends ILightProps {
+export interface IPointLightProps extends ILightProps {
   distance?: number;
   decay?: number;
   power?: number;
