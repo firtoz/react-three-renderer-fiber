@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: "./src/index.tsx",
+  entry: "./examples/src/index.tsx",
   output: {
     filename: "bundle.js",
     path: path.join(__dirname, "dist")
@@ -12,7 +12,7 @@ module.exports = {
   devtool: "cheap-module-eval-source-map",
 
   devServer: {
-    publicPath: "/dist/"
+    publicPath: "/examples/dist/"
   },
 
   resolve: {

@@ -3,7 +3,7 @@ import * as React from "react";
 
 import {Euler, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from "three";
 
-import React3 from "../src/app/React3";
+import React3 from "../../src";
 
 interface ISimpleProps {
   width: number;

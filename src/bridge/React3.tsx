@@ -4,6 +4,14 @@ import {PureComponent} from "react";
 import * as ReactDOM from "react-dom";
 import ReactThreeRenderer from "../core/renderer/reactThreeRenderer";
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "react-three-renderer-proxy": any;
+    }
+  }
+}
+
 interface IContextWrapperProps {
   testProps: number;
   onContextUpdate: (newContext: any) => void;

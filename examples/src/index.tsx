@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as THREE from "three";
 import {Euler} from "three";
-import ReactThreeRenderer from "../src/core/renderer/reactThreeRenderer";
+import {ReactThreeRenderer} from "../../src";
 
 class Demo extends React.Component<any, {
   cubeRotation: Euler,

@@ -1,17 +1,9 @@
 import * as React from "react";
 import {Component} from "react";
 import * as THREE from "three";
-import React3 from "./React3";
+import React3 from "../../../src";
 
 import ColorCube from "./ColorCube";
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "react-three-renderer-proxy": any;
-    }
-  }
-}
 
 // A modification of the 'Simple' example of ReactThreeRenderer
 class Experiment extends Component {

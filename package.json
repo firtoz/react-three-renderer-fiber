@@ -1,13 +1,11 @@
 {
   "name": "react-three-renderer-fiber",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "main": "./lib/main.js",
+  "types": "./lib/main.d.ts",
   "author": "Firtina `toxicFork` Ozbalikci (http://toxicfork.com)",
   "license": "MIT",
   "dependencies": {
-    "@types/react": "16.0.9",
-    "@types/react-dom": "16.0.0",
-    "@types/three": "0.84.26",
     "react": "16.0.0",
     "react-dom": "16.0.0",
     "three": "^0.87.1"
@@ -16,13 +14,16 @@
     "build": "webpack",
     "start": "webpack-dev-server",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server",
-    "lint": "tslint --project tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}'",
+    "lint": "tslint --project tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/**/*.{ts,tsx,d.ts}'",
     "pretest": "npm run lint",
     "test": "karma start tests/karma.conf.js --single-run",
     "tdd": "karma start tests/karma.conf.js",
     "tdd-prod": "cross-env NODE_ENV=production karma start tests/karma.conf.js"
   },
   "devDependencies": {
+    "@types/react": "16.0.9",
+    "@types/react-dom": "16.0.0",
+    "@types/three": "0.84.26",
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.43",
     "@types/prop-types": "^15.5.2",

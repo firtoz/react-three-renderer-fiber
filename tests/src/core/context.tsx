@@ -2,7 +2,7 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
-import React3 from "../../../src/app/React3";
+import React3 from "../../../src/bridge/React3";
 import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 import {testContainers} from "../index";
 
