@@ -22,11 +22,11 @@ class SceneDescriptor extends Object3DDescriptorBase<IObject3DProps, Scene, Scen
     return new Scene();
   }
 
-  public addedToParent(instance: Scene, parentInstance: SceneParents): void {
+  public willBeAddedToParent(instance: Scene, parentInstance: SceneParents): void {
     if (parentInstance instanceof WebGLRenderer) {
       // no-op
     } else {
-      super.addedToParent(instance, parentInstance);
+      super.willBeAddedToParent(instance, parentInstance);
     }
   }
 }

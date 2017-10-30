@@ -1,3 +1,5 @@
+const Path = require("path");
+
 /**
  * Makes the test debugging easier by source-mapping the function bodies
  */
@@ -78,7 +80,8 @@ module.exports = (babel) => {
           return Math.min(minimumSpace, firstSpace[0].length);
         }, 120);
 
-        expectedToString = 'const testCode = ' + ([sourceLines[0]].concat(
+        expectedToString = `// ${Path.relative(inputSourceMap.sourceRoot, inputSourceMap.file)}:${originalStart.line}:${originalStart.column}
+const testCode = ` + ([sourceLines[0]].concat(
           sourceLines
             .slice(1)
             .map(line => {

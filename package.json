@@ -17,7 +17,7 @@
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server",
     "lint": "tslint --project examples/tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
     "lint-fix": "tslint --fix --project examples/tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
-    "pretest": "npm run lint && npm run lint",
+    "pretest": "npm run lint",
     "test": "karma start tests/karma.conf.js --single-run",
     "tdd": "karma start tests/karma.conf.js",
     "tdd-prod": "cross-env NODE_ENV=production karma start tests/karma.conf.js"
@@ -36,6 +36,7 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
+    "bind-decorator": "^1.0.11",
     "chai": "^4.1.2",
     "console-expect": "^2.1.0",
     "cross-env": "^5.0.5",

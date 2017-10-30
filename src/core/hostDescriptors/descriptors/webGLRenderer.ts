@@ -32,7 +32,7 @@ function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebG
 export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, WebGLRenderer> {
   private containerIsCanvas: boolean;
 
-  public addedToParent(instance: WebGLRenderer, parent: Node): boolean {
+  public willBeAddedToParent(instance: WebGLRenderer, parent: Node): boolean {
     if ((this.wrappedObject != null)) {
       throw new Error("Something really funky is going on here");
     }
@@ -56,7 +56,7 @@ export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, 
     return true;
   }
 
-  public addedToParentBefore(instance: WebGLRenderer, parent: Node, before: any): boolean {
+  public willBeAddedToParentBefore(instance: WebGLRenderer, parent: Node, before: any): boolean {
     if (this.wrappedObject !== null || this.wrappedObject !== undefined) {
       throw new Error("Something really funky is going on here");
     }

@@ -1,11 +1,8 @@
 import {Validator} from "prop-types";
+import {TUpdatePayload} from "../../customRenderer/createReconciler";
 import {INativeElement, IPropTypeMap} from "../../customRenderer/customRenderer";
-import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
-import {TUpdatePayload} from "../../renderer/fiberRenderer/prepareUpdate";
 import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
-import getDescriptorForInstance from "../../renderer/utils/getDescriptorForInstance";
-import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
-import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
+import isNonProduction from "../../renderer/utils/isNonProduction";
 import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
 import {PropertyUpdater} from "./properties/PropertyUpdater";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
@@ -19,6 +16,15 @@ export interface IPropertyGroupMap<TProps, TInstance> {
 }
 
 const emptyObject: any = {};
+
+function final(instanceParameterIndex: number = 0): any {
+  return (target: any,
+          propertyKey: string,
+          descriptor: PropertyDescriptor): void => {
+    descriptor.writable = false;
+    descriptor.configurable = false;
+  };
+}
 
 /**
  * A base type for all ReactThreeRenderer element descriptors.
@@ -59,16 +65,28 @@ export default abstract class ReactThreeRendererDescriptor< //
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
   protected propertyGroups: IPropertyGroupMap<TProps, TInstance>;
 
-  constructor(private wantsRepaint: boolean = true) {
+  constructor(public wantsRepaint: boolean = true) {
     this.propertyDescriptors = {};
     this.propertyGroups = {};
     this.propTypes = {};
+
+    // TODO define all mounting/unmounting properties as nonconfigurable
+    // TODO and they should trigger render if necessary
+    // TODO and also test
   }
 
+  /**
+   *
+   * @param {TInstance} instance
+   * @param {TUpdatePayload} updatePayload
+   * @param {TProps} oldProps
+   * @param {TProps} newProps
+   * @return {boolean} Whether a repaint will be necessary
+   */
   public commitUpdate(instance: TInstance,
                       updatePayload: TUpdatePayload,
                       oldProps: TProps,
-                      newProps: TProps): void {
+                      newProps: TProps): boolean {
     const groupedUpdates: {
       [groupName: string]: {
         [propertyName: string]: any;
@@ -97,13 +115,7 @@ export default abstract class ReactThreeRendererDescriptor< //
       }
     }
 
-    if (this.wantsRepaint && wantsRepaint) {
-      const context: IHostContext = (instance as any)[r3rContextSymbol];
-
-      if (context !== undefined) {
-        context.triggerRender();
-      }
-    }
+    return this.wantsRepaint && wantsRepaint;
   }
 
   /**
@@ -117,62 +129,123 @@ export default abstract class ReactThreeRendererDescriptor< //
   public abstract createInstance(props: TProps, rootContainerInstance: any): TInstance;
 
   public willBeRemovedFromParent(instance: TInstance, parent: TParent): void {
-    this.willBeRemovedFromParentInternal(instance, parent);
+    // NO-OP
+  }
 
-    if (this.wantsRepaint) {
-      const context: IHostContext = (instance as any)[r3rContextSymbol];
-
-      if (context !== undefined) {
-        context.triggerRender();
-      }
+  // Use "parent" behaviour for containers to keep things simple.
+  @final()
+  public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
+    if (isNonProduction) {
+      throw new Error("Containers are treated as parents for ReactThreeRenderer");
     }
   }
 
-  public willBeRemovedFromParentInternal(instance: TInstance, parent: TParent): void {
-    /* noop by default */
+  @final()
+  public insertInContainerBefore(instance: TInstance, container: TParent, before: any): void {
+    if (isNonProduction) {
+      throw new Error("Containers are treated as parents for ReactThreeRenderer");
+    }
   }
 
-  public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
-    this.willBeRemovedFromParentInternal(instance, container);
+  @final()
+  public appendToContainer(instance: TInstance, container: TParent): void {
+    if (isNonProduction) {
+      throw new Error("Containers are treated as parents for ReactThreeRenderer");
+    }
   }
 
   public applyInitialPropUpdates(instance: TInstance, props: TProps): void {
-    this.internalApplyInitialPropUpdates(instance, props);
+    const groupedUpdates: {
+      [groupName: string]: {
+        [propertyName: string]: any;
+      },
+    } = {};
 
-    if (this.wantsRepaint) {
-      const context: IHostContext = (instance as any)[r3rContextSymbol];
+    const allDescriptorNamesWithDefaultValuesMissingFromProps = Object.keys(this.propertyDescriptors)
+      .filter((key: string) => {
+        const descriptor = (this.propertyDescriptors[key] as any);
 
-      if (context !== undefined) {
-        context.triggerRender();
+        return (props as any)[key] === undefined &&
+          descriptor.updateInitial &&
+          descriptor.defaultValue !== undefined;
+      });
+
+    const groupNamesToUpdate: string[] = [];
+
+    const keys = Object.keys(props);
+    for (const key of keys) {
+      if (key === "children") {
+        continue;
       }
+
+      const value = (props as any)[key];
+
+      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, emptyObject, props, true);
+    }
+
+    const updatedGroupsMap: {
+      [idx: string]: boolean,
+    } = {};
+
+    for (const groupName of groupNamesToUpdate) {
+      updatedGroupsMap[groupName] = true;
+
+      const newData = groupedUpdates[groupName];
+
+      if (this.propertyGroups[groupName].updateInitial) {
+        this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
+      }
+    }
+
+    allDescriptorNamesWithDefaultValuesMissingFromProps.forEach((name) => {
+      const value = (this.propertyDescriptors[name] as any).defaultValue;
+
+      this.updateProperty(name, groupedUpdates, null, value, instance, emptyObject, props, true);
+    });
+
+    const allGroupNamesWithDefaultValuesMissingFromProps = Object.keys(this.propertyGroups)
+      .filter((key: string) => {
+        const groupDescriptor = (this.propertyGroups[key] as any);
+
+        return updatedGroupsMap[key] !== true &&
+          groupDescriptor.updateInitial &&
+          groupDescriptor.defaultValue !== undefined;
+      });
+
+    for (const groupName of allGroupNamesWithDefaultValuesMissingFromProps) {
+      const newData = (this.propertyGroups[groupName] as any).defaultValue;
+
+      this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
     }
   }
 
   public appendInitialChild(instance: TInstance, child: TChild): void {
-    (getDescriptorForInstance(child) as ReactThreeRendererDescriptor).addedToParent(child, instance);
+    /* */
   }
 
   public appendChild(instance: TInstance, child: TChild): void {
-    (getDescriptorForInstance(child) as ReactThreeRendererDescriptor).addedToParent(child, instance);
+    /* */
   }
 
   public insertBefore(parentInstance: TInstance, childInstance: TChild, before: TChild): void {
-    (getDescriptorForInstance(childInstance) as ReactThreeRendererDescriptor)
-      .addedToParentBefore(childInstance, parentInstance, before);
+    /* */
   }
 
-  public insertInContainerBefore(instance: TInstance, container: TParent, before: any): void {
-    this.addedToParentBefore(instance, container, before);
+  public willBeAddedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void {
+    this.willBeAddedToParent(instance, parentInstance);
+  }
+
+  // What does it mean for this object to be added into a parent, (as a last sibling)?
+  // For example, geometries and materials can set parent.material = instance
+  //              and object types can ensure they are added as children
+  // TODO ensure somehow that this does not get overwritten...
+  // TODO google: "typescript (or javascript) final method or function"
+  public willBeAddedToParent(instance: TInstance, parent: TParent): void {
+    // NO-OP
   }
 
   public removeChild(instance: TInstance, child: TChild): void {
-    getDescriptorForInstance(child).willBeRemovedFromParent(child, instance);
-
     // throw new Error("tried to remove a child from " + (instance as any)[r3rFiberSymbol].type);
-  }
-
-  public appendToContainer(instance: TInstance, container: TParent): void {
-    this.addedToParent(instance, container);
   }
 
   /**
@@ -283,82 +356,6 @@ export default abstract class ReactThreeRendererDescriptor< //
     return this.propertyGroups[groupName];
   }
 
-  protected internalApplyInitialPropUpdates(instance: TInstance, props: TProps) {
-    const groupedUpdates: {
-      [groupName: string]: {
-        [propertyName: string]: any;
-      },
-    } = {};
-
-    const allDescriptorNamesWithDefaultValuesMissingFromProps = Object.keys(this.propertyDescriptors)
-      .filter((key: string) => {
-        const descriptor = (this.propertyDescriptors[key] as any);
-
-        return (props as any)[key] === undefined &&
-          descriptor.updateInitial &&
-          descriptor.defaultValue !== undefined;
-      });
-
-    const groupNamesToUpdate: string[] = [];
-
-    const keys = Object.keys(props);
-    for (const key of keys) {
-      if (key === "children") {
-        continue;
-      }
-
-      const value = (props as any)[key];
-
-      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, emptyObject, props, true);
-    }
-
-    const updatedGroupsMap: {
-      [idx: string]: boolean,
-    } = {};
-
-    for (const groupName of groupNamesToUpdate) {
-      updatedGroupsMap[groupName] = true;
-
-      const newData = groupedUpdates[groupName];
-
-      if (this.propertyGroups[groupName].updateInitial) {
-        this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
-      }
-    }
-
-    allDescriptorNamesWithDefaultValuesMissingFromProps.forEach((name) => {
-      const value = (this.propertyDescriptors[name] as any).defaultValue;
-
-      this.updateProperty(name, groupedUpdates, null, value, instance, emptyObject, props, true);
-    });
-
-    const allGroupNamesWithDefaultValuesMissingFromProps = Object.keys(this.propertyGroups)
-      .filter((key: string) => {
-        const groupDescriptor = (this.propertyGroups[key] as any);
-
-        return updatedGroupsMap[key] !== true &&
-          groupDescriptor.updateInitial &&
-          groupDescriptor.defaultValue !== undefined;
-      });
-
-    for (const groupName of allGroupNamesWithDefaultValuesMissingFromProps) {
-      const newData = (this.propertyGroups[groupName] as any).defaultValue;
-
-      this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
-    }
-  }
-
-  protected addedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void {
-    this.addedToParent(instance, parentInstance);
-  }
-
-  // What does it mean for this object to be added into a container, (as a last sibling)?
-  // For example, geometries and materials can set container.material = instance
-  //              and object types can ensure they are added as children
-  protected addedToParent(instance: TInstance, container: TParent): void {
-    /* NO-OP by default */
-  }
-
   protected removeProp(propName: string) {
     const propertyDescriptor: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined
       = this.propertyDescriptors[propName];
@@ -429,8 +426,10 @@ export default abstract class ReactThreeRendererDescriptor< //
       const updateFunction = propertyDescriptor.updateFunction;
 
       if (updateFunction === null) {
-        throw new Error("Property updateFunction for " +
-          `${(instance as any)[r3rFiberSymbol].type}.${propName} is not defined.`);
+        // TODO
+        throw new Error("yarrg test this btw");
+        // throw new Error("Property updateFunction for " +
+        //   `${(instance as any)[r3rFiberSymbol].type}.${propName} is not defined.`);
       }
 
       updateFunction(instance, value, oldProps, newProps);

@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import * as React from "react";
 import * as Sinon from "sinon";
-import hostDescriptors from "../../../../src/core/hostDescriptors";
 import ReactThreeRendererDescriptor from "../../../../src/core/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
+import r3rReconcilerConfig from "../../../../src/core/renderer/reconciler/r3rReconcilerConfig";
 import {mockConsole, testContainers} from "../../index";
 
 class TestDescriptor extends ReactThreeRendererDescriptor {
@@ -53,13 +53,15 @@ declare global {
   }
 }
 
+const hostDescriptors: Map<string, ReactThreeRendererDescriptor> = (r3rReconcilerConfig as any).hostDescriptors;
+
 describe("with default values", () => {
   before("set test descriptor", () => {
-    hostDescriptors.test = new TestDescriptor();
+    hostDescriptors.set("test", new TestDescriptor());
   });
 
   after("set test descriptor", () => {
-    delete hostDescriptors.test;
+    hostDescriptors.delete("test");
   });
 
   it("should not be used for initial render unless specified", () => {
@@ -133,8 +135,8 @@ describe("with default values", () => {
       "] with default values, but is missing" +
       " the default values for [\"groupedTwo\"].");
 
-    hostDescriptors.test2 = new TestDescriptorWithBadDefaults();
+    hostDescriptors.set("test2", new TestDescriptorWithBadDefaults());
 
-    delete hostDescriptors.test2;
+    hostDescriptors.delete("test2");
   });
 });

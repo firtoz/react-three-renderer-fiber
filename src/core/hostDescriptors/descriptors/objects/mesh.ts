@@ -1,5 +1,4 @@
 import {Geometry, Material, MaterialParameters, Mesh} from "three";
-import getDescriptorForInstance from "../../../renderer/utils/getDescriptorForInstance";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
@@ -58,8 +57,6 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public appendInitialChild(instance: Mesh, child: MeshChildType): void {
-    (getDescriptorForInstance(child) as any).addedToParent(child, instance);
-
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if (child instanceof Material) {
@@ -70,8 +67,6 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public appendChild(instance: Mesh, child: MeshChildType): void {
-    (getDescriptorForInstance(child) as any).addedToParent(child, instance);
-
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if (child instanceof Material) {
@@ -82,7 +77,6 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public insertBefore(instance: Mesh, child: MeshChildType, before: any): void {
-    (getDescriptorForInstance(child) as any).addedToParent(child, instance);
 
     if (child instanceof Geometry) {
       instance.geometry = child;
@@ -94,8 +88,6 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public removeChild(instance: Mesh, child: MeshChildType): void {
-    getDescriptorForInstance(child).willBeRemovedFromParent(child, instance);
-
     if (child instanceof Geometry) {
       instance.geometry = null as any;
     } else if (child instanceof Material) {

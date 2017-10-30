@@ -2,9 +2,7 @@ import {
   Material, MaterialParameters,
   Mesh, MeshBasicMaterial,
 } from "three";
-import {IHostContext} from "../../../renderer/fiberRenderer/createInstance";
-import {TUpdatePayload} from "../../../renderer/fiberRenderer/prepareUpdate";
-import r3rContextSymbol from "../../../renderer/utils/r3rContextSymbol";
+import {TUpdatePayload} from "../../../customRenderer/createReconciler";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 
@@ -24,41 +22,29 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     super();
   }
 
-  public internalApplyInitialPropUpdates(instance: TType, props: TProps): void {
+  public applyInitialPropUpdates(instance: TType, props: TProps): void {
+    // skip the updates, we know what we're doing here
+    // TODO verify that it is the case for ALL material kinds.
     instance.setValues(props);
-
-    const context: IHostContext = (instance as any)[r3rContextSymbol];
-
-    if (context !== undefined) {
-      context.triggerRender();
-    }
   }
 
   public commitUpdate(instance: TType,
                       updatePayload: TUpdatePayload,
                       oldProps: TProps,
-                      newProps: TProps): void {
+                      newProps: TProps): boolean {
     // that simple!?
     instance.setValues(newProps);
 
-    const context: IHostContext = (instance as any)[r3rContextSymbol];
-
-    if (context !== undefined) {
-      context.triggerRender();
-    }
+    return true;
   }
 
-  public insertInContainerBefore(instance: TType, container: Mesh, before: any): void {
-    container.material = instance;
+  public willBeAddedToParent(instance: TType, parent: Mesh) {
+    parent.material = instance;
   }
 
-  public appendToContainer(instance: TType, container: Mesh): void {
-    container.material = instance;
-  }
-
-  public willBeRemovedFromContainer(instance: TType, container: Mesh): void {
-    if (container.material === instance) {
-      (container as any).material = new MeshBasicMaterial();
+  public willBeRemovedFromParent(instance: TType, parent: Mesh): void {
+    if (parent.material === instance) {
+      (parent as any).material = new MeshBasicMaterial();
     }
   }
 }

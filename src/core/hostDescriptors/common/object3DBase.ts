@@ -1,7 +1,7 @@
 import * as PropTypes from "prop-types";
 import {Euler, Object3D, Quaternion, Vector3} from "three";
+import r3rReconcilerConfig from "../../renderer/reconciler/r3rReconcilerConfig";
 import isNonProduction from "../../renderer/utils/isNonProduction";
-import r3rFiberSymbol from "../../renderer/utils/r3rFiberSymbol";
 import {IPropsWithChildren} from "./IPropsWithChildren";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 
@@ -91,9 +91,9 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       // instance.add(child);
     } else {
       throw new Error("cannot add " +
-        (child as any)[r3rFiberSymbol].type +
+        (child as any)[r3rReconcilerConfig.getFiberSymbol()].type +
         " as a childInstance to " +
-        (instance as any)[r3rFiberSymbol].type);
+        (instance as any)[r3rReconcilerConfig.getFiberSymbol()].type);
     }
   }
 
@@ -102,9 +102,9 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       // instance.add(child);
     } else {
       throw new Error("cannot insert " +
-        (child as any)[r3rFiberSymbol].type +
+        (child as any)[r3rReconcilerConfig.getFiberSymbol()].type +
         " as a childInstance to " +
-        (instance as any)[r3rFiberSymbol].type);
+        (instance as any)[r3rReconcilerConfig.getFiberSymbol()].type);
     }
   }
 
@@ -114,13 +114,13 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       instance.remove(child);
     } else {
       throw new Error("cannot remove " +
-        (child as any)[r3rFiberSymbol].type +
+        (child as any)[r3rReconcilerConfig.getFiberSymbol()].type +
         " as a childInstance from " +
-        (instance as any)[r3rFiberSymbol].type);
+        (instance as any)[r3rReconcilerConfig.getFiberSymbol()].type);
     }
   }
 
-  public addedToParent(instance: T, parentInstance: TParent): void {
+  public willBeAddedToParent(instance: T, parentInstance: TParent): void {
     if (parentInstance instanceof Object3D) {
       const indexInParent = parentInstance.children.indexOf(instance);
       if (indexInParent !== -1) {
@@ -136,7 +136,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public addedToParentBefore(instance: T, parentInstance: TParent, before: any): void {
+  public willBeAddedToParentBefore(instance: T, parentInstance: TParent, before: any): void {
     if (parentInstance instanceof Object3D) {
       let instanceIndex = parentInstance.children.indexOf(instance);
 
@@ -156,7 +156,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public willBeRemovedFromParentInternal(instance: T, parent: TParent): void {
+  public willBeRemovedFromParent(instance: T, parent: TParent): void {
     if (parent instanceof Object3D) {
       parent.remove(instance);
     } else {

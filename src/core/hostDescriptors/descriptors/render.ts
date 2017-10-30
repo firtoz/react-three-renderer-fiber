@@ -1,8 +1,7 @@
 import * as React from "react";
 import {Camera, Group, Scene, WebGLRenderer, WebGLRendererParameters} from "three";
-import {IHostContext} from "../../renderer/fiberRenderer/createInstance";
-import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
-import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
+import ReactThreeRenderer, {IHostContext} from "../../renderer/reactThreeRenderer";
+import r3rReconcilerConfig from "../../renderer/reconciler/r3rReconcilerConfig";
 import {CameraElementProps} from "../common/cameraBase";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
@@ -51,7 +50,7 @@ export class RenderAction extends RefWrapper implements IHostContext {
     this.autoRender = false;
 
     this.group = new Group();
-    (this.group as any)[r3rContextSymbol] = this;
+    (this.group as any)[r3rReconcilerConfig.getContextSymbol()] = this;
 
     this.renderer = null;
 
@@ -75,6 +74,9 @@ export class RenderAction extends RefWrapper implements IHostContext {
     }
 
     this.renderer = renderer;
+
+    // Initial render trigger!
+    this.triggerRender();
   }
 
   public render = () => {
@@ -118,6 +120,8 @@ export class RenderAction extends RefWrapper implements IHostContext {
         sceneElementToRender = this.wrapElementAndReturn("scene", scene);
       }
     }
+
+    this.internalCamera = null;
 
     if (camera != null) {
       if ((camera instanceof Camera)) {
@@ -180,7 +184,7 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
   }
 
   public createInstance(props: IRenderProps, rootContainerInstance: HTMLCanvasElement): RenderAction {
-    const rootContext: IHostContext = (rootContainerInstance as any)[r3rContextSymbol];
+    const rootContext: IHostContext = (rootContainerInstance as any)[r3rReconcilerConfig.getContextSymbol()];
     const renderAction = new RenderAction();
 
     if (rootContext.renderActionFound === undefined) {
@@ -193,7 +197,7 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
     return renderAction;
   }
 
-  protected addedToParent(instance: RenderAction, container: WebGLRenderer): void {
+  public willBeAddedToParent(instance: RenderAction, container: WebGLRenderer): void {
     instance.mountedIntoRenderer(container);
   }
 }

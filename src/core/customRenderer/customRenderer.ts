@@ -1,5 +1,5 @@
 import {Validator} from "prop-types";
-import {IPropMap} from "../renderer/fiberRenderer/prepareUpdate";
+import {IPropMap} from "./createReconciler";
 
 export type ICustomReactRenderer<TRootContainer> = any;
 
@@ -7,28 +7,32 @@ export interface IPropTypeMap {
   [propName: string]: Validator<any>;
 }
 
-export interface INativeElement<TProps, T, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
+export interface INativeElement<TProps, THost, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
   propTypes: IPropTypeMap;
 
-  createInstance(props: TProps, rootContainerInstance: TRoot): T;
+  createInstance(props: TProps, rootContainerInstance: TRoot): THost;
 
-  applyInitialPropUpdates(instance: T, props: TProps): void;
+  applyInitialPropUpdates(instance: THost, props: TProps): void;
 
-  willBeRemovedFromParent(instance: T, parent: TParent): void;
+  willBeRemovedFromParent(instance: THost, parent: TParent): void;
 
-  willBeRemovedFromContainer(instance: T, container: TParent): void;
+  willBeRemovedFromContainer(instance: THost, container: TParent): void;
 
-  appendInitialChild(instance: T, child: TChild): void;
+  appendInitialChild(instance: THost, child: TChild): void;
 
-  appendChild(instance: T, child: TChild): void;
+  willBeAddedToParent(instance: THost, parentInstance: TParent): void;
 
-  insertBefore(parentInstance: T, childInstance: TChild, before: TChild): void;
+  willBeAddedToParentBefore(instance: THost, parentInstance: TParent, before: any): void;
 
-  insertInContainerBefore(childInstance: T, container: TParent, before: any): void;
+  appendChild(instance: THost, child: TChild): void;
 
-  removeChild(instance: T, child: TChild): void;
+  insertBefore(parentInstance: THost, childInstance: TChild, before: TChild): void;
 
-  appendToContainer(instance: T, container: TParent): void;
+  insertInContainerBefore(childInstance: THost, container: TParent, before: any): void;
+
+  removeChild(instance: THost, child: TChild): void;
+
+  appendToContainer(instance: THost, container: TParent): void;
 
   commitUpdate(instance: any,
                updatePayload: any[],

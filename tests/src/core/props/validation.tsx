@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import hostDescriptors from "../../../../src/core/hostDescriptors";
 import ReactThreeRendererDescriptor from "../../../../src/core/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
+import r3rReconcilerConfig from "../../../../src/core/renderer/reconciler/r3rReconcilerConfig";
 import {mockConsole, testContainers} from "../../index";
 
 class TestDescriptor extends ReactThreeRendererDescriptor {
@@ -38,13 +38,15 @@ declare global {
   }
 }
 
+const hostDescriptors: Map<string, ReactThreeRendererDescriptor> = (r3rReconcilerConfig as any).hostDescriptors;
+
 describe("validation", () => {
   before("set test descriptor", () => {
-    hostDescriptors.test = new TestDescriptor();
+    hostDescriptors.set("test", new TestDescriptor());
   });
 
   after("set test descriptor", () => {
-    delete hostDescriptors.test;
+    hostDescriptors.delete("test");
   });
 
   it("should give warnings for incorrect types of values", () => {

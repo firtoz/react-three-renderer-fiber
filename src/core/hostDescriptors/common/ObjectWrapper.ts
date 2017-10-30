@@ -1,4 +1,4 @@
-import r3rContextSymbol from "../../renderer/utils/r3rContextSymbol";
+import r3rReconcilerConfig from "../../renderer/reconciler/r3rReconcilerConfig";
 import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
@@ -130,15 +130,17 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   public remount(newProps: any) {
     this.wrapObject(this.recreateInstance(newProps));
 
-    if (this.wrapper[r3rContextSymbol] !== undefined) {
-      // console.log("triggering a render for context", this.wrapper[r3rContextSymbol]);
-      this.wrapper[r3rContextSymbol].triggerRender();
+    if (this.wrapper[r3rReconcilerConfig.getContextSymbol()] !== undefined) {
+      // console.log("triggering a render for context", this.wrapper[r3rReconcilerConfig.getContextSymbol()]);
+      this.wrapper[r3rReconcilerConfig.getContextSymbol()].triggerRender();
     }
   }
 
-  public abstract addedToParent(instance: TWrapped, parentInstance: any): boolean;
+  public abstract willBeAddedToParent(instance: TWrapped, parentInstance: any): boolean;
 
-  public abstract addedToParentBefore(instance: TWrapped, parentInstance: any, before: any): boolean;
+  public willBeAddedToParentBefore(instance: TWrapped, parentInstance: any, before: any): boolean {
+    return this.willBeAddedToParent(instance, parentInstance);
+  }
 
   public abstract willBeRemovedFromParent(instance: TWrapped, container: any): void;
 
@@ -198,32 +200,32 @@ export class WrappedEntityDescriptor<TProps = any,
     return new this.wrapperType(props).wrapper;
   }
 
-  public internalApplyInitialPropUpdates(instance: TInstance, props: TProps): void {
+  public applyInitialPropUpdates(instance: TInstance, props: TProps): void {
     if (!this.delayPropUpdatesUntilMount) {
-      super.internalApplyInitialPropUpdates(instance, props);
+      super.applyInitialPropUpdates(instance, props);
     }
   }
 
-  public addedToParent(instance: TInstance, parentInstance: any): void {
+  public willBeAddedToParent(instance: TInstance, parentInstance: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 
-    if (wrapperDetails.addedToParent(instance, parentInstance) && this.delayPropUpdatesUntilMount) {
-      super.internalApplyInitialPropUpdates(instance, wrapperDetails.props);
+    if (wrapperDetails.willBeAddedToParent(instance, parentInstance) && this.delayPropUpdatesUntilMount) {
+      super.applyInitialPropUpdates(instance, wrapperDetails.props);
     }
   }
 
-  public addedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void {
+  public willBeAddedToParentBefore(instance: TInstance, parentInstance: TParent, before: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 
-    wrapperDetails.addedToParentBefore(instance, parentInstance, before);
+    wrapperDetails.willBeAddedToParentBefore(instance, parentInstance, before);
 
     if (this.delayPropUpdatesUntilMount) {
-      super.internalApplyInitialPropUpdates(instance, wrapperDetails.props);
+      super.applyInitialPropUpdates(instance, wrapperDetails.props);
     }
   }
 
-  public willBeRemovedFromParentInternal(instance: TInstance, parent: TParent): void {
-    // super.willBeRemovedFromParentInternal(instance, parent);
+  public willBeRemovedFromParent(instance: TInstance, parent: TParent): void {
+    // super.willBeRemovedFromParent(instance, parent);
     const wrapperDetails = this.wrapperType.get(instance);
 
     wrapperDetails.willBeRemovedFromParent(instance, parent);
@@ -259,6 +261,6 @@ export class WrappedEntityDescriptor<TProps = any,
   private remount(instance: TInstance, newProps: TProps) {
     this.wrapperType.get(instance).remount(newProps);
 
-    super.internalApplyInitialPropUpdates(instance, newProps);
+    super.applyInitialPropUpdates(instance, newProps);
   }
 }

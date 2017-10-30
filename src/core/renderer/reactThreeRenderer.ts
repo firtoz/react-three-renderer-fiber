@@ -1,14 +1,18 @@
-import {default as r3rFiberSymbol} from "./utils/r3rFiberSymbol";
 import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import {IFiber} from "react-fiber-export";
 import {Scene} from "three";
 import {SceneElementProps} from "../hostDescriptors/descriptors/objects/scene";
 import {RenderAction} from "../hostDescriptors/descriptors/render";
-import ReactThreeFiberRenderer from "./fiberRenderer";
-import {IHostContext} from "./fiberRenderer/createInstance";
+import ReactThreeFiberRenderer from "./reconciler";
+import r3rReconcilerConfig from "./reconciler/r3rReconcilerConfig";
 import "./utils/DevtoolsHelpers";
-import r3rContextSymbol from "./utils/r3rContextSymbol";
+
+export interface IHostContext {
+  triggerRender(): void;
+
+  renderActionFound?(action: RenderAction): void;
+}
 
 function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> | null,
                                     children: any,
@@ -28,7 +32,7 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
 
     const renderActionsForContainer: RenderAction[] = [];
 
-    if (container[r3rContextSymbol] === undefined) {
+    if (container[r3rReconcilerConfig.getContextSymbol()] === undefined) {
       // noinspection UnnecessaryLocalVariableJS
       const rootContext: IHostContext = {
         triggerRender() {
@@ -44,7 +48,7 @@ function renderSubtreeIntoContainer(parentComponent: React.Component<any, any> |
         },
       };
 
-      container[r3rContextSymbol] = rootContext;
+      container[r3rReconcilerConfig.getContextSymbol()] = rootContext;
     }
 
     root = newRoot;
@@ -143,7 +147,7 @@ class ReactThreeRenderer {
       return null;
     }
 
-    if (componentOrElement[r3rFiberSymbol] !== undefined) {
+    if (componentOrElement[r3rReconcilerConfig.getFiberSymbol()] !== undefined) {
       // must be a host instance already then
       return componentOrElement;
     }

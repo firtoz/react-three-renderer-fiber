@@ -1,8 +1,8 @@
 import {IFiber, IHookConfig, ReactFiberDevToolsHook} from "react-fiber-export";
 
 import {ReactDevtools} from "../../dependencies-shim";
+import r3rReconcilerConfig from "../reconciler/r3rReconcilerConfig";
 import isNonProduction from "./isNonProduction";
-import r3rFiberSymbol from "./r3rFiberSymbol";
 
 const {injectInternals} = ReactFiberDevToolsHook;
 
@@ -82,12 +82,13 @@ if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
         // debugger;
         console.log("getClosestInstanceFromNode", hostInstance);
 
-        return hostInstance[r3rFiberSymbol];
+        return hostInstance[r3rReconcilerConfig.getFiberSymbol()];
       },
       findHostInstanceByFiber(/* fiber: ReactFiber.IFiber */): INativeType {
         return highlightElement;
       },
       bundleType: BundleType.DEV,
+      // yep, react-dom-style
       rendererPackageName: "react-dom",
       version: R3RVersion,
     };

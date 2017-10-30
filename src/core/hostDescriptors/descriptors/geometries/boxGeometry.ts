@@ -20,6 +20,7 @@ declare global {
   }
 }
 
+// TODO no need to create wrapperdetails class, put all info into the descriptor?
 export class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeometry> {
   private container: Mesh | null;
 
@@ -36,7 +37,7 @@ export class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeo
       props.depthSegments));
   }
 
-  public addedToParent(instance: BoxGeometry, container: Mesh): boolean {
+  public willBeAddedToParent(instance: BoxGeometry, container: Mesh): boolean {
     if (this.container === container) {
       return false;
     }
@@ -44,10 +45,6 @@ export class BoxGeometryWrapper extends WrapperDetails<IBoxGeometryProps, BoxGeo
     this.container = container;
 
     return true;
-  }
-
-  public addedToParentBefore(instance: BoxGeometry, container: Mesh, before: any): boolean {
-    return this.addedToParent(instance, container);
   }
 
   public willBeRemovedFromParent(instance: BoxGeometry, container: Mesh): void {
@@ -96,17 +93,13 @@ class BoxGeometryDescriptor extends WrappedEntityDescriptor<IBoxGeometryProps,
       "heightSegments");
   }
 
-  public insertInContainerBefore(instance: BoxGeometry, container: Mesh, before: any): void {
+  public willBeAddedToParent(instance: BoxGeometry, container: Mesh): void {
     container.geometry = instance;
   }
 
-  public appendToContainer(instance: BoxGeometry, container: Mesh): void {
-    container.geometry = instance;
-  }
-
-  public willBeRemovedFromContainer(instance: BoxGeometry, container: Mesh): void {
-    if (container.geometry === instance) {
-      (container as any).geometry = new BufferGeometry();
+  public willBeRemovedFromParent(instance: BoxGeometry, parent: Mesh): void {
+    if (parent.geometry === instance) {
+      (parent as any).geometry = new BufferGeometry();
     }
   }
 }

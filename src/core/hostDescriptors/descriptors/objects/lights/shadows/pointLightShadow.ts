@@ -49,7 +49,7 @@ class PointLightShadowDescriptor extends ReactThreeRendererDescriptor<IPointLigh
     return new PointLightShadow(props.camera);
   }
 
-  protected addedToParent(instance: PointLightShadow, container: PointLight): void {
+  public willBeAddedToParent(instance: PointLightShadow, container: PointLight): void {
     container.shadow = instance;
   }
 }
