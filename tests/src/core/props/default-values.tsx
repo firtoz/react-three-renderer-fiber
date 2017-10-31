@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import * as React from "react";
 import * as Sinon from "sinon";
-import ReactThreeRendererDescriptor from "../../../../src/core/hostDescriptors/common/ReactThreeRendererDescriptor";
+import ReactThreeRendererDescriptor from "../../../../src/core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
 import r3rReconcilerConfig from "../../../../src/core/renderer/reconciler/r3rReconcilerConfig";
 import {mockConsole, testContainers} from "../../index";

@@ -2,8 +2,8 @@ import r3rRootContainerSymbol from "./utils/r3rRootContainerSymbol";
 
 import {IFiber} from "react-fiber-export";
 import {Scene} from "three";
-import {SceneElementProps} from "../hostDescriptors/descriptors/objects/scene";
-import {RenderAction} from "../hostDescriptors/descriptors/render";
+import {SceneElementProps} from "./hostDescriptors/descriptors/objects/scene";
+import {RenderAction} from "./hostDescriptors/descriptors/render";
 import ReactThreeFiberRenderer from "./reconciler";
 import r3rReconcilerConfig from "./reconciler/r3rReconcilerConfig";
 

@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import {PointLight, PointLightShadow} from "three";
-import isNonProduction from "../../../../renderer/utils/isNonProduction";
 import {IThreeElementPropsBase} from "../../../common/IReactThreeRendererElement";
 import {default as LightDescriptorBase, ILightProps} from "../../../common/lightBase";
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../../common/RefWrapper";
 import {IPointLightShadowProps} from "./shadows/pointLightShadow";
+import isNonProduction from "../../../../../customRenderer/utils/isNonProduction";
 
 export interface IPointLightProps extends ILightProps {
   distance?: number;

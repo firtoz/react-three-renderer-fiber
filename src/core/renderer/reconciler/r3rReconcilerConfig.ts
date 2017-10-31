@@ -1,12 +1,12 @@
 import {IFiber} from "react-fiber-export";
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
-import ReactThreeRendererDescriptor from "../../hostDescriptors/common/ReactThreeRendererDescriptor";
+import {hookDevtools} from "../../customRenderer/utils/DevtoolsHelpers";
+import ReactThreeRendererDescriptor from "../hostDescriptors/common/ReactThreeRendererDescriptor";
 import {IHostContext} from "../reactThreeRenderer";
-import {hookDevtools} from "../utils/DevtoolsHelpers";
 
 declare function require(filename: string): any;
 
-const descriptorsRequireContext = (require as any).context("../../hostDescriptors/descriptors/", true, /\.ts$/);
+const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.ts$/);
 
 export class ReactThreeReconcilerConfig extends CustomReconcilerConfig<ReactThreeRendererDescriptor> {
   constructor() {

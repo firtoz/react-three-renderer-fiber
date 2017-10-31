@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Camera, Group, Scene, WebGLRenderer, WebGLRendererParameters} from "three";
-import ReactThreeRenderer, {IHostContext} from "../../renderer/reactThreeRenderer";
-import r3rReconcilerConfig from "../../renderer/reconciler/r3rReconcilerConfig";
+import {default as ReactThreeRenderer, IHostContext} from "../../reactThreeRenderer";
+import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import {CameraElementProps} from "../common/cameraBase";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";

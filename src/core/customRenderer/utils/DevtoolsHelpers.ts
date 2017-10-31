@@ -1,9 +1,8 @@
 import {IFiber, IHookConfig, IReactFiberRendererConfig, IRenderer, ReactFiberDevToolsHook} from "react-fiber-export";
 
 import {ReactDevtools} from "../../dependencies-shim";
-import r3rReconcilerConfig from "../reconciler/r3rReconcilerConfig";
+import {CustomReconcilerConfig} from "../createReconciler";
 import isNonProduction from "./isNonProduction";
-import {CustomReconcilerConfig} from "../../customRenderer/createReconciler";
 
 const {injectInternals} = ReactFiberDevToolsHook;
 
@@ -16,7 +15,7 @@ declare const process: {
 
 declare function require(filename: string): any;
 
-export function hookDevtools(reconcilerConfig: IReactFiberRendererConfig) {
+export function hookDevtools(reconcilerConfig: CustomReconcilerConfig<any>) {
   if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
     ((isNonProduction) || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
     // Inject the runtime into a devtools global hook regardless of browser.
@@ -87,7 +86,7 @@ export function hookDevtools(reconcilerConfig: IReactFiberRendererConfig) {
           // debugger;
           console.log("getClosestInstanceFromNode", hostInstance);
 
-          return hostInstance[r3rReconcilerConfig.getFiberSymbol()];
+          return hostInstance[reconcilerConfig.getFiberSymbol()];
         },
         findHostInstanceByFiber(/* fiber: ReactFiber.IFiber */): INativeType {
           return highlightElement;

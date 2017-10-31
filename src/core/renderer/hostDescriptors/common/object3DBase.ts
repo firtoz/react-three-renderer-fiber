@@ -1,7 +1,7 @@
 import * as PropTypes from "prop-types";
 import {Euler, Object3D, Quaternion, Vector3} from "three";
-import r3rReconcilerConfig from "../../renderer/reconciler/r3rReconcilerConfig";
-import isNonProduction from "../../renderer/utils/isNonProduction";
+import isNonProduction from "../../../customRenderer/utils/isNonProduction";
+import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import {IPropsWithChildren} from "./IPropsWithChildren";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 

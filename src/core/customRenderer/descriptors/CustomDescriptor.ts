@@ -1,11 +1,13 @@
 import {Validator} from "prop-types";
-import {TUpdatePayload} from "../../customRenderer/createReconciler";
-import {INativeElement, IPropTypeMap} from "../../customRenderer/customRenderer";
-import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
-import isNonProduction from "../../renderer/utils/isNonProduction";
-import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
-import {PropertyUpdater} from "./properties/PropertyUpdater";
-import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
+import PropertyGroupDescriptor from "../../renderer/hostDescriptors/common/properties/PropertyGroupDescriptor";
+import {PropertyUpdater} from "../../renderer/hostDescriptors/common/properties/PropertyUpdater";
+// tslint:disable-next-line
+import ReactThreeRendererPropertyDescriptor from "../../renderer/hostDescriptors/common/properties/ReactThreeRendererPropertyDescriptor";
+import {TUpdatePayload} from "../createReconciler";
+import {INativeElement, IPropTypeMap} from "../customRenderer";
+import isNonProduction from "../utils/isNonProduction";
+
+// TODO remove more "three" references
 
 export interface IPropertyUpdaterMap<TProps, TInstance> {
   [key: string]: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined;
@@ -14,8 +16,6 @@ export interface IPropertyUpdaterMap<TProps, TInstance> {
 export interface IPropertyGroupMap<TProps, TInstance> {
   [key: string]: PropertyGroupDescriptor<TProps, TInstance, any>;
 }
-
-const emptyObject: any = {};
 
 function final(instanceParameterIndex: number = 0): any {
   return (target: any,
@@ -26,10 +26,9 @@ function final(instanceParameterIndex: number = 0): any {
   };
 }
 
-/**
- * A base type for all ReactThreeRenderer element descriptors.
- */
-export default abstract class ReactThreeRendererDescriptor< //
+const emptyObject: any = {};
+
+export abstract class CustomDescriptor< //
   /**
    * @typedef {any} ReactThreeRendererDescriptor.TProps
    * @type ReactThreeRendererDescriptor.TProps
@@ -53,26 +52,26 @@ export default abstract class ReactThreeRendererDescriptor< //
    * @type ReactThreeRendererDescriptor.TParent
    * The types of objects the host instance will accept as children.
    */
-  TChild = any>
+  TChild = any,
+  TPropertyDescriptor = any,
+  TRoot = any,
+  TRenderer = any>
   implements INativeElement<TProps,
     TInstance,
     TParent,
     TChild,
-    HTMLCanvasElement,
-    ReactThreeRenderer> {
+    TRoot,
+    TRenderer> {
+
   public propTypes: IPropTypeMap;
 
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
   protected propertyGroups: IPropertyGroupMap<TProps, TInstance>;
 
-  constructor(public wantsRepaint: boolean = true) {
+  constructor() {
     this.propertyDescriptors = {};
     this.propertyGroups = {};
     this.propTypes = {};
-
-    // TODO define all mounting/unmounting properties as nonconfigurable
-    // TODO and they should trigger render if necessary
-    // TODO and also test
   }
 
   /**
@@ -86,7 +85,7 @@ export default abstract class ReactThreeRendererDescriptor< //
   public commitUpdate(instance: TInstance,
                       updatePayload: TUpdatePayload,
                       oldProps: TProps,
-                      newProps: TProps): boolean {
+                      newProps: TProps): void {
     const groupedUpdates: {
       [groupName: string]: {
         [propertyName: string]: any;
@@ -95,14 +94,10 @@ export default abstract class ReactThreeRendererDescriptor< //
 
     const groupNamesToUpdate: string[] = [];
 
-    let wantsRepaint = false;
-
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
       const key: string = updatePayload[keyIndex];
       const value: any = updatePayload[keyIndex + 1];
-      if (this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false)) {
-        wantsRepaint = true;
-      }
+      this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false);
     }
 
     for (const groupName of groupNamesToUpdate) {
@@ -110,12 +105,7 @@ export default abstract class ReactThreeRendererDescriptor< //
 
       const propertyGroup = this.propertyGroups[groupName];
       propertyGroup.updateFunction(instance, newData, oldProps, newProps);
-      if (propertyGroup.wantsRepaint) {
-        wantsRepaint = true;
-      }
     }
-
-    return this.wantsRepaint && wantsRepaint;
   }
 
   /**
@@ -256,8 +246,6 @@ export default abstract class ReactThreeRendererDescriptor< //
    * Handle updating of the property here.
    * @param {boolean} updateInitial
    * Does this property need to be updated right after createInstance?
-   * @param {boolean} wantsRepaint
-   * Should the modification of this property trigger a re-render?
    */
   public hasProp< //
     /**
@@ -265,16 +253,16 @@ export default abstract class ReactThreeRendererDescriptor< //
      */
     TProp>(propName: string,
            updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
-           updateInitial: boolean = true,
-           wantsRepaint: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
+           updateInitial: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
     if (this.propertyDescriptors[propName] !== undefined) {
       throw new Error(`Property type for ${this.constructor.name}#${propName} is already defined.`);
     }
+
     const propertyDescriptor = new ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp>(
       null,
       updateFunction,
       updateInitial,
-      wantsRepaint,
+      false, // TODO remove wantsRepaint
       (validator: Validator<TProp>) => {
         this.propTypes[propName] = validator;
       },
@@ -293,20 +281,17 @@ export default abstract class ReactThreeRendererDescriptor< //
    * Similar to `hasProp`s updateFunction, but it will expect a key-value pair of `propertyName` to `newValue`
    * @param {boolean} updateInitial
    * Handle updating of the property here.
-   * @param {boolean} wantsRepaint
-   * Does this property need to be updated right after createInstance?
    */
   public hasPropGroup<TPropMap>(propNames: string[],
                                 updateFunction: PropertyUpdater<TProps, TInstance, TPropMap>,
-                                updateInitial: boolean = true,
-                                wantsRepaint: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TPropMap> {
+                                updateInitial: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TPropMap> {
     const groupName = propNames.join(",");
 
     this.propertyGroups[groupName] = new PropertyGroupDescriptor(
       propNames,
       updateFunction,
       updateInitial,
-      wantsRepaint,
+      false,
       (validatorMap: IPropTypeMap) => {
         const missingKeys = propNames.concat().reduce((map, name) => {
           map[name] = true;
@@ -378,25 +363,22 @@ export default abstract class ReactThreeRendererDescriptor< //
    * The name of the property
    * @param {boolean} updateInitial
    * Does this property need to be updated right after createInstance?
-   * @param {boolean} wantsRepaint
-   * Should the modification of this property trigger a re-render?
    */
   protected hasSimpleProp(propName: string,
-                          updateInitial: boolean = true,
-                          wantsRepaint: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> {
+                          updateInitial: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> {
     return this.hasProp(propName, (instance: any, newValue: any): void => {
       (instance as any)[propName] = newValue;
-    }, updateInitial, wantsRepaint);
+    }, updateInitial);
   }
 
-  private updateProperty(propName: string,
-                         groupedUpdates: { [p: string]: { [p: string]: any } },
-                         groupNamesToUpdate: null | (string[]),
-                         value: any,
-                         instance: TInstance,
-                         oldProps: TProps,
-                         newProps: TProps,
-                         isInitialUpdate: boolean): boolean {
+  protected updateProperty(propName: string,
+                           groupedUpdates: { [p: string]: { [p: string]: any } },
+                           groupNamesToUpdate: null | (string[]),
+                           value: any,
+                           instance: TInstance,
+                           oldProps: TProps,
+                           newProps: TProps,
+                           isInitialUpdate: boolean): void {
     const propertyDescriptor: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined
       = this.propertyDescriptors[propName];
     if (propertyDescriptor === undefined) {
@@ -407,7 +389,7 @@ export default abstract class ReactThreeRendererDescriptor< //
 
     if (groupNamesToUpdate !== null && groupName !== null) {
       if (isInitialUpdate && !this.propertyGroups[groupName].updateInitial) {
-        return false;
+        return;
       }
 
       if (groupedUpdates[groupName] === undefined) {
@@ -416,11 +398,9 @@ export default abstract class ReactThreeRendererDescriptor< //
       }
 
       groupedUpdates[groupName][propName] = value;
-
-      return false;
     } else {
       if (isInitialUpdate && propertyDescriptor.updateInitial !== true) {
-        return false;
+        return;
       }
 
       const updateFunction = propertyDescriptor.updateFunction;
@@ -433,8 +413,6 @@ export default abstract class ReactThreeRendererDescriptor< //
       }
 
       updateFunction(instance, value, oldProps, newProps);
-
-      return propertyDescriptor.wantsRepaint;
     }
   }
 }

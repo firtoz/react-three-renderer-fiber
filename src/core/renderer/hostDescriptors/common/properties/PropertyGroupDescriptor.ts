@@ -1,5 +1,5 @@
-import {IPropTypeMap} from "../../../customRenderer/customRenderer";
-import isNonProduction from "../../../renderer/utils/isNonProduction";
+import {IPropTypeMap} from "../../../../customRenderer/customRenderer";
+import isNonProduction from "../../../../customRenderer/utils/isNonProduction";
 import {PropertyUpdater} from "./PropertyUpdater";
 
 export default class PropertyGroupDescriptor<TProps, TInstance, TProp> {

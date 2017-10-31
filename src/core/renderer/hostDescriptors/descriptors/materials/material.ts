@@ -2,7 +2,7 @@ import {
   Material, MaterialParameters,
   Mesh, MeshBasicMaterial,
 } from "three";
-import {TUpdatePayload} from "../../../customRenderer/createReconciler";
+import {TUpdatePayload} from "../../../../customRenderer/createReconciler";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 

@@ -1,4 +1,4 @@
-import r3rReconcilerConfig from "../../renderer/reconciler/r3rReconcilerConfig";
+import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";

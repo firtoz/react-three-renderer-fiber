@@ -8,7 +8,7 @@ import {
 } from "react-fiber-export";
 
 import * as PropTypes from "prop-types";
-import isNonProduction from "../renderer/utils/isNonProduction";
+import isNonProduction from "./utils/isNonProduction";
 import {INativeElement} from "./customRenderer";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
 

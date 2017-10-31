@@ -7,7 +7,7 @@ import {
   WebGLRendererParameters,
 } from "three";
 import * as THREE from "three";
-import ReactThreeRenderer from "../../renderer/reactThreeRenderer";
+import ReactThreeRenderer from "../../reactThreeRenderer";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import {getWrappedAttributes, WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
 
