@@ -6,7 +6,6 @@ import {SceneElementProps} from "../hostDescriptors/descriptors/objects/scene";
 import {RenderAction} from "../hostDescriptors/descriptors/render";
 import ReactThreeFiberRenderer from "./reconciler";
 import r3rReconcilerConfig from "./reconciler/r3rReconcilerConfig";
-import "./utils/DevtoolsHelpers";
 
 export interface IHostContext {
   triggerRender(): void;

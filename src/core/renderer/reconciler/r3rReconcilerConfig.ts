@@ -2,6 +2,7 @@ import {IFiber} from "react-fiber-export";
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
 import ReactThreeRendererDescriptor from "../../hostDescriptors/common/ReactThreeRendererDescriptor";
 import {IHostContext} from "../reactThreeRenderer";
+import {hookDevtools} from "../utils/DevtoolsHelpers";
 
 declare function require(filename: string): any;
 
@@ -152,5 +153,7 @@ export class ReactThreeReconcilerConfig extends CustomReconcilerConfig<ReactThre
 }
 
 const r3rReconcilerConfig: ReactThreeReconcilerConfig = new ReactThreeReconcilerConfig();
+
+hookDevtools(r3rReconcilerConfig);
 
 export default r3rReconcilerConfig;

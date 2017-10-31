@@ -1,8 +1,9 @@
-import {IFiber, IHookConfig, ReactFiberDevToolsHook} from "react-fiber-export";
+import {IFiber, IHookConfig, IReactFiberRendererConfig, IRenderer, ReactFiberDevToolsHook} from "react-fiber-export";
 
 import {ReactDevtools} from "../../dependencies-shim";
 import r3rReconcilerConfig from "../reconciler/r3rReconcilerConfig";
 import isNonProduction from "./isNonProduction";
+import {CustomReconcilerConfig} from "../../customRenderer/createReconciler";
 
 const {injectInternals} = ReactFiberDevToolsHook;
 
@@ -15,121 +16,128 @@ declare const process: {
 
 declare function require(filename: string): any;
 
-if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
-  ((isNonProduction) || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
-  // Inject the runtime into a devtools global hook regardless of browser.
-  // Allows for debugging when the hook is injected on the page.
-  if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined") {
-    // tslint:disable-next-line:no-var-requires
-    const R3RVersion = require("../../../../package.json").version;
+export function hookDevtools(reconcilerConfig: IReactFiberRendererConfig) {
+  if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
+    ((isNonProduction) || process.env.ENABLE_REACT_ADDON_HOOKS === "true")) {
+    // Inject the runtime into a devtools global hook regardless of browser.
+    // Allows for debugging when the hook is injected on the page.
+    if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined") {
+      // tslint:disable-next-line:no-var-requires
+      const R3RVersion = require("../../../../package.json").version;
 
-    enum BundleType {
-      PROD = 0,
-      DEV = 1,
-    }
-
-    let devtoolsAgent: ReactDevtools.IAgent;
-    let highlightCache: any;
-
-    const highlightElement = document.createElement("div");
-    highlightElement.appendChild(
-      document.createComment("This element is here to be used by React Devtools" +
-        " in order to highlight ReactThreeRenderer components." +
-        " It is harmless, but if you'd like to get rid of it, use a production environment."));
-    highlightElement.setAttribute("style", "position: absolute;width: 0;height: 0; top: 0; left: 0;");
-    document.body.appendChild(highlightElement);
-
-    const onHideHighlightFromInspector = () => {
-      if (highlightCache) {
-        console.log("hiding highlight");
-
-        highlightCache = null;
+      enum BundleType {
+        PROD = 0,
+        DEV = 1,
       }
-    };
 
-    const onHighlightFromInspector = (highlightInfo: any) => {
-      if (highlightInfo.node === highlightElement) {
-        if (highlightCache !== highlightInfo) {
-          highlightCache = highlightInfo;
-          console.log("highlighting: ", highlightInfo);
-        } else {
-          console.log("was already highlighting: ", highlightInfo);
+      let devtoolsAgent: ReactDevtools.IAgent;
+      let highlightCache: any;
+
+      const highlightElement = document.createElement("div");
+      highlightElement.appendChild(
+        document.createComment("This element is here to be used by React Devtools" +
+          " in order to highlight " + reconcilerConfig.constructor.name + " components." +
+          " It is harmless, but if you'd like to get rid of it, use a production environment."));
+      highlightElement.setAttribute("style", "position: absolute;width: 0;height: 0; top: 0; left: 0;");
+      document.body.appendChild(highlightElement);
+
+      const onHideHighlightFromInspector = () => {
+        if (highlightCache) {
+          console.log("hiding highlight");
+
+          highlightCache = null;
         }
+      };
+
+      const onHighlightFromInspector = (highlightInfo: any) => {
+        if (highlightInfo.node === highlightElement) {
+          if (highlightCache !== highlightInfo) {
+            highlightCache = highlightInfo;
+            console.log("highlighting: ", highlightInfo);
+          } else {
+            console.log("was already highlighting: ", highlightInfo);
+          }
+        }
+      };
+
+      let reactDevtoolsRendererId: number;
+      let rendererListenerCleanup: (() => void) | null;
+      // let reconciler: CustomReconcilerConfig<any> | null = null;
+
+      const rendererListener = (info: ReactDevtools.IRendererInfo) => {
+        if (reconcilerConfig === (info.renderer as any).reconciler) {
+          reactDevtoolsRendererId = info.id;
+
+          if (rendererListenerCleanup != null) {
+            rendererListenerCleanup();
+
+            rendererListenerCleanup = null;
+          }
+        }
+      };
+
+      rendererListenerCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__.sub("renderer", rendererListener);
+
+      type INativeType = any;
+
+      // import interface Fiber from 'R'
+
+      const hookConfig: IHookConfig & { reconciler: IReactFiberRendererConfig } = {
+        findFiberByHostInstance(hostInstance: any): IFiber {
+          // debugger;
+          console.log("getClosestInstanceFromNode", hostInstance);
+
+          return hostInstance[r3rReconcilerConfig.getFiberSymbol()];
+        },
+        findHostInstanceByFiber(/* fiber: ReactFiber.IFiber */): INativeType {
+          return highlightElement;
+        },
+        bundleType: BundleType.DEV,
+        // yep, react-dom-style
+        reconciler: reconcilerConfig,
+        rendererPackageName: "react-dom",
+        version: R3RVersion,
+      };
+
+      if (!isNonProduction) {
+        hookConfig.bundleType = BundleType.PROD;
       }
-    };
 
-    let reactDevtoolsRendererId: number;
-    let rendererListenerCleanup: (() => void) | null;
+      injectInternals(hookConfig);
 
-    const rendererListener = (info: ReactDevtools.IRendererInfo) => {
-      reactDevtoolsRendererId = info.id;
+      const hookAgent = (agent: ReactDevtools.IAgent) => {
+        devtoolsAgent = agent;
 
-      if (rendererListenerCleanup != null) {
-        rendererListenerCleanup();
+        console.log("agent hooked!");
+
+        // agent.on('startInspecting', (...args) => {
+        //   console.log('start inspecting?', args);
+        // });
+        // agent.on('setSelection', (...args) => {
+        //   console.log('set selection?', args);
+        // });
+        // agent.on('selected', (...args) => {
+        //   console.log('selected?', args);
+        // });
+        agent
+          .on("highlight", onHighlightFromInspector)
+          .on("hideHighlight", onHideHighlightFromInspector);
+        // agent.on('highlightMany', (...args) => {
+        //   console.log('highlightMany?', args);
+        // });
+      };
+
+      if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent !== "undefined") {
+        hookAgent(__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent);
+      } else {
+        const devtoolsCallbackCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__
+          .sub("react-devtools", (agent: ReactDevtools.IAgent) => {
+            devtoolsCallbackCleanup();
+
+            hookAgent(agent);
+          });
       }
-
-      rendererListenerCleanup = null;
-    };
-
-    rendererListenerCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__.sub("renderer", rendererListener);
-
-    type INativeType = any;
-
-    // import interface Fiber from 'R'
-
-    const hookConfig: IHookConfig = {
-      findFiberByHostInstance(hostInstance: any): IFiber {
-        // debugger;
-        console.log("getClosestInstanceFromNode", hostInstance);
-
-        return hostInstance[r3rReconcilerConfig.getFiberSymbol()];
-      },
-      findHostInstanceByFiber(/* fiber: ReactFiber.IFiber */): INativeType {
-        return highlightElement;
-      },
-      bundleType: BundleType.DEV,
-      // yep, react-dom-style
-      rendererPackageName: "react-dom",
-      version: R3RVersion,
-    };
-
-    if (!isNonProduction) {
-      hookConfig.bundleType = BundleType.PROD;
-    }
-
-    injectInternals(hookConfig);
-
-    const hookAgent = (agent: ReactDevtools.IAgent) => {
-      devtoolsAgent = agent;
-
-      console.log("agent hooked!");
-
-      // agent.on('startInspecting', (...args) => {
-      //   console.log('start inspecting?', args);
-      // });
-      // agent.on('setSelection', (...args) => {
-      //   console.log('set selection?', args);
-      // });
-      // agent.on('selected', (...args) => {
-      //   console.log('selected?', args);
-      // });
-      agent
-        .on("highlight", onHighlightFromInspector)
-        .on("hideHighlight", onHideHighlightFromInspector);
-      // agent.on('highlightMany', (...args) => {
-      //   console.log('highlightMany?', args);
-      // });
-    };
-
-    if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent !== "undefined") {
-      hookAgent(__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent);
-    } else {
-      const devtoolsCallbackCleanup = __REACT_DEVTOOLS_GLOBAL_HOOK__
-        .sub("react-devtools", (agent: ReactDevtools.IAgent) => {
-          devtoolsCallbackCleanup();
-
-          hookAgent(agent);
-        });
     }
   }
+
 }
