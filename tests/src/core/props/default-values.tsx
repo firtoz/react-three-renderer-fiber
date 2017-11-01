@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import * as React from "react";
 import * as Sinon from "sinon";
+// tslint:disable-next-line
 import ReactThreeRendererDescriptor from "../../../../src/core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
 import r3rReconcilerConfig from "../../../../src/core/renderer/reconciler/r3rReconcilerConfig";
@@ -129,7 +130,7 @@ describe("with default values", () => {
       }
     }
 
-    mockConsole.expectWarnDev("PropertyGroupDescriptor is" +
+    mockConsole.expectWarnDev("TestDescriptorWithBadDefaults is" +
       " declaring a property group with properties [" +
       "\"groupedOne\", \"groupedTwo\"" +
       "] with default values, but is missing" +

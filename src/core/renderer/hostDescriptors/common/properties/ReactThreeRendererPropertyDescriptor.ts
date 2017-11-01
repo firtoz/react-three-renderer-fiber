@@ -1,29 +1,21 @@
 import {Validator} from "prop-types";
-import {PropertyUpdater} from "./PropertyUpdater";
+import CustomPropertyDescriptor from "../../../../customRenderer/descriptors/properties/CustomPropertyDescriptor";
+import {PropertyUpdater} from "../../../../customRenderer/descriptors/properties/PropertyUpdater";
 
-export default class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
+export default class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp>
+  extends CustomPropertyDescriptor<TProps, TInstance, TProp> {
   public defaultValue?: TProp = undefined;
+  public wantsRepaint: boolean = false;
 
-  constructor(public groupName: string | null,
-              public updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
-              public updateInitial: boolean,
-              public wantsRepaint: boolean,
-              private validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
-
+  constructor(groupName: string | null,
+              updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
+              updateInitial: boolean,
+              validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
+    super(groupName, updateFunction, updateInitial, validatorAcceptor);
   }
 
-  public withDefault(defaultValue: TProp): this {
-    this.defaultValue = defaultValue;
-
-    return this;
-  }
-
-  public withType(validator: Validator<TProp>): this {
-    if (this.validatorAcceptor === null) {
-      throw new Error("This property cannot have type validation");
-    }
-
-    this.validatorAcceptor(validator);
+  public withWantsRepaint(value: boolean): this {
+    this.wantsRepaint = value;
 
     return this;
   }

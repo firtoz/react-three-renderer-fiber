@@ -1,10 +1,8 @@
-import {Validator} from "prop-types";
 import {TUpdatePayload} from "../../../customRenderer/createReconciler";
-import {IPropTypeMap} from "../../../customRenderer/customRenderer";
 import {CustomDescriptor} from "../../../customRenderer/descriptors/CustomDescriptor";
+import {PropertyUpdater} from "../../../customRenderer/descriptors/properties/PropertyUpdater";
 import ReactThreeRenderer from "../../reactThreeRenderer";
-import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
-import {PropertyUpdater} from "./properties/PropertyUpdater";
+import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 
 const emptyObject: any = {};
@@ -50,10 +48,12 @@ export default abstract class ReactThreeRendererDescriptor< //
     TInstance,
     TParent,
     TChild,
+    ReactThreeRendererPropertyDescriptor<TProps, TInstance, any>,
+    PropertyGroupDescriptor<TProps, TInstance, any>,
     HTMLCanvasElement,
     ReactThreeRenderer> {
   constructor(public wantsRepaint: boolean = true) {
-    super();
+    super(ReactThreeRendererPropertyDescriptor, PropertyGroupDescriptor);
 
     // TODO define all mounting/unmounting properties as nonconfigurable
     // TODO and they should trigger render if necessary
@@ -122,22 +122,8 @@ export default abstract class ReactThreeRendererDescriptor< //
            updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
            updateInitial: boolean = true,
            wantsRepaint: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
-    if (this.propertyDescriptors[propName] !== undefined) {
-      throw new Error(`Property type for ${this.constructor.name}#${propName} is already defined.`);
-    }
-    const propertyDescriptor = new ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp>(
-      null,
-      updateFunction,
-      updateInitial,
-      wantsRepaint,
-      (validator: Validator<TProp>) => {
-        this.propTypes[propName] = validator;
-      },
-    );
-
-    this.propertyDescriptors[propName] = propertyDescriptor;
-
-    return propertyDescriptor;
+    return super.hasProp(propName, updateFunction, updateInitial)
+      .withWantsRepaint(wantsRepaint);
   }
 
   /**
@@ -155,60 +141,8 @@ export default abstract class ReactThreeRendererDescriptor< //
                                 updateFunction: PropertyUpdater<TProps, TInstance, TPropMap>,
                                 updateInitial: boolean = true,
                                 wantsRepaint: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TPropMap> {
-    const groupName = propNames.join(",");
-
-    this.propertyGroups[groupName] = new PropertyGroupDescriptor(
-      propNames,
-      updateFunction,
-      updateInitial,
-      wantsRepaint,
-      (validatorMap: IPropTypeMap) => {
-        const missingKeys = propNames.concat().reduce((map, name) => {
-          map[name] = true;
-          return map;
-        }, {} as { [index: string]: boolean });
-
-        const errors: string[] = [];
-
-        Object.keys(validatorMap).forEach((propName: string) => {
-          if (missingKeys[propName] === true) {
-            missingKeys[propName] = false;
-          } else {
-            errors.push(
-              `Found property type for unknown property "${propName}"`);
-          }
-          this.propTypes[propName] = validatorMap[propName];
-        });
-
-        propNames.forEach((propName) => {
-          if (missingKeys[propName]) {
-            errors.push(`Missing type for property "${propName}"`);
-          }
-        });
-
-        if (errors.length > 0) {
-          throw new Error(`Property group for [${propNames
-            .map((name) => `"${name}"`)
-            .join(", ")}] has mismatching types:\n` + errors.join("\n"));
-        }
-      },
-    );
-
-    propNames.forEach((propName) => {
-      if (typeof this.propertyDescriptors[propName] !== "undefined") {
-        throw new Error(`Property type for ${propName} is already defined.`);
-      }
-
-      this.propertyDescriptors[propName] = new ReactThreeRendererPropertyDescriptor(
-        groupName,
-        null,
-        false,
-        false,
-        null,
-      );
-    });
-
-    return this.propertyGroups[groupName];
+    return super.hasPropGroup(propNames, updateFunction, updateInitial)
+      .withWantsRepaint(wantsRepaint);
   }
 
   /**
@@ -223,9 +157,8 @@ export default abstract class ReactThreeRendererDescriptor< //
   protected hasSimpleProp(propName: string,
                           updateInitial: boolean = true,
                           wantsRepaint: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> {
-    return this.hasProp(propName, (instance: any, newValue: any): void => {
-      (instance as any)[propName] = newValue;
-    }, updateInitial, wantsRepaint);
+    return super.hasSimpleProp(propName, updateInitial)
+      .withWantsRepaint(wantsRepaint);
   }
 
   protected updateProperty(propName: string,
@@ -248,7 +181,7 @@ export default abstract class ReactThreeRendererDescriptor< //
     const propertyDescriptor: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined
       = this.propertyDescriptors[propName];
     if (propertyDescriptor === undefined) {
-      throw new Error(`Cannot find property descriptor for ${this.constructor.name}#${propName}`);
+      throw new Error(`Cannot find property descriptor for ${(this as any).__proto__.constructor.name}#${propName}`);
     }
 
     return propertyDescriptor.wantsRepaint;

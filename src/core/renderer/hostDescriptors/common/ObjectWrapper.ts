@@ -1,5 +1,5 @@
 import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
-import PropertyGroupDescriptor from "./properties/PropertyGroupDescriptor";
+import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 
@@ -100,7 +100,7 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   public wrapper: any;
 
   constructor(public props: TProps) {
-    const staticType = (this.constructor as IWrapperType<TProps, TWrapped, any>);
+    const staticType = ((this as any).__proto__.constructor as IWrapperType<TProps, TWrapped, any>);
 
     staticType.set(new (staticType.getWrappedType())(), this);
   }
@@ -237,8 +237,7 @@ export class WrappedEntityDescriptor<TProps = any,
         [],
         this.remountTrigger,
         false,
-        true,
-        null);
+        null).withWantsRepaint(true);
     }
 
     for (const propName of propNames) {
@@ -252,9 +251,8 @@ export class WrappedEntityDescriptor<TProps = any,
         remountGroupName,
         null,
         false,
-        false,
         null,
-      );
+      ).withWantsRepaint(false);
     }
   }
 

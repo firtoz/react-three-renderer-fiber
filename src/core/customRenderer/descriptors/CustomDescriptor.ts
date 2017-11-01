@@ -1,59 +1,69 @@
 import {Validator} from "prop-types";
-import PropertyGroupDescriptor from "../../renderer/hostDescriptors/common/properties/PropertyGroupDescriptor";
-import {PropertyUpdater} from "../../renderer/hostDescriptors/common/properties/PropertyUpdater";
-// tslint:disable-next-line
-import ReactThreeRendererPropertyDescriptor from "../../renderer/hostDescriptors/common/properties/ReactThreeRendererPropertyDescriptor";
 import {TUpdatePayload} from "../createReconciler";
 import {INativeElement, IPropTypeMap} from "../customRenderer";
+import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
+import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
+import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
+import {PropertyUpdater} from "./properties/PropertyUpdater";
 
-// TODO remove more "three" references
-
-export interface IPropertyUpdaterMap<TProps, TInstance> {
-  [key: string]: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined;
+export interface IPropertyUpdaterMap<TProps,
+  TInstance,
+  TDescriptor extends CustomPropertyDescriptor<TProps, TInstance, any>> {
+  [key: string]: TDescriptor | undefined;
 }
 
-export interface IPropertyGroupMap<TProps, TInstance> {
-  [key: string]: PropertyGroupDescriptor<TProps, TInstance, any>;
-}
-
-function final(instanceParameterIndex: number = 0): any {
-  return (target: any,
-          propertyKey: string,
-          descriptor: PropertyDescriptor): void => {
-    descriptor.writable = false;
-    descriptor.configurable = false;
-  };
+export interface IPropertyGroupMap<TProps,
+  TInstance,
+  TGroupDescriptor extends CustomPropertyGroupDescriptor<TProps, TInstance, any>> {
+  [key: string]: TGroupDescriptor;
 }
 
 const emptyObject: any = {};
 
+export type TPropertyDescriptorConstructor<TProps,
+  TInstance,
+  TPropertyDescriptor extends CustomPropertyDescriptor<TProps, TInstance, any>>
+  = new(groupName: string | null,
+        updateFunction: PropertyUpdater<TProps, TInstance, any> | null,
+        updateInitial: boolean,
+        validatorAcceptor: ((validator: Validator<any>) => void) | null) => TPropertyDescriptor;
+
+export type TPropertyGroupDescriptorConstructor<TProps,
+  TInstance,
+  TPropertyGroupDescriptor extends CustomPropertyGroupDescriptor<TProps, TInstance, any>>
+  = new(properties: string[],
+        updateFunction: PropertyUpdater<TProps, TInstance, any>,
+        updateInitial: boolean,
+        validatorAcceptor: ((validator: IPropTypeMap) => void) | null) => TPropertyGroupDescriptor;
+
 export abstract class CustomDescriptor< //
   /**
-   * @typedef {any} ReactThreeRendererDescriptor.TProps
-   * @type ReactThreeRendererDescriptor.TProps
+   * @typedef {any} CustomDescriptor.TProps
+   * @type CustomDescriptor.TProps
    * The expected property types to be used for createInstance and property updates.
    */
   TProps = any,
   /**
-   * @typedef {any} ReactThreeRendererDescriptor.TInstance
-   * @type ReactThreeRendererDescriptor.TInstance
+   * @typedef {any} CustomDescriptor.TInstance
+   * @type CustomDescriptor.TInstance
    * The instance type to be created and updated.
    */
   TInstance = any,
   /**
-   * @typedef {any} ReactThreeRendererDescriptor.TParent
-   * @type ReactThreeRendererDescriptor.TParent
+   * @typedef {any} CustomDescriptor.TParent
+   * @type CustomDescriptor.TParent
    * The parent types that the host instances can be mounted into.
    */
   TParent = any,
   /**
-   * @typedef {any} ReactThreeRendererDescriptor.TParent
-   * @type ReactThreeRendererDescriptor.TParent
+   * @typedef {any} CustomDescriptor.TParent
+   * @type CustomDescriptor.TParent
    * The types of objects the host instance will accept as children.
    */
   TChild = any,
-  TPropertyDescriptor = any,
+  TPropertyDescriptor extends CustomPropertyDescriptor<TProps, TInstance, any> = any,
+  TPropertyGroupDescriptor extends CustomPropertyGroupDescriptor<TProps, TInstance, any> = any,
   TRoot = any,
   TRenderer = any>
   implements INativeElement<TProps,
@@ -65,10 +75,15 @@ export abstract class CustomDescriptor< //
 
   public propTypes: IPropTypeMap;
 
-  protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance>;
-  protected propertyGroups: IPropertyGroupMap<TProps, TInstance>;
+  protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance, TPropertyDescriptor>;
+  protected propertyGroups: IPropertyGroupMap<TProps, TInstance, TPropertyGroupDescriptor>;
 
-  constructor() {
+  constructor(private propertyDescriptorConstructor: TPropertyDescriptorConstructor<TProps,
+                TInstance,
+                TPropertyDescriptor>,
+              private propertyGroupDescriptorConstructor: TPropertyGroupDescriptorConstructor<TProps,
+                TInstance,
+                TPropertyGroupDescriptor>) {
     this.propertyDescriptors = {};
     this.propertyGroups = {};
     this.propTypes = {};
@@ -113,7 +128,7 @@ export abstract class CustomDescriptor< //
    * @param {TProps} props
    * The properties of the element
    * @param {any} rootContainerInstance
-   * The object that `ReactTHREERenderer.render` was called upon.
+   * The object that `MyRenderer.render` was called upon.
    * @return {TInstance} The new host instance
    */
   public abstract createInstance(props: TProps, rootContainerInstance: any): TInstance;
@@ -126,21 +141,21 @@ export abstract class CustomDescriptor< //
   @final()
   public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for ReactThreeRenderer");
+      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
     }
   }
 
   @final()
   public insertInContainerBefore(instance: TInstance, container: TParent, before: any): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for ReactThreeRenderer");
+      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
     }
   }
 
   @final()
   public appendToContainer(instance: TInstance, container: TParent): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for ReactThreeRenderer");
+      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
     }
   }
 
@@ -253,16 +268,15 @@ export abstract class CustomDescriptor< //
      */
     TProp>(propName: string,
            updateFunction: PropertyUpdater<TProps, TInstance, TProp>,
-           updateInitial: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp> {
+           updateInitial: boolean = true): TPropertyDescriptor {
     if (this.propertyDescriptors[propName] !== undefined) {
-      throw new Error(`Property type for ${this.constructor.name}#${propName} is already defined.`);
+      throw new Error(`Property type for ${(this as any).__proto__.constructor.name}#${propName} is already defined.`);
     }
 
-    const propertyDescriptor = new ReactThreeRendererPropertyDescriptor<TProps, TInstance, TProp>(
+    const propertyDescriptor = new this.propertyDescriptorConstructor(
       null,
       updateFunction,
       updateInitial,
-      false, // TODO remove wantsRepaint
       (validator: Validator<TProp>) => {
         this.propTypes[propName] = validator;
       },
@@ -284,14 +298,13 @@ export abstract class CustomDescriptor< //
    */
   public hasPropGroup<TPropMap>(propNames: string[],
                                 updateFunction: PropertyUpdater<TProps, TInstance, TPropMap>,
-                                updateInitial: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TPropMap> {
+                                updateInitial: boolean = true): TPropertyGroupDescriptor {
     const groupName = propNames.join(",");
 
-    this.propertyGroups[groupName] = new PropertyGroupDescriptor(
+    this.propertyGroups[groupName] = new this.propertyGroupDescriptorConstructor(
       propNames,
       updateFunction,
       updateInitial,
-      false,
       (validatorMap: IPropTypeMap) => {
         const missingKeys = propNames.concat().reduce((map, name) => {
           map[name] = true;
@@ -324,15 +337,20 @@ export abstract class CustomDescriptor< //
       },
     );
 
+    if (isNonProduction) {
+      this.propertyGroups[groupName]
+        .withErrorName((this as any).__proto__.constructor.name);
+    }
+
     propNames.forEach((propName) => {
       if (typeof this.propertyDescriptors[propName] !== "undefined") {
         throw new Error(`Property type for ${propName} is already defined.`);
       }
 
-      this.propertyDescriptors[propName] = new ReactThreeRendererPropertyDescriptor(
+      // wantsRepaint is false so that's OK?
+      this.propertyDescriptors[propName] = new this.propertyDescriptorConstructor(
         groupName,
         null,
-        false,
         false,
         null,
       );
@@ -342,11 +360,11 @@ export abstract class CustomDescriptor< //
   }
 
   protected removeProp(propName: string) {
-    const propertyDescriptor: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined
+    const propertyDescriptor: TPropertyDescriptor | undefined
       = this.propertyDescriptors[propName];
 
     if (propertyDescriptor === undefined) {
-      throw new Error(`Property type for ${this.constructor.name}#${propName} is not defined.`);
+      throw new Error(`Property type for ${(this as any).__proto__.constructor.name}#${propName} is not defined.`);
     }
 
     if (propertyDescriptor.groupName !== null) {
@@ -365,7 +383,7 @@ export abstract class CustomDescriptor< //
    * Does this property need to be updated right after createInstance?
    */
   protected hasSimpleProp(propName: string,
-                          updateInitial: boolean = true): ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> {
+                          updateInitial: boolean = true): TPropertyDescriptor {
     return this.hasProp(propName, (instance: any, newValue: any): void => {
       (instance as any)[propName] = newValue;
     }, updateInitial);
@@ -379,10 +397,10 @@ export abstract class CustomDescriptor< //
                            oldProps: TProps,
                            newProps: TProps,
                            isInitialUpdate: boolean): void {
-    const propertyDescriptor: ReactThreeRendererPropertyDescriptor<TProps, TInstance, any> | undefined
+    const propertyDescriptor: TPropertyDescriptor | undefined
       = this.propertyDescriptors[propName];
     if (propertyDescriptor === undefined) {
-      throw new Error(`Cannot find property descriptor for ${this.constructor.name}#${propName}`);
+      throw new Error(`Cannot find property descriptor for ${(this as any).__proto__.constructor.name}#${propName}`);
     }
 
     const groupName = propertyDescriptor.groupName;

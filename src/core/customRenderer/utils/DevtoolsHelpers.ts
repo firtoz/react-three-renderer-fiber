@@ -1,7 +1,7 @@
-import {IFiber, IHookConfig, IReactFiberRendererConfig, IRenderer, ReactFiberDevToolsHook} from "react-fiber-export";
+import {IFiber, IHookConfig, IReactFiberRendererConfig, ReactFiberDevToolsHook} from "react-fiber-export";
 
-import {ReactDevtools} from "../../dependencies-shim";
 import {CustomReconcilerConfig} from "../createReconciler";
+import {ReactDevtools} from "./dependencies-shim";
 import isNonProduction from "./isNonProduction";
 
 const {injectInternals} = ReactFiberDevToolsHook;
