@@ -7,7 +7,6 @@ import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
 import {ReactThreeRenderer} from "../../src";
 import r3rReconcilerConfig from "../../src/core/renderer/reconciler/r3rReconcilerConfig";
-import r3rRootContainerSymbol from "../../src/core/renderer/utils/r3rRootContainerSymbol";
 
 chai.use(dirtyChai);
 
@@ -60,7 +59,7 @@ describe("React Three Renderer", () => {
       expect(container._reactRootContainer === null
         || container._reactRootContainer === undefined,
         "DOM Components should have been unmounted from container").to.equal(true);
-      expect(container[r3rRootContainerSymbol],
+      expect(container[r3rReconcilerConfig.getRootContainerSymbol()],
         "container should not be a r3rRootContainer").to.equal(undefined);
       expect(container[r3rReconcilerConfig.getFiberSymbol()],
         "testDiv should not be a r3rFiber").to.equal(undefined);

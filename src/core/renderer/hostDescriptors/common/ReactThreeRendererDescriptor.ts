@@ -1,7 +1,7 @@
 import {TUpdatePayload} from "../../../customRenderer/createReconciler";
 import {CustomDescriptor} from "../../../customRenderer/descriptors/CustomDescriptor";
 import {PropertyUpdater} from "../../../customRenderer/descriptors/properties/PropertyUpdater";
-import ReactThreeRenderer from "../../reactThreeRenderer";
+import {ReactThreeRenderer} from "../../reactThreeRenderer";
 import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 

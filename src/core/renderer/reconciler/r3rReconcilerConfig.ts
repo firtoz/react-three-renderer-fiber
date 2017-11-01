@@ -1,8 +1,8 @@
 import {IFiber} from "react-fiber-export";
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
+import {IHostContext} from "../../customRenderer/customReactRenderer";
 import {hookDevtools} from "../../customRenderer/utils/DevtoolsHelpers";
 import ReactThreeRendererDescriptor from "../hostDescriptors/common/ReactThreeRendererDescriptor";
-import {IHostContext} from "../reactThreeRenderer";
 
 declare function require(filename: string): any;
 

@@ -7,7 +7,7 @@ export interface IPropTypeMap {
   [propName: string]: Validator<any>;
 }
 
-export interface INativeElement<TProps, THost, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
+export interface IReconcilerConfig<TProps, THost, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
   propTypes: IPropTypeMap;
 
   createInstance(props: TProps, rootContainerInstance: TRoot): THost;

@@ -15,7 +15,8 @@ import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 import object3D from "../../../src/core/renderer/hostDescriptors/descriptors/objects/object3D";
 import {RenderAction} from "../../../src/core/renderer/hostDescriptors/descriptors/render";
 import webGLRenderer from "../../../src/core/renderer/hostDescriptors/descriptors/webGLRenderer";
-import {mockConsole, testContainers} from "../index";
+import wrRenderer from "../../../src/core/WR/wrRenderer";
+import {testContainers} from "../index";
 
 const {div: testDiv} = testContainers;
 
@@ -473,6 +474,12 @@ describe("render", () => {
         });
       });
     });
+  });
+
+  it("should allow custom renderers", (done) => {
+    wrRenderer.render(<test />, testDiv);
+
+    done();
   });
 
   it("should trigger a render only when a visible property is updated", (done) => {

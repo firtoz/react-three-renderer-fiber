@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import * as PropTypes from "prop-types";
 import * as React from "react";
+// tslint:disable-next-line
 import ReactThreeRendererDescriptor from "../../../../src/core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ReactThreeRenderer from "../../../../src/core/renderer/reactThreeRenderer";
 import r3rReconcilerConfig from "../../../../src/core/renderer/reconciler/r3rReconcilerConfig";

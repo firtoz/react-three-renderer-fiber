@@ -8,9 +8,9 @@ import {
 } from "react-fiber-export";
 
 import * as PropTypes from "prop-types";
-import isNonProduction from "./utils/isNonProduction";
-import {INativeElement} from "./customRenderer";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
+import {IReconcilerConfig} from "./IReconcilerConfig";
+import isNonProduction from "./utils/isNonProduction";
 
 const emptyObject = {};
 
@@ -27,7 +27,7 @@ const checkPropTypes: (typeSpecs: any,
                        getStack?: () => (string | null)) => void = (PropTypes as any).checkPropTypes;
 
 @bindAcceptor
-export class CustomReconcilerConfig<TDescriptor extends INativeElement<any,
+export class CustomReconcilerConfig<TDescriptor extends IReconcilerConfig<any,
   any,
   any,
   any,
@@ -38,6 +38,7 @@ export class CustomReconcilerConfig<TDescriptor extends INativeElement<any,
 
   private fiberSymbol: symbol = Symbol("custom-renderer-fiber");
   private contextSymbol: symbol = Symbol("custom-renderer-context");
+  private rootContainerSymbol: symbol = Symbol("custom-renderer-root-container-symbol");
 
   private hostDescriptors: Map<string, TDescriptor> = new Map();
 
@@ -47,6 +48,10 @@ export class CustomReconcilerConfig<TDescriptor extends INativeElement<any,
 
   public getContextSymbol() {
     return this.contextSymbol;
+  }
+
+  public getRootContainerSymbol() {
+    return this.rootContainerSymbol;
   }
 
   @autoBind
@@ -303,7 +308,7 @@ export class CustomReconcilerConfig<TDescriptor extends INativeElement<any,
   }
 }
 
-export default function createReconciler<TDescriptor extends INativeElement<any,
+export default function createReconciler<TDescriptor extends IReconcilerConfig<any,
   any,
   any,
   any,

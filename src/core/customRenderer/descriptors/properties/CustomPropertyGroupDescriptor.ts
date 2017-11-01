@@ -1,4 +1,4 @@
-import {IPropTypeMap} from "../../customRenderer";
+import {IPropTypeMap} from "../../IReconcilerConfig";
 import isNonProduction from "../../utils/isNonProduction";
 import {PropertyUpdater} from "./PropertyUpdater";
 

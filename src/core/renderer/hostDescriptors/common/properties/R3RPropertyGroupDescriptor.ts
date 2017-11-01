@@ -1,4 +1,4 @@
-import {IPropTypeMap} from "../../../../customRenderer/customRenderer";
+import {IPropTypeMap} from "../../../../customRenderer/IReconcilerConfig";
 // tslint:disable-next-line
 import CustomPropertyGroupDescriptor from "../../../../customRenderer/descriptors/properties/CustomPropertyGroupDescriptor";
 import {PropertyUpdater} from "../../../../customRenderer/descriptors/properties/PropertyUpdater";
