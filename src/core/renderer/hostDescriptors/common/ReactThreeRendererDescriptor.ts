@@ -2,7 +2,7 @@ import {TUpdatePayload} from "../../../customRenderer/createReconciler";
 import {CustomDescriptor} from "../../../customRenderer/descriptors/CustomDescriptor";
 import {PropertyUpdater} from "../../../customRenderer/descriptors/properties/PropertyUpdater";
 import {ReactThreeRenderer} from "../../reactThreeRenderer";
-import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
+import R3RPropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 
 const emptyObject: any = {};
@@ -49,11 +49,11 @@ export default abstract class ReactThreeRendererDescriptor< //
     TParent,
     TChild,
     ReactThreeRendererPropertyDescriptor<TProps, TInstance, any>,
-    PropertyGroupDescriptor<TProps, TInstance, any>,
+    R3RPropertyGroupDescriptor<TProps, TInstance, any>,
     HTMLCanvasElement,
     ReactThreeRenderer> {
   constructor(public wantsRepaint: boolean = true) {
-    super(ReactThreeRendererPropertyDescriptor, PropertyGroupDescriptor);
+    super(ReactThreeRendererPropertyDescriptor, R3RPropertyGroupDescriptor);
 
     // TODO define all mounting/unmounting properties as nonconfigurable
     // TODO and they should trigger render if necessary
@@ -140,7 +140,7 @@ export default abstract class ReactThreeRendererDescriptor< //
   public hasPropGroup<TPropMap>(propNames: string[],
                                 updateFunction: PropertyUpdater<TProps, TInstance, TPropMap>,
                                 updateInitial: boolean = true,
-                                wantsRepaint: boolean = true): PropertyGroupDescriptor<TProps, TInstance, TPropMap> {
+                                wantsRepaint: boolean = true): R3RPropertyGroupDescriptor<TProps, TInstance, TPropMap> {
     return super.hasPropGroup(propNames, updateFunction, updateInitial)
       .withWantsRepaint(wantsRepaint);
   }

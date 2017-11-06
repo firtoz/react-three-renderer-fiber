@@ -1,8 +1,8 @@
 import {Validator} from "prop-types";
 import {TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
-import {IPropTypeMap, IHostDescriptor} from "./IHostDescriptor";
 import isNonProduction from "../utils/isNonProduction";
+import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
 import {PropertyUpdater} from "./properties/PropertyUpdater";
@@ -80,10 +80,10 @@ export abstract class CustomDescriptor< //
 
   constructor(private propertyDescriptorConstructor: TPropertyDescriptorConstructor<TProps,
                 TInstance,
-                TPropertyDescriptor>,
+                TPropertyDescriptor> = CustomPropertyDescriptor as any,
               private propertyGroupDescriptorConstructor: TPropertyGroupDescriptorConstructor<TProps,
                 TInstance,
-                TPropertyGroupDescriptor>) {
+                TPropertyGroupDescriptor> = CustomPropertyGroupDescriptor as any) {
     this.propertyDescriptors = {};
     this.propertyGroups = {};
     this.propTypes = {};

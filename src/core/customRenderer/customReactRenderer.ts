@@ -65,8 +65,8 @@ function renderSubtreeIntoContainer(reconciler: IRenderer,
 export default class CustomReactRenderer {
   private reconciler: IRenderer;
 
-  constructor(private reconcilerConfig: CustomReconcilerConfig<any>) {
-    if (isNonProduction) {
+  constructor(private reconcilerConfig: CustomReconcilerConfig<any>, wantsDevtools: boolean = true) {
+    if (wantsDevtools && isNonProduction) {
       hookDevtools(reconcilerConfig);
     }
 

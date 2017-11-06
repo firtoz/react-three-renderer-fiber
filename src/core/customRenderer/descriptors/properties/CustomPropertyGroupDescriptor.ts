@@ -1,5 +1,5 @@
-import {IPropTypeMap} from "../IHostDescriptor";
 import isNonProduction from "../../utils/isNonProduction";
+import {IPropTypeMap} from "../IHostDescriptor";
 import {PropertyUpdater} from "./PropertyUpdater";
 
 export default class CustomPropertyGroupDescriptor<TProps, TInstance, TProp> {
