@@ -1,6 +1,8 @@
 import {IFiber, IRenderer, ReactFiberReconciler} from "react-fiber-export";
 import {RenderAction} from "../renderer/hostDescriptors/descriptors/render";
 import {CustomReconcilerConfig} from "./createReconciler";
+import {hookDevtools} from "./utils/DevtoolsHelpers";
+import isNonProduction from "./utils/isNonProduction";
 
 export interface IHostContext {
   triggerRender(): void;
@@ -64,6 +66,10 @@ export default class CustomReactRenderer {
   private reconciler: IRenderer;
 
   constructor(private reconcilerConfig: CustomReconcilerConfig<any>) {
+    if (isNonProduction) {
+      hookDevtools(reconcilerConfig);
+    }
+
     this.reconciler = ReactFiberReconciler(reconcilerConfig);
   }
 

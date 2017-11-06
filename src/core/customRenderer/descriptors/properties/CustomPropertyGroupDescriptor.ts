@@ -1,4 +1,4 @@
-import {IPropTypeMap} from "../../IReconcilerConfig";
+import {IPropTypeMap} from "../IHostDescriptor";
 import isNonProduction from "../../utils/isNonProduction";
 import {PropertyUpdater} from "./PropertyUpdater";
 

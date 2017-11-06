@@ -9,7 +9,7 @@ import {
 
 import * as PropTypes from "prop-types";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
-import {IReconcilerConfig} from "./IReconcilerConfig";
+import {IHostDescriptor} from "./descriptors/IHostDescriptor";
 import isNonProduction from "./utils/isNonProduction";
 
 const emptyObject = {};
@@ -27,7 +27,7 @@ const checkPropTypes: (typeSpecs: any,
                        getStack?: () => (string | null)) => void = (PropTypes as any).checkPropTypes;
 
 @bindAcceptor
-export class CustomReconcilerConfig<TDescriptor extends IReconcilerConfig<any,
+export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   any,
   any,
   any,
@@ -308,7 +308,7 @@ export class CustomReconcilerConfig<TDescriptor extends IReconcilerConfig<any,
   }
 }
 
-export default function createReconciler<TDescriptor extends IReconcilerConfig<any,
+export default function createReconciler<TDescriptor extends IHostDescriptor<any,
   any,
   any,
   any,

@@ -1,7 +1,7 @@
 import {Validator} from "prop-types";
 import {TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
-import {IPropTypeMap, IReconcilerConfig} from "../IReconcilerConfig";
+import {IPropTypeMap, IHostDescriptor} from "./IHostDescriptor";
 import isNonProduction from "../utils/isNonProduction";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
@@ -66,7 +66,7 @@ export abstract class CustomDescriptor< //
   TPropertyGroupDescriptor extends CustomPropertyGroupDescriptor<TProps, TInstance, any> = any,
   TRoot = any,
   TRenderer = any>
-  implements IReconcilerConfig<TProps,
+  implements IHostDescriptor<TProps,
     TInstance,
     TParent,
     TChild,

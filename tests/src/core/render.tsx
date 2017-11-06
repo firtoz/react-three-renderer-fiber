@@ -16,7 +16,7 @@ import object3D from "../../../src/core/renderer/hostDescriptors/descriptors/obj
 import {RenderAction} from "../../../src/core/renderer/hostDescriptors/descriptors/render";
 import webGLRenderer from "../../../src/core/renderer/hostDescriptors/descriptors/webGLRenderer";
 import wrRenderer from "../../../src/core/WR/wrRenderer";
-import {testContainers} from "../index";
+import {mockConsole, testContainers} from "../index";
 
 const {div: testDiv} = testContainers;
 
