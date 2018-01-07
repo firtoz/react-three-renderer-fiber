@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "allowJs": true,
+    "declaration": false,
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
