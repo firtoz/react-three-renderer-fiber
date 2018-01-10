@@ -1,8 +1,8 @@
+import final from "../../../customRenderer/decorators/final";
 import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
-import final from "../../../customRenderer/decorators/final";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;

@@ -20,7 +20,6 @@ export class SimplePropertyWrapper<TInstance> extends PropertyWrapper<TInstance,
   public constructor(propertyName: string,
                      types: Array<new (...args: any[]) => any>) {
     super(propertyName, types, (instance: TInstance, prop: any) => {
-      console.log("wrap placement");
       (instance as any)[propertyName] = prop;
     });
   }
