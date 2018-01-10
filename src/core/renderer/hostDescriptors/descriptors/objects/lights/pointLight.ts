@@ -22,14 +22,11 @@ declare global {
 }
 
 class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLight> {
-  private refWrapper: RefWrapper;
-
   constructor() {
     super();
 
-    this.refWrapper = new RefWrapper(["shadow"], this);
-
-    this.refWrapper.wrapProperty(new SimplePropertyWrapper("shadow", PointLightShadow));
+    new RefWrapper(["shadow"], this)
+      .wrapProperty(new SimplePropertyWrapper("shadow", [PointLightShadow]));
 
     this.hasSimpleProp("distance", false);
     this.hasSimpleProp("decay", false);

@@ -27,18 +27,15 @@ declare global {
 export type MeshChildType = Geometry | Material;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
-  private refWrapper: RefWrapper;
-
   constructor() {
     super();
 
-    this.refWrapper = new RefWrapper(["material", "geometry"], this);
-
-    this.refWrapper.wrapProperties([
-        new SimplePropertyWrapper("material", Material),
-        new SimplePropertyWrapper("geometry", Geometry),
-      ],
-    );
+    new RefWrapper(["material", "geometry"], this)
+      .wrapProperties([
+          new SimplePropertyWrapper("material", [Material]),
+          new SimplePropertyWrapper("geometry", [Geometry]),
+        ],
+      );
   }
 
   public createInstance(props: IMeshProps) {

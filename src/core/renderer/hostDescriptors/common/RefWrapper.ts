@@ -11,15 +11,16 @@ export type IRenderableProp<TInstance, TProps> = IElement<TInstance, TProps> | T
 
 export class PropertyWrapper<TInstance, TProp> {
   public constructor(public propertyName: string,
-                     public type: new (...args: any[]) => TProp,
+                     public types: Array<new (...args: any[]) => TProp>,
                      public updateFunction: (instance: TInstance, newValue: TProp) => void) {
   }
 }
 
 export class SimplePropertyWrapper<TInstance> extends PropertyWrapper<TInstance, any> {
   public constructor(propertyName: string,
-                     type: new (...args: any[]) => any) {
-    super(propertyName, type, (instance: TInstance, prop: any) => {
+                     types: Array<new (...args: any[]) => any>) {
+    super(propertyName, types, (instance: TInstance, prop: any) => {
+      console.log("wrap placement");
       (instance as any)[propertyName] = prop;
     });
   }
@@ -27,6 +28,10 @@ export class SimplePropertyWrapper<TInstance> extends PropertyWrapper<TInstance,
 
 function containToInstance<TInstance>(instance: TInstance): TInstance {
   return instance;
+}
+
+function wrapperContainsType(wrapper: PropertyWrapper<any, any>, value: any) {
+  return wrapper.types.some((wrapperType) => value instanceof wrapperType);
 }
 
 export class RefWrapper {
@@ -56,25 +61,6 @@ export class RefWrapper {
     });
   }
 
-  public getInstance<T>(identifier: string): T | null {
-    return this.internalInstances[identifier] as T;
-  }
-
-  public wrapElementAndReturn<T, TProps>(identifier: string, element: IElement<T, TProps>): ReactElement<TProps> {
-    const refFromElement: React.Ref<T> | null = element.ref == null ? null : element.ref;
-
-    const originalKey = element.key == null ? "" : element.key;
-
-    if (this.wrappedRefs[identifier] !== refFromElement) {
-      this.regenerateRef(identifier, refFromElement);
-    }
-
-    return React.cloneElement(element, {
-      key: `${identifier}${originalKey}`,
-      ref: this.refWrappers[identifier],
-    } as any /* partial props won't match type completely */);
-  }
-
   public wrapProperties<TInstance>(wrappers: Array<PropertyWrapper<TInstance, any>>,
                                    containerFunction: (instance: TInstance) => any = containToInstance) {
     if (this.descriptor === null) {
@@ -93,7 +79,7 @@ export class RefWrapper {
         let valueElement: React.ReactElement<any> | null = null;
 
         if ((value != null)) {
-          if ((value instanceof wrapper.type)) {
+          if (wrapperContainsType(wrapper, value)) {
             wrapper.updateFunction(instance, value);
           } else {
             valueElement = this.wrapElementAndReturn(propertyName, value);
@@ -107,7 +93,7 @@ export class RefWrapper {
         wrappers.forEach((wrapper, i) => {
           const value = newMap[wrapper.propertyName];
 
-          if ((value != null) && (value instanceof wrapper.type)) {
+          if ((value != null) && (wrapperContainsType(wrapper, value))) {
             wrapper.updateFunction(instance, value);
           }
         });
@@ -125,7 +111,6 @@ export class RefWrapper {
 
     const {
       propertyName: propName,
-      type: propType,
       updateFunction,
     } = wrapper;
 
@@ -135,19 +120,38 @@ export class RefWrapper {
       let valueElement: React.ReactElement<any> | null = null;
 
       if ((value != null)) {
-        if ((value instanceof propType)) {
+        if ((wrapperContainsType(wrapper, value))) {
           updateFunction(instance, value);
         } else {
-          valueElement = this.wrapElementAndReturn(propName, value);
+          valueElement = this.wrapElementAndReturn(propName, value as any);
         }
       }
 
       ReactThreeRenderer.render(valueElement, containerFunction(instance), () => {
-        if ((value != null) && (value instanceof propType)) {
+        if ((value != null) && (wrapperContainsType(wrapper, value))) {
           updateFunction(instance, value);
         }
       });
     });
+  }
+
+  protected wrapElementAndReturn<T, TProps>(identifier: string, element: IElement<T, TProps>): ReactElement<TProps> {
+    const refFromElement: React.Ref<T> | null = element.ref == null ? null : element.ref;
+
+    const originalKey = element.key == null ? "" : element.key;
+
+    if (this.wrappedRefs[identifier] !== refFromElement) {
+      this.regenerateRef(identifier, refFromElement);
+    }
+
+    return React.cloneElement(element, {
+      key: `${identifier}${originalKey}`,
+      ref: this.refWrappers[identifier],
+    } as any /* partial props won't match type completely */);
+  }
+
+  protected getInstance<T>(identifier: string): T | null {
+    return this.internalInstances[identifier] as T;
   }
 
   private regenerateRef<T>(identifier: string, ref: React.Ref<T> | null) {

@@ -2,6 +2,7 @@ import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
+import final from "../../../customRenderer/decorators/final";
 
 type GetterFunction = () => any;
 type SetterFunction = (value: any) => void;
@@ -147,18 +148,18 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   protected abstract recreateInstance(newProps: any): TWrapped;
 }
 
-export class WrappedEntityDescriptor<TProps = any,
+export class WrappedEntityDescriptor<TWrapper extends WrapperDetails<TProps, TInstance>,
+  TProps = any,
   TInstance = any,
   TParent = any,
-  TChild = never,
-  TWrapper extends WrapperDetails<TProps, TInstance> = any> extends ReactThreeRendererDescriptor<TProps,
+  TChild = never> extends ReactThreeRendererDescriptor<TProps,
   TInstance,
   TParent,
   TChild> {
-  private remountTrigger: (instance: TInstance,
-                           newValue: any,
-                           oldProps: TProps,
-                           newProps: TProps) => void;
+  protected remountTrigger: (instance: TInstance,
+                             newValue: any,
+                             oldProps: TProps,
+                             newProps: TProps) => void;
 
   constructor(private wrapperType: IWrapperType<TProps, TInstance, TWrapper>,
               private typeToWrap: any,
@@ -184,15 +185,13 @@ export class WrappedEntityDescriptor<TProps = any,
       current = Object.getPrototypeOf(current.prototype).constructor;
     }
 
-    const remountFunction = (instance: TInstance, newProps: TProps) => {
-      this.remount(instance, newProps);
-    };
-
     this.remountTrigger = (instance: TInstance,
                            newValue: any,
                            oldProps: TProps,
                            newProps: TProps) => {
-      remountFunction(instance, newProps);
+      this.wrapperType.get(instance).remount(newProps);
+
+      super.applyInitialPropUpdates(instance, newProps);
     };
   }
 
@@ -206,6 +205,7 @@ export class WrappedEntityDescriptor<TProps = any,
     }
   }
 
+  @final()
   public willBeAddedToParent(instance: TInstance, parentInstance: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 
@@ -254,11 +254,5 @@ export class WrappedEntityDescriptor<TProps = any,
         null,
       ).withWantsRepaint(false);
     }
-  }
-
-  private remount(instance: TInstance, newProps: TProps) {
-    this.wrapperType.get(instance).remount(newProps);
-
-    super.applyInitialPropUpdates(instance, newProps);
   }
 }

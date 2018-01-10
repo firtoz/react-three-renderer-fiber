@@ -192,11 +192,11 @@ declare global {
   }
 }
 
-class WebGLRendererDescriptor extends WrappedEntityDescriptor<IWebGLRendererProps,
+class WebGLRendererDescriptor extends WrappedEntityDescriptor<RendererWrapperDetails,
+  IWebGLRendererProps,
   any,
   HTMLCanvasElement,
-  Scene,
-  RendererWrapperDetails> {
+  Scene> {
   constructor() {
     super(RendererWrapperDetails, WebGLRenderer, true);
 
