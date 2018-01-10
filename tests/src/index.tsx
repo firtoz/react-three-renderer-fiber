@@ -6,8 +6,7 @@ import dirtyChai = require("dirty-chai");
 import * as ReactDOM from "react-dom";
 import {Object3D} from "three";
 import {ReactThreeRenderer} from "../../src";
-import r3rFiberSymbol from "../../src/core/renderer/utils/r3rFiberSymbol";
-import r3rRootContainerSymbol from "../../src/core/renderer/utils/r3rRootContainerSymbol";
+import r3rReconcilerConfig from "../../src/core/renderer/reconciler/r3rReconcilerConfig";
 
 chai.use(dirtyChai);
 
@@ -37,7 +36,11 @@ describe("React Three Renderer", () => {
 
   Object.keys(testContainers).forEach((keyName: string) => {
     afterEach(`ensure ${keyName} is clean`, function(this: Mocha.IBeforeAndAfterContext) {
-      if (this.currentTest.state !== "passed") {
+      if (!this.currentTest) {
+        console.error("no test?!", this);
+      }
+
+      if (!this.currentTest || this.currentTest.state !== "passed") {
         try {
           ReactThreeRenderer.unmountComponentAtNode(testContainers[keyName]);
         } catch (e) {
@@ -56,9 +59,9 @@ describe("React Three Renderer", () => {
       expect(container._reactRootContainer === null
         || container._reactRootContainer === undefined,
         "DOM Components should have been unmounted from container").to.equal(true);
-      expect(container[r3rRootContainerSymbol],
+      expect(container[r3rReconcilerConfig.getRootContainerSymbol()],
         "container should not be a r3rRootContainer").to.equal(undefined);
-      expect(container[r3rFiberSymbol],
+      expect(container[r3rReconcilerConfig.getFiberSymbol()],
         "testDiv should not be a r3rFiber").to.equal(undefined);
     });
   });

@@ -16,7 +16,8 @@
     "strictNullChecks": true,
     "inlineSources": true,
     "sourceMap": true,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
+    "experimentalDecorators": true
   },
   "include": [
     "./src/**/*",
