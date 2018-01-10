@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {Geometry, Vector3} from "three";
-import {GeometryWrapperBase} from "../../common/geometryBase";
+import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-class GeometryWrapper extends GeometryWrapperBase<IGeometryProps, Geometry> {
+export class GeometryWrapper extends GeometryWrapperBase<IGeometryProps, Geometry> {
   protected constructGeometry(props: IGeometryProps) {
     const geometry = new Geometry();
 
@@ -30,7 +30,8 @@ class GeometryWrapper extends GeometryWrapperBase<IGeometryProps, Geometry> {
 
 class GeometryDescriptor extends WrappedEntityDescriptor<GeometryWrapper,
   IGeometryProps,
-  Geometry> {
+  Geometry,
+  GeometryContainerType> {
   constructor() {
     super(GeometryWrapper, Geometry);
 

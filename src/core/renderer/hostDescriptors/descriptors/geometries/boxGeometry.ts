@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {BoxGeometry} from "three";
-import {GeometryWrapperBase} from "../../common/geometryBase";
+import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
@@ -34,7 +34,8 @@ export class BoxGeometryWrapper extends GeometryWrapperBase<IBoxGeometryProps, B
 
 class BoxGeometryDescriptor extends WrappedEntityDescriptor<BoxGeometryWrapper,
   IBoxGeometryProps,
-  BoxGeometry> {
+  BoxGeometry,
+  GeometryContainerType> {
   constructor() {
     super(BoxGeometryWrapper, BoxGeometry);
 
