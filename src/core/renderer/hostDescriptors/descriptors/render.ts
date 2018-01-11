@@ -3,15 +3,18 @@ import {Camera, Group, Scene, WebGLRenderer, WebGLRendererParameters} from "thre
 import {IHostContext} from "../../../customRenderer/customReactRenderer";
 import {default as ReactThreeRenderer} from "../../reactThreeRenderer";
 import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
+import Viewport from "../../utils/viewport";
 import {CameraElementProps} from "../common/cameraBase";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
 import {IRenderableProp, RefWrapper} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
+import {ViewportElementProps} from "./viewport";
 
 export interface IRenderProps extends WebGLRendererParameters {
   camera: IRenderableProp<Camera, CameraElementProps>;
   scene: IRenderableProp<Scene, SceneElementProps>;
+  viewport?: IRenderableProp<Viewport, ViewportElementProps>;
   onAnimationFrame?: () => void;
   autoRender?: boolean;
 }
@@ -36,16 +39,22 @@ export class RenderAction extends RefWrapper implements IHostContext {
 
   private internalScene: Scene | null;
   private internalCamera: Camera | null;
+  private internalViewport: Viewport | null;
+
   private onAnimationFrame: (() => void) | null;
 
   constructor() {
     super([
       "scene",
       "camera",
+      "viewport",
     ]);
+
+    // TODO add viewport tests
 
     this.internalScene = null;
     this.internalCamera = null;
+    this.internalViewport = null;
 
     this.onAnimationFrame = null;
     this.autoRender = false;
@@ -83,6 +92,7 @@ export class RenderAction extends RefWrapper implements IHostContext {
   public render = () => {
     let sceneToUse: Scene | null = this.internalScene;
     let cameraToUse: Camera | null = this.internalCamera;
+    let viewportToUse: Viewport | null = this.internalViewport;
 
     if (sceneToUse == null) {
       sceneToUse = this.getInstance("scene");
@@ -90,6 +100,10 @@ export class RenderAction extends RefWrapper implements IHostContext {
 
     if (cameraToUse == null) {
       cameraToUse = this.getInstance("camera");
+    }
+
+    if (viewportToUse == null) {
+      viewportToUse = this.getInstance("viewport");
     }
 
     if (this.renderer == null ||
@@ -100,17 +114,25 @@ export class RenderAction extends RefWrapper implements IHostContext {
 
     this.group.updateMatrixWorld(false);
 
+    if (viewportToUse !== null) {
+      this.renderer.setViewport(viewportToUse.x, viewportToUse.y, viewportToUse.width, viewportToUse.height);
+    } else {
+      this.renderer.setViewport(0, 0, this.renderer.getSize().width, this.renderer.getSize().height);
+    }
+
     this.renderer.render(sceneToUse, cameraToUse);
   }
 
-  public updateSceneAndCamera(newValue: IRenderProps) {
+  public updateProps(newValue: IRenderProps) {
     const {
       scene,
       camera,
+      viewport,
     } = newValue;
 
     let sceneElementToRender: React.ReactElement<SceneElementProps> | null = null;
     let cameraElementToRender: React.ReactElement<CameraElementProps> | null = null;
+    let viewportElementToRender: React.ReactElement<ViewportElementProps> | null = null;
 
     this.internalScene = null;
 
@@ -132,7 +154,20 @@ export class RenderAction extends RefWrapper implements IHostContext {
       }
     }
 
-    ReactThreeRenderer.render([sceneElementToRender, cameraElementToRender], this.group);
+    this.internalViewport = null;
+
+    if (viewport != null) {
+      if ((viewport instanceof Viewport)) {
+        this.internalViewport = viewport;
+      } else {
+        viewportElementToRender = this.wrapElementAndReturn("viewport", viewport);
+      }
+    }
+
+    ReactThreeRenderer.render([
+      sceneElementToRender,
+      cameraElementToRender,
+      viewportElementToRender], this.group);
   }
 
   public setOnAnimationFrame(newValue: (() => void) | null) {
@@ -168,9 +203,9 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
   constructor() {
     super();
 
-    this.hasPropGroup(["scene", "camera"],
+    this.hasPropGroup(["scene", "camera", "viewport"],
       (instance: RenderAction, newValue: IRenderProps) => {
-        instance.updateSceneAndCamera(newValue);
+        instance.updateProps(newValue);
       });
 
     this.hasProp("onAnimationFrame",
