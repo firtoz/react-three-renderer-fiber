@@ -1,4 +1,6 @@
+import {EventEmitter} from "events";
 import {Camera, CameraHelper, Object3D, PerspectiveCamera} from "three";
+import {cameraEventProjectionMatrixUpdated, cameraEventsSymbol} from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IElement} from "../../common/RefWrapper";
@@ -23,13 +25,24 @@ declare global {
 
 const defaultCamera = new PerspectiveCamera();
 
+const cameraEventListenerSymbol = Symbol("camera-helper-event-listener");
+
 class CameraHelperDescriptor extends Object3DDescriptorBase<ICameraHelperProps, CameraHelper, CameraHelperParents> {
   constructor() {
     super();
 
     this.hasProp<Camera>("camera", (instance, newValue) => {
+      const cameraHelperUserData = instance.userData as any;
+
+      const cameraEventListener = cameraHelperUserData[cameraEventListenerSymbol];
+
       if (instance.camera !== defaultCamera) {
-        // TODO remove update listener
+        const userData = instance.camera.userData as any;
+
+        const cameraEventEmitter: EventEmitter = userData[cameraEventsSymbol];
+
+        cameraEventEmitter
+          .removeListener(cameraEventProjectionMatrixUpdated, cameraEventListener);
       }
 
       let cameraToUse = newValue;
@@ -37,10 +50,16 @@ class CameraHelperDescriptor extends Object3DDescriptorBase<ICameraHelperProps, 
       if (cameraToUse == null) {
         cameraToUse = defaultCamera;
       } else {
-        // TODO add update listener
+        const userData = newValue.userData as any;
+
+        userData[cameraEventsSymbol]
+          .addListener(cameraEventProjectionMatrixUpdated, cameraEventListener);
       }
 
       instance.camera = cameraToUse;
+
+      instance.matrix = cameraToUse.matrixWorld;
+
       instance.update();
     }, false);
   }
@@ -50,11 +69,24 @@ class CameraHelperDescriptor extends Object3DDescriptorBase<ICameraHelperProps, 
 
     if (cameraToUse == null) {
       cameraToUse = defaultCamera;
-    } else {
-      // TODO add update listener
     }
 
-    return new CameraHelper(cameraToUse);
+    const instance = new CameraHelper(cameraToUse);
+
+    const cameraHelperUserData = instance.userData as any;
+
+    cameraHelperUserData[cameraEventListenerSymbol] = () => {
+      instance.update();
+    };
+
+    if (props.camera != null) {
+      const cameraEventEmitter: EventEmitter = props.camera.userData[cameraEventsSymbol];
+
+      cameraEventEmitter
+        .addListener(cameraEventProjectionMatrixUpdated, cameraHelperUserData[cameraEventListenerSymbol]);
+    }
+
+    return instance;
   }
 }
 

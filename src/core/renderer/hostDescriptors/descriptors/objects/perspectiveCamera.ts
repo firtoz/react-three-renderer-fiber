@@ -1,5 +1,11 @@
+import {EventEmitter} from "events";
 import {PerspectiveCamera} from "three";
-import {CameraElementProps, ICameraProps} from "../../common/cameraBase";
+import {
+  CameraElementProps,
+  cameraEventsSymbol,
+  ICameraProps,
+  cameraEventProjectionMatrixUpdated
+} from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
 
@@ -30,15 +36,41 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
   public constructor() {
     super();
 
-    // TODO emit update event for properties to be used by camera helpers
+    this.hasPropGroup([
+      "fov",
+      "aspect",
+      "near",
+      "far",
+    ], (instance, newValue: {
+      fov: number,
+      aspect: number,
+      near: number,
+      far: number,
+    }) => {
+      if (newValue.fov !== undefined) {
+        instance.fov = newValue.fov;
+      }
+      if (newValue.aspect !== undefined) {
+        instance.aspect = newValue.aspect;
+      }
+      if (newValue.near !== undefined) {
+        instance.near = newValue.near;
+      }
+      if (newValue.far !== undefined) {
+        instance.far = newValue.far;
+      }
 
-    this.hasSimpleProp("fov", false).withDefault(defaultCamera.fov);
-    this.hasProp("aspect", (instance: PerspectiveCamera, newValue: number) => {
-      instance.aspect = newValue;
       instance.updateProjectionMatrix();
-    }).withDefault(defaultCamera.aspect);
-    this.hasSimpleProp("near", false).withDefault(defaultCamera.near);
-    this.hasSimpleProp("far", false).withDefault(defaultCamera.far);
+
+      const cameraEvents: EventEmitter = instance.userData[cameraEventsSymbol];
+
+      cameraEvents.emit(cameraEventProjectionMatrixUpdated);
+    }, false, true).withDefault({
+      aspect: defaultCamera.aspect,
+      far: defaultCamera.far,
+      fov: defaultCamera.fov,
+      near: defaultCamera.near,
+    });
   }
 
   public createInstance(props: IPerspectiveCameraProps) {
@@ -49,7 +81,11 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
       far,
     } = props;
 
-    return new PerspectiveCamera(fov, aspect, near, far);
+    const camera = new PerspectiveCamera(fov, aspect, near, far);
+
+    camera.userData[cameraEventsSymbol] = new EventEmitter();
+
+    return camera;
   }
 }
 
