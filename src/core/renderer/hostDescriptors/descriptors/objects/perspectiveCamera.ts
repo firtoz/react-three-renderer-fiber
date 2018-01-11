@@ -30,6 +30,8 @@ class PerspectiveCameraDescriptor extends Object3DDescriptorBase<IPerspectiveCam
   public constructor() {
     super();
 
+    // TODO emit update event for properties to be used by camera helpers
+
     this.hasSimpleProp("fov", false).withDefault(defaultCamera.fov);
     this.hasProp("aspect", (instance: PerspectiveCamera, newValue: number) => {
       instance.aspect = newValue;
