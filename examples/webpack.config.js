@@ -9,7 +9,7 @@ module.exports = {
   },
 
   // Enable sourcemaps for debugging webpack's output.
-  devtool: "cheap-module-eval-source-map",
+  devtool: "cheap-module-source-map",
 
   devServer: {
     publicPath: "/dist/"
