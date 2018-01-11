@@ -41,6 +41,7 @@ class CameraHelperDescriptor extends Object3DDescriptorBase<ICameraHelperProps, 
       }
 
       instance.camera = cameraToUse;
+      instance.update();
     }, false);
   }
 
