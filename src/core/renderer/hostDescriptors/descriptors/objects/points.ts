@@ -1,10 +1,8 @@
 import {
   Geometry,
-  Line,
-  LineBasicMaterial,
-  LineDashedMaterial,
+  Material,
   MaterialParameters,
-  ShaderMaterial,
+  Points,
 } from "three";
 
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
@@ -12,44 +10,32 @@ import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/ob
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
 import {IGeometryElementProps} from "./mesh";
 
-export interface ILineProps extends IObject3DProps {
+export interface IPointsProps extends IObject3DProps {
   geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
-  material?: IRenderableProp<LineDashedMaterial | LineBasicMaterial | ShaderMaterial, MaterialParameters>;
+  material?: IRenderableProp<Material, MaterialParameters>;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      threeLine: IThreeElementPropsBase<Line> & ILineProps;
+      points: IThreeElementPropsBase<Points> & IPointsProps;
     }
   }
 }
 
-export type LineMaterialType = LineDashedMaterial |
-  LineBasicMaterial |
-  ShaderMaterial;
+export type PointsMaterialType = Material;
 
-export type LineChildType = Geometry |
-  LineMaterialType;
+export type PointsChildType = Geometry |
+  PointsMaterialType;
 
-function isLineMaterial(material: any): boolean {
-  return material !== undefined && (
-    material instanceof LineDashedMaterial ||
-    material instanceof LineBasicMaterial ||
-    material instanceof ShaderMaterial
-  );
-}
-
-class LineDescriptor extends Object3DDescriptorBase<ILineProps, Line, LineChildType> {
+class PointsDescriptor extends Object3DDescriptorBase<IPointsProps, Points, PointsChildType> {
   constructor() {
     super();
 
     new RefWrapper(["material", "geometry"], this)
       .wrapProperties([
           new SimplePropertyWrapper("material", [
-            LineDashedMaterial,
-            LineBasicMaterial,
-            ShaderMaterial,
+            Material,
           ]),
           new SimplePropertyWrapper("geometry", [
             Geometry,
@@ -58,60 +44,59 @@ class LineDescriptor extends Object3DDescriptorBase<ILineProps, Line, LineChildT
       );
   }
 
-  public createInstance(props: ILineProps) {
+  public createInstance(props: IPointsProps) {
     let geometry: Geometry | undefined;
     let material: any;
 
     if (props.geometry instanceof Geometry) {
-      console.log("set prop geometry");
       geometry = props.geometry;
     }
 
-    if (isLineMaterial(props.material)) {
+    if (props.material instanceof Material) {
       material = props.material;
     }
 
-    return new Line(geometry, material);
+    return new Points(geometry, material);
   }
 
-  public appendInitialChild(instance: Line, child: LineChildType): void {
+  public appendInitialChild(instance: Points, child: PointsChildType): void {
     console.log("append initial", child);
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (isLineMaterial(child)) {
+    } else if (child instanceof Material) {
       instance.material = child;
     } else {
       super.appendInitialChild(instance, child);
     }
   }
 
-  public appendChild(instance: Line, child: LineChildType): void {
+  public appendChild(instance: Points, child: PointsChildType): void {
     console.log("append", child);
 
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (isLineMaterial(child)) {
+    } else if (child instanceof Material) {
       instance.material = child;
     } else {
       super.appendChild(instance, child);
     }
   }
 
-  public insertBefore(instance: Line, child: LineChildType, before: any): void {
+  public insertBefore(instance: Points, child: PointsChildType, before: any): void {
 
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (isLineMaterial(child)) {
+    } else if (child instanceof Material) {
       instance.material = child;
     } else {
       super.insertBefore(instance, child, before);
     }
   }
 
-  public removeChild(instance: Line, child: LineChildType): void {
+  public removeChild(instance: Points, child: PointsChildType): void {
     if (child instanceof Geometry) {
       instance.geometry = null as any;
-    } else if (isLineMaterial(child)) {
+    } else if (child instanceof Material) {
       instance.material = null as any;
     } else {
       super.removeChild(instance, child);
@@ -120,4 +105,4 @@ class LineDescriptor extends Object3DDescriptorBase<ILineProps, Line, LineChildT
   }
 }
 
-export default LineDescriptor;
+export default PointsDescriptor;

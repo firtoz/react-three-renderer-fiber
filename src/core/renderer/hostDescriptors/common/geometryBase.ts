@@ -1,8 +1,8 @@
-import {BufferGeometry, Geometry, Line, Mesh} from "three";
+import {BufferGeometry, Geometry, Line, Mesh, Points} from "three";
 import final from "../../../customRenderer/decorators/final";
 import {WrapperDetails} from "./ObjectWrapper";
 
-export type GeometryContainerType = Mesh | Line;
+export type GeometryContainerType = Mesh | Line | Points;
 
 export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry>
   extends WrapperDetails<TProps, TInstance> {
