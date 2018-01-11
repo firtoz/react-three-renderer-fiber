@@ -11,7 +11,7 @@ import ReactThreeRenderer from "../../reactThreeRenderer";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import {getWrappedAttributes, WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
 
-function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebGLRenderer {
+function createRendererWithoutLogging(parameters: IWebGLRendererProps): WebGLRenderer {
   const oldLog = window.console.log;
 
   window.console.log = () => {
@@ -19,6 +19,8 @@ function createRendererWithoutLogging(parameters: WebGLRendererParameters): WebG
   };
 
   const renderer = new WebGLRenderer(parameters);
+
+  renderer.autoClear = parameters.autoClear !== false;
 
   if (renderer.getContext().isContextLost()) {
     throw new Error("WebGL context is lost already...");
@@ -136,7 +138,7 @@ export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, 
     });
   }
 
-  protected recreateInstance(newProps: WebGLRendererParameters): WebGLRenderer {
+  protected recreateInstance(newProps: IWebGLRendererProps): WebGLRenderer {
     const lastRenderer = this.wrappedObject;
 
     if (lastRenderer !== null) {
@@ -180,6 +182,8 @@ export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, 
 export interface IWebGLRendererProps extends WebGLRendererParameters {
   width: number;
   height: number;
+
+  autoClear?: boolean;
 }
 
 export type WebGLRendererElementProps = IThreeElementPropsBase<WebGLRenderer> & IWebGLRendererProps;
@@ -242,6 +246,9 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<RendererWrapperDet
         camera = this;
       });
     });
+
+    this.hasSimpleProp("autoClear", false, false)
+      .withDefault(true);
   }
 }
 
