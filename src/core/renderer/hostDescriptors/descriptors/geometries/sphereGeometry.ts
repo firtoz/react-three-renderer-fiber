@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import {SphereGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../../renderer/hostDescriptors/common/geometryBase";
-import {IThreeElementPropsBase} from "../../../renderer/hostDescriptors/common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../../renderer/hostDescriptors/common/ObjectWrapper";
+import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
+import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface ISphereGeometryProps {
   radius: number;
