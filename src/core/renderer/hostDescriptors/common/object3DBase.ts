@@ -11,6 +11,7 @@ export interface IObject3DProps extends IPropsWithChildren {
   rotation?: Euler;
   quaternion?: Quaternion;
   lookAt?: Vector3;
+  visible?: boolean;
 }
 
 abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
@@ -28,6 +29,9 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
 
     this.hasSimpleProp("name", true, false)
       .withType(PropTypes.string);
+
+    this.hasSimpleProp("visible", true, true)
+      .withDefault(true);
 
     // this.hasSimpleProp("name", true, true);
     this.hasProp("position", (instance: Object3D,
