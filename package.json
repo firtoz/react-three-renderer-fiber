@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.0.4",
+    "@types/events": "^1.1.0",
     "@types/mocha": "^2.2.43",
     "@types/prop-types": "^15.5.2",
     "@types/react": "16.0.9",

@@ -12,3 +12,6 @@ export interface ICameraProps extends IObject3DProps, ITestProps<Camera> {
 export type CameraElementProps = IThreeElementPropsBase<Camera> & ICameraProps;
 
 export type CameraElement = IElement<Camera, CameraElementProps>;
+
+export const cameraEventsSymbol = Symbol("camera-events");
+export const cameraEventProjectionMatrixUpdated = "camera-event-projection-matrix-updated";

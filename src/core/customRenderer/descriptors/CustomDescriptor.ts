@@ -4,8 +4,8 @@ import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
 import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
-import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
 import {PropertyUpdater} from "./properties/PropertyUpdater";
+import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
 
 export interface IPropertyUpdaterMap<TProps,
   TInstance,
@@ -195,10 +195,19 @@ export abstract class CustomDescriptor< //
     for (const groupName of groupNamesToUpdate) {
       updatedGroupsMap[groupName] = true;
 
-      const newData = groupedUpdates[groupName];
+      const propertyGroup = this.propertyGroups[groupName];
+      if (propertyGroup.updateInitial) {
+        let newData;
 
-      if (this.propertyGroups[groupName].updateInitial) {
-        this.propertyGroups[groupName].updateFunction(instance, newData, emptyObject, props);
+        // fill in default values partially
+        // TODO test this
+        if (propertyGroup.defaultValue !== undefined) {
+          newData = Object.assign({}, propertyGroup.defaultValue, groupedUpdates[groupName]);
+        } else {
+          newData = groupedUpdates[groupName];
+        }
+
+        propertyGroup.updateFunction(instance, newData, emptyObject, props);
       }
     }
 
@@ -406,13 +415,20 @@ export abstract class CustomDescriptor< //
     const groupName = propertyDescriptor.groupName;
 
     if (groupNamesToUpdate !== null && groupName !== null) {
-      if (isInitialUpdate && !this.propertyGroups[groupName].updateInitial) {
+      const propertyGroup: TPropertyGroupDescriptor = this.propertyGroups[groupName];
+
+      if (isInitialUpdate && !propertyGroup.updateInitial) {
         return;
       }
 
       if (groupedUpdates[groupName] === undefined) {
         groupNamesToUpdate.push(groupName);
         groupedUpdates[groupName] = {};
+      }
+
+      if (value === null && propertyGroup.defaultValue !== undefined) {
+        // TODO test partial default values
+        value = propertyGroup.defaultValue[propName];
       }
 
       groupedUpdates[groupName][propName] = value;
@@ -428,6 +444,11 @@ export abstract class CustomDescriptor< //
         throw new Error("yarrg test this btw");
         // throw new Error("Property updateFunction for " +
         //   `${(instance as any)[r3rFiberSymbol].type}.${propName} is not defined.`);
+      }
+
+      if (value === null && propertyDescriptor.defaultValue !== undefined) {
+        // TODO test restoring default values for individual property descriptors
+        value = propertyDescriptor.defaultValue;
       }
 
       updateFunction(instance, value, oldProps, newProps);

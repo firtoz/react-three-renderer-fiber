@@ -1,7 +1,11 @@
-import {OrthographicCamera} from "three";
-import {CameraElementProps, ICameraProps} from "../../common/cameraBase";
+import {OrthographicCamera, PerspectiveCamera} from "three";
+import {
+  CameraElementProps, cameraEventProjectionMatrixUpdated, cameraEventsSymbol,
+  ICameraProps
+} from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
+import {EventEmitter} from "events";
 
 export interface IOrthographicCameraProps extends ICameraProps {
   zoom?: number;
@@ -35,10 +39,7 @@ class OrthographicCameraDescriptor extends Object3DDescriptorBase<IOrthographicC
   public constructor() {
     super();
 
-    // TODO emit update event for properties to be used by camera helpers
-    // TODO call update projection matrix only once, use property groups
-
-    [
+    this.hasPropGroup([
       "zoom",
       "left",
       "right",
@@ -46,11 +47,50 @@ class OrthographicCameraDescriptor extends Object3DDescriptorBase<IOrthographicC
       "bottom",
       "near",
       "far",
-    ].forEach((propName) => {
-      this.hasProp(propName, (instance: OrthographicCamera, newValue: number) => {
-        (instance as any)[propName] = newValue;
-        instance.updateProjectionMatrix();
-      }).withDefault((defaultCamera as any)[propName]);
+    ], (instance, newValue: {
+      zoom: number,
+      left: number,
+      right: number,
+      top: number,
+      bottom: number,
+      near: number,
+      far: number,
+    }) => {
+      if (newValue.zoom !== undefined) {
+        instance.zoom = newValue.zoom;
+      }
+      if (newValue.left !== undefined) {
+        instance.left = newValue.left;
+      }
+      if (newValue.right !== undefined) {
+        instance.right = newValue.right;
+      }
+      if (newValue.top !== undefined) {
+        instance.top = newValue.top;
+      }
+      if (newValue.bottom !== undefined) {
+        instance.bottom = newValue.bottom;
+      }
+      if (newValue.near !== undefined) {
+        instance.near = newValue.near;
+      }
+      if (newValue.far !== undefined) {
+        instance.far = newValue.far;
+      }
+
+      instance.updateProjectionMatrix();
+
+      const cameraEvents: EventEmitter = instance.userData[cameraEventsSymbol];
+
+      cameraEvents.emit(cameraEventProjectionMatrixUpdated);
+    }, false, true).withDefault({
+      bottom: defaultCamera.bottom,
+      far: defaultCamera.far,
+      left: defaultCamera.left,
+      near: defaultCamera.near,
+      right: defaultCamera.right,
+      top: defaultCamera.top,
+      zoom: defaultCamera.zoom,
     });
   }
 
@@ -64,7 +104,11 @@ class OrthographicCameraDescriptor extends Object3DDescriptorBase<IOrthographicC
       far,
     } = props;
 
-    return new OrthographicCamera(left, right, top, bottom, near, far);
+    const camera = new OrthographicCamera(left, right, top, bottom, near, far);
+
+    camera.userData[cameraEventsSymbol] = new EventEmitter();
+
+    return camera;
   }
 }
 
