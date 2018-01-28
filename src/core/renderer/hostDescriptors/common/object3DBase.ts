@@ -1,5 +1,5 @@
 import * as PropTypes from "prop-types";
-import {Euler, Object3D, Quaternion, Vector3} from "three";
+import {Euler, MeshDepthMaterial, Object3D, Quaternion, Vector3} from "three";
 import isNonProduction from "../../../customRenderer/utils/isNonProduction";
 import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import {IPropsWithChildren} from "./IPropsWithChildren";
@@ -12,6 +12,10 @@ export interface IObject3DProps extends IPropsWithChildren {
   quaternion?: Quaternion;
   lookAt?: Vector3;
   visible?: boolean;
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+  // TODO add prop setting for customDepthMaterial
+  customDepthMaterial?: MeshDepthMaterial;
 }
 
 abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
@@ -24,7 +28,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     TParent,
     TChild> {
 
-  public constructor() {
+  protected constructor() {
     super();
 
     this.hasSimpleProp("name", true, false)
@@ -32,6 +36,11 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
 
     this.hasSimpleProp("visible", true, true)
       .withDefault(true);
+
+    // TODO find default for castShadow
+    this.hasSimpleProp("castShadow", true, true);
+    // TODO find default for receiveShadow
+    this.hasSimpleProp("receiveShadow", true, true);
 
     // this.hasSimpleProp("name", true, true);
     this.hasProp("position", (instance: Object3D,

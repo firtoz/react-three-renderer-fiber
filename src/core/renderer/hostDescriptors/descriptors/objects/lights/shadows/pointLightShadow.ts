@@ -24,6 +24,7 @@ declare global {
 
 const defaultPointLightCamera = new PointLight().shadow.camera;
 
+// TODO bias/map/mapsize/matrix/radius props
 class PointLightShadowDescriptor extends ReactThreeRendererDescriptor<IPointLightShadowProps,
   LightShadow,
   PointLight> {

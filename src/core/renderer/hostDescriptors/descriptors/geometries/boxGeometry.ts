@@ -1,5 +1,4 @@
-import * as THREE from "three";
-import {BoxGeometry} from "three";
+import {BoxGeometry, PlaneBufferGeometry} from "three";
 import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
@@ -13,10 +12,21 @@ export interface IBoxGeometryProps {
   depthSegments?: number;
 }
 
+export interface IPlaneGeometryProps {
+  width: number;
+  height: number;
+  widthSegments?: number;
+  heightSegments?: number;
+}
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      boxGeometry: IThreeElementPropsBase<THREE.BoxGeometry> & IBoxGeometryProps;
+      boxGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
+      // TODO implement boxBufferGeometry
+      boxBufferGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
+      // TODO implement planeBufferGeometry
+      planeBufferGeometry: IThreeElementPropsBase<PlaneBufferGeometry> & IPlaneGeometryProps;
     }
   }
 }
