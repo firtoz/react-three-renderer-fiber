@@ -1,7 +1,7 @@
 import {ResourceContainerSymbol} from "./ResourceDescriptorWrapper";
 
 export default class ResourceContainer {
-  public static Get(instance: any): ResourceContainer | undefined {
+  public static GetContainerForResource(instance: any): ResourceContainer | undefined {
     return instance[ResourceContainerSymbol];
   }
 

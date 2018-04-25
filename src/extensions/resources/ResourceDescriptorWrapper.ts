@@ -35,7 +35,7 @@ function MountResourceToContainer(instance: any, parent: any) {
 }
 
 function UnmountResourceFromContainer(instance: any) {
-  const resourceContainer = ResourceContainer.Get(instance);
+  const resourceContainer = ResourceContainer.GetContainerForResource(instance);
   if (resourceContainer !== undefined) {
     const resourceId = GetResourceID(instance);
 
@@ -55,7 +55,7 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
       // TODO check if the parent is a 'ResourceContainer', if so, change the resource key.
       // Otherwise, complain
       this.hasProp<string>("resource-id", (instance, newResourceId) => {
-        const resourceContainer = ResourceContainer.Get(instance);
+        const resourceContainer = ResourceContainer.GetContainerForResource(instance);
 
         if (resourceContainer === undefined) {
           SetResourceId(instance, newResourceId);

@@ -58,7 +58,7 @@ describe("ResourceRenderer", () => {
 
     chai.expect(geometry).to.be.instanceOf(BoxGeometry);
     chai.expect(resourceContainer).to.equal(resourcesRef.lastCall.args[0]);
-    chai.expect(ResourceContainer.Get(geometry)).to.equal(resourcesRef.lastCall.args[0]);
+    chai.expect(ResourceContainer.GetContainerForResource(geometry)).to.equal(resourcesRef.lastCall.args[0]);
     chai.expect(resourceContainer.get("hey")).to.equal(geometry);
 
     resourceRenderer.unmountComponentAtNode(container, () => {
