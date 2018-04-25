@@ -16,11 +16,6 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       object3D: IThreeElementPropsBase<THREE.Object3D> & IObject3DProps;
-      // TODO implement resources as a module (have fun lol
-      resources: IThreeElementPropsBase<THREE.Object3D> & IObject3DProps;
-      resource: IThreeElementPropsBase<THREE.Object3D> & IResourceProps;
-      geometryResource: IThreeElementPropsBase<THREE.Object3D> & IResourceReferenceProps;
-      materialResource: IThreeElementPropsBase<THREE.Object3D> & IResourceReferenceProps;
     }
   }
 }

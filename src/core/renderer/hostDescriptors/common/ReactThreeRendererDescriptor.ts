@@ -84,6 +84,10 @@ export default abstract class ReactThreeRendererDescriptor< //
 
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
       const key: string = updatePayload[keyIndex];
+      if (key === "children") {
+        continue;
+      }
+
       const value: any = updatePayload[keyIndex + 1];
       if (this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false)) {
         wantsRepaint = true;

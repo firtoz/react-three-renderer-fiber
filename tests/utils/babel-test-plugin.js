@@ -95,53 +95,55 @@ const testCode = ` + ([sourceLines[0]].concat(
       }
 
       try {
-        path.replaceWith(
-          t.expressionStatement(t.callExpression(
-            t.functionExpression(null,
-              [],
-              t.blockStatement(
-                [
-                  t.variableDeclaration(
-                    'let',
-                    [
-                      t.variableDeclarator(
-                        t.identifier('func'),
-                        pathNode,
-                      ),
-                    ]
-                  ),
-                  t.expressionStatement(
-                    t.assignmentExpression(
-                      '=', // operator
-                      t.memberExpression(
-                        t.identifier('func'),
-                        t.identifier('toString'),
-                        false
-                      ), // left
-                      t.functionExpression(
-                        null,
-                        [], // params
-                        t.blockStatement([
-                          t.returnStatement(
-                            t.callExpression(
-                              t.identifier('decodeURI'),
-                              [t.stringLiteral(encodeURI(expectedToString))]
-                            )
-                          ),
-                        ])// body
-                      ), // right
-                    )
-                  ),
-                  t.returnStatement(
-                    t.identifier('func'),
-                  ),
-                ]
-              ), // body
-              false,
-              false),
-            []
-            )
+        let replacement = t.expressionStatement(t.callExpression(
+          t.functionExpression(null,
+            [],
+            t.blockStatement(
+              [
+                t.variableDeclaration(
+                  'let',
+                  [
+                    t.variableDeclarator(
+                      t.identifier('func'),
+                      pathNode
+                    ),
+                  ]
+                ),
+                t.expressionStatement(
+                  t.assignmentExpression(
+                    '=', // operator
+                    t.memberExpression(
+                      t.identifier('func'),
+                      t.identifier('toString'),
+                      false
+                    ), // left
+                    t.functionExpression(
+                      null,
+                      [], // params
+                      t.blockStatement([
+                        t.returnStatement(
+                          t.callExpression(
+                            t.identifier('decodeURI'),
+                            [t.stringLiteral(encodeURI(expectedToString))]
+                          )
+                        ),
+                      ])// body
+                    ) // right
+                  )
+                ),
+                t.returnStatement(
+                  t.identifier('func')
+                ),
+              ]
+            ), // body
+            false,
+            false),
+          []
           )
+        );
+
+        path.replaceWith(
+          replacement
         );
       } catch (e) {
         console.error(e); // eslint-disable-line

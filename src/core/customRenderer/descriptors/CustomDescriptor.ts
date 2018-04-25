@@ -141,21 +141,21 @@ export abstract class CustomDescriptor< //
   @final()
   public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
+      throw new Error("Containers are treated as parents for " + (this as any).__proto__.constructor.name);
     }
   }
 
   @final()
   public insertInContainerBefore(instance: TInstance, container: TParent, before: any): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
+      throw new Error("Containers are treated as parents for " + (this as any).__proto__.constructor.name);
     }
   }
 
   @final()
   public appendToContainer(instance: TInstance, container: TParent): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
+      throw new Error("Containers are treated as parents for " + (this as any).__proto__.constructor.name);
     }
   }
 

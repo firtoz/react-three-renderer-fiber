@@ -208,7 +208,6 @@ export class WrappedEntityDescriptor<TWrapper extends WrapperDetails<TProps, TIn
     }
   }
 
-  @final()
   public willBeAddedToParent(instance: TInstance, parentInstance: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 

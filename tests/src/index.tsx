@@ -75,6 +75,7 @@ describe("React Three Renderer", () => {
 
   require("./core");
   require("./examples");
+  require("./extensions");
 
   before("place test elements", () => {
     document.body.appendChild(testContainers.div);

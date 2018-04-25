@@ -1,4 +1,4 @@
-export default function final(instanceParameterIndex: number = 0): any {
+export default function final(): any {
   return (target: any,
           propertyKey: string,
           descriptor: PropertyDescriptor): void => {
