@@ -1,11 +1,11 @@
+import {EventEmitter} from "events";
 import {OrthographicCamera, PerspectiveCamera} from "three";
 import {
   CameraElementProps, cameraEventProjectionMatrixUpdated, cameraEventsSymbol,
-  ICameraProps
+  ICameraProps,
 } from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
-import {EventEmitter} from "events";
 
 export interface IOrthographicCameraProps extends ICameraProps {
   zoom?: number;

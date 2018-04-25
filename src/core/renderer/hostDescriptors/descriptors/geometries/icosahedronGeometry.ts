@@ -21,7 +21,7 @@ export class IcosahedronGeometryWrapper extends GeometryWrapperBase<IIcosahedron
   protected constructGeometry(props: IIcosahedronGeometryProps): IcosahedronGeometry {
     return new IcosahedronGeometry(
       props.radius,
-      props.detail
+      props.detail,
     );
   }
 }
@@ -35,7 +35,7 @@ class IcosahedronGeometryDescriptor extends WrappedEntityDescriptor<IcosahedronG
 
     this.hasRemountProps(
       "radius",
-      "detail"
+      "detail",
     );
   }
 }

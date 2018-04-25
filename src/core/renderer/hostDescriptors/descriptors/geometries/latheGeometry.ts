@@ -5,7 +5,7 @@ import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface ILatheGeometryProps {
-  points: Array<THREE.Vector2>;
+  points: THREE.Vector2[];
   segments?: number;
   phiStart?: number;
   phiLength?: number;
@@ -25,7 +25,7 @@ export class LatheGeometryWrapper extends GeometryWrapperBase<ILatheGeometryProp
       props.points as any,
       props.segments,
       props.phiStart,
-      props.phiLength
+      props.phiLength,
     );
   }
 }
@@ -41,7 +41,7 @@ class LatheGeometryDescriptor extends WrappedEntityDescriptor<LatheGeometryWrapp
       "points",
       "segments",
       "phiStart",
-      "phiLength"
+      "phiLength",
     );
   }
 }

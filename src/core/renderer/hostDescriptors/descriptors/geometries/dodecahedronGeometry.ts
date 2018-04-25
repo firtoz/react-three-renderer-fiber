@@ -21,7 +21,7 @@ export class DodecahedronGeometryWrapper extends GeometryWrapperBase<IDodecahedr
   protected constructGeometry(props: IDodecahedronGeometryProps): DodecahedronGeometry {
     return new DodecahedronGeometry(
       props.radius,
-      props.detail
+      props.detail,
     );
   }
 }
@@ -35,7 +35,7 @@ class DodecahedronGeometryDescriptor extends WrappedEntityDescriptor<Dodecahedro
 
     this.hasRemountProps(
       "radius",
-      "detail"
+      "detail",
     );
   }
 }

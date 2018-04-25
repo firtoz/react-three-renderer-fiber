@@ -4,8 +4,8 @@ import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
 import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
-import {PropertyUpdater} from "./properties/PropertyUpdater";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
+import {PropertyUpdater} from "./properties/PropertyUpdater";
 
 export interface IPropertyUpdaterMap<TProps,
   TInstance,

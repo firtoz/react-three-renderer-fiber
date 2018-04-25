@@ -63,7 +63,7 @@ function renderSubtreeIntoContainer(reconciler: IRenderer,
 }
 
 export default class CustomReactRenderer {
-  private reconciler: IRenderer;
+  private readonly reconciler: IRenderer;
 
   constructor(private reconcilerConfig: CustomReconcilerConfig<any>, wantsDevtools: boolean = true) {
     if (wantsDevtools && isNonProduction) {
@@ -88,8 +88,8 @@ export default class CustomReactRenderer {
                         container: any,
                         callback?: any): any | null {
     return renderSubtreeIntoContainer(this.reconciler,
-      this.reconcilerConfig.getContextSymbol(),
-      this.reconcilerConfig.getRootContainerSymbol(),
+      CustomReconcilerConfig.contextSymbol,
+      CustomReconcilerConfig.rootContainerSymbol,
       null,
       element,
       container,
@@ -98,7 +98,7 @@ export default class CustomReactRenderer {
   }
 
   public unmountComponentAtNode(container: any, callback?: () => void): any {
-    if (container[this.reconcilerConfig.getRootContainerSymbol()]) {
+    if (container[CustomReconcilerConfig.rootContainerSymbol]) {
       // if (__DEV__) {
       //   const rootEl = getReactRootElementInContainer(container);
       //   const renderedByDifferentReact =
@@ -113,14 +113,14 @@ export default class CustomReactRenderer {
       // Unmount should not be batched.
       this.reconciler.unbatchedUpdates(() => {
         renderSubtreeIntoContainer(this.reconciler,
-          this.reconcilerConfig.getContextSymbol(),
-          this.reconcilerConfig.getRootContainerSymbol(),
+          CustomReconcilerConfig.contextSymbol,
+          CustomReconcilerConfig.rootContainerSymbol,
           null,
           null,
           container,
           false,
           () => {
-            delete container[this.reconcilerConfig.getRootContainerSymbol()];
+            delete container[CustomReconcilerConfig.rootContainerSymbol];
 
             if (callback != null) {
               callback();
@@ -166,7 +166,7 @@ export default class CustomReactRenderer {
       return null;
     }
 
-    if (componentOrElement[this.reconcilerConfig.getFiberSymbol()] !== undefined) {
+    if (componentOrElement[CustomReconcilerConfig.fiberSymbol] !== undefined) {
       // must be a host instance already then
       return componentOrElement;
     }

@@ -106,6 +106,10 @@ export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, 
 
     const property = Object.getOwnPropertyDescriptor(rendererInstance, "render");
 
+    if (property === undefined) {
+      return;
+    }
+
     const renderFunction = (scene: Scene, camera: Camera, renderTarget?: RenderTarget, forceClear?: boolean) => {
       const oldWarn = window.console.warn;
 

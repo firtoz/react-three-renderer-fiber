@@ -5,7 +5,7 @@ import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IExtrudeGeometryProps {
-  shapes: Array<THREE.Shape>;
+  shapes: THREE.Shape[];
   curveSegments?: number;
   steps?: number;
   amount?: number;
@@ -28,11 +28,11 @@ declare global {
 
 export class ExtrudeGeometryWrapper extends GeometryWrapperBase<IExtrudeGeometryProps, ExtrudeGeometry> {
   protected constructGeometry(props: IExtrudeGeometryProps): ExtrudeGeometry {
-    const { shapes, ...opts } = props;
+    const {shapes, ...opts} = props;
 
     return new ExtrudeGeometry(
       shapes,
-      opts
+      opts,
     );
   }
 }
@@ -56,7 +56,7 @@ class ExtrudeGeometryDescriptor extends WrappedEntityDescriptor<ExtrudeGeometryW
       "bevelSegments",
       "extrudePath",
       "frames",
-      "UVGenerator"
+      "UVGenerator",
     );
   }
 }

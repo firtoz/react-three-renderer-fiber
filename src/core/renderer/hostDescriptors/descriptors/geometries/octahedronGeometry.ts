@@ -21,7 +21,7 @@ export class OctahedronGeometryWrapper extends GeometryWrapperBase<IOctahedronGe
   protected constructGeometry(props: IOctahedronGeometryProps): OctahedronGeometry {
     return new OctahedronGeometry(
       props.radius,
-      props.detail
+      props.detail,
     );
   }
 }
@@ -35,7 +35,7 @@ class OctahedronGeometryDescriptor extends WrappedEntityDescriptor<OctahedronGeo
 
     this.hasRemountProps(
       "radius",
-      "detail"
+      "detail",
     );
   }
 }

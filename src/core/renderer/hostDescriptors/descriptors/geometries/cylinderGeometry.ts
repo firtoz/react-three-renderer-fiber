@@ -33,7 +33,7 @@ export class CylinderGeometryWrapper extends GeometryWrapperBase<ICylinderGeomet
       props.heightSegments,
       props.openEnded,
       props.thetaStart,
-      props.thetaLength
+      props.thetaLength,
     );
   }
 }
@@ -53,7 +53,7 @@ class CylinderGeometryDescriptor extends WrappedEntityDescriptor<CylinderGeometr
       "heightSegments",
       "openEnded",
       "thetaStart",
-      "thetaLength"
+      "thetaLength",
     );
   }
 }

@@ -4,11 +4,18 @@ import {
   DirectionalLight,
   DoubleSide,
   Fog,
+  Geometry,
+  Material,
   MeshDepthMaterial,
-  ParametricGeometry, RepeatWrapping, RGBADepthPacking,
+  ParametricGeometry,
+  RepeatWrapping,
+  RGBADepthPacking,
   TextureLoader,
   Vector3,
 } from "three";
+import CustomReactRenderer from "../../src/core/customRenderer/customReactRenderer";
+import r3rReconcilerConfig, {ReactThreeReconcilerConfig} from "../../src/core/renderer/reconciler/r3rReconcilerConfig";
+import {CustomReconcilerConfig} from "../../src/core/customRenderer/createReconciler";
 
 function clothFunction(u: number, v: number): Vector3 {
   return new Vector3(u, v);
@@ -54,8 +61,79 @@ groundTexture.anisotropy = 16;
 // TODO find ballSize
 const ballSize = 5;
 
+class ResourceWrapper<T> {
+  private readonly element: any;
+
+  constructor(element: any) {
+    this.element = element;
+  }
+
+  public raw(): T {
+    return this.element;
+  }
+
+  public dispose(): void {
+    // TODO
+  }
+}
+
+
 class ClothExample extends React.Component<never, never> {
+  // private rawPoleGeometry: BoxBufferGeometry;
+
+  // private poleGeometry: ResourceWrapper<Geometry>;
+  // private poleMaterial: ResourceWrapper<Material>;
+
+  private resources: {
+    poleGeometry: Geometry,
+    poleMaterial: Material,
+  };
+
+  public componentWillMount() {
+    // this.poleGeometry = new ResourceWrapper<Geometry>(<boxBufferGeometry
+    //   width={5}
+    //   height={375}
+    //   depth={5}
+    // />);
+
+    // this.rawPoleGeometry = new BoxBufferGeometry(5, 375, 3);
+
+    // this.poleMaterial = new ResourceWrapper<Material>(<meshLambertMaterial/>);
+
+    // resources = ResourceRenderer.render(
+    //   this,
+    //   {
+    //     poleGeometry: <boxBufferGeometry
+    //       width={5}
+    //       height={375}
+    //       depth={5}
+    //     />,
+    //     poleMaterial: <meshLambertMaterial/>,
+    //   });
+  }
+
+  public componentWillUnmount() {
+    // this.poleGeometry.dispose();
+    // this.poleMaterial.dispose();
+
+    ResourceRenderer.unmount(this);
+  }
+
   public render() {
+    const resources: {
+      poleGeometry: Geometry,
+      poleMaterial: Material,
+    } = ResourceRenderer.render(
+      this,
+      {
+        poleGeometry: <boxBufferGeometry
+          width={5}
+          height={375}
+          depth={5}
+        />,
+        poleMaterial: <meshLambertMaterial/>,
+      });
+
     return <render
       camera={<perspectiveCamera
         fov={30}
@@ -69,20 +147,6 @@ class ClothExample extends React.Component<never, never> {
         background={new Color(0xCCE0FF)}
         fog={new Fog(0XCCE0FF, 500, 10000)}
       >
-        <resources>
-          <resource
-            source={<boxBufferGeometry
-              width={5}
-              height={375}
-              depth={5}
-            />}
-            name="poleGeo"
-          />
-          <resource
-            source={<meshLambertMaterial/>}
-            name="poleMat"
-          />
-        </resources>
         <ambientLight
           color={0x666666}
         />
@@ -159,12 +223,8 @@ class ClothExample extends React.Component<never, never> {
           receiveShadow
         />
         <mesh
-          geometry={<geometryResource
-            name="poleGeo"
-          />}
-          material={<materialResource
-            name="poleMat"
-          />}
+          geometry={resources.poleGeometry}
+          material={resources.poleMaterial}
 
           position={new Vector3(-125, 62)}
 
@@ -172,12 +232,8 @@ class ClothExample extends React.Component<never, never> {
           castShadow
         />
         <mesh
-          geometry={<geometryResource
-            name="poleGeo"
-          />}
-          material={<materialResource
-            name="poleMat"
-          />}
+          geometry={resources.poleGeometry}
+          material={resources.poleMaterial}
 
           position={new Vector3(125, -62)}
 

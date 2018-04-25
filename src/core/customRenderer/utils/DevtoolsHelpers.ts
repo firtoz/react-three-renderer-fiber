@@ -1,5 +1,6 @@
 import {IFiber, IHookConfig, IReactFiberRendererConfig, ReactFiberDevToolsHook} from "react-fiber-export";
 
+import {CustomRendererElementInstance} from "../../renderer/hostDescriptors/common/object3DBase";
 import {CustomReconcilerConfig} from "../createReconciler";
 import {ReactDevtools} from "./dependencies-shim";
 import isNonProduction from "./isNonProduction";
@@ -82,11 +83,11 @@ export function hookDevtools(reconcilerConfig: CustomReconcilerConfig<any>) {
       // import interface Fiber from 'R'
 
       const hookConfig: IHookConfig & { reconciler: IReactFiberRendererConfig } = {
-        findFiberByHostInstance(hostInstance: any): IFiber {
+        findFiberByHostInstance(hostInstance: CustomRendererElementInstance): IFiber {
           // debugger;
           console.log("getClosestInstanceFromNode", hostInstance);
 
-          return hostInstance[reconcilerConfig.getFiberSymbol()];
+          return hostInstance[CustomReconcilerConfig.fiberSymbol];
         },
         findHostInstanceByFiber(/* fiber: ReactFiber.IFiber */): INativeType {
           return highlightElement;

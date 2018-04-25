@@ -2,9 +2,9 @@ import {EventEmitter} from "events";
 import {PerspectiveCamera} from "three";
 import {
   CameraElementProps,
+  cameraEventProjectionMatrixUpdated,
   cameraEventsSymbol,
   ICameraProps,
-  cameraEventProjectionMatrixUpdated
 } from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
