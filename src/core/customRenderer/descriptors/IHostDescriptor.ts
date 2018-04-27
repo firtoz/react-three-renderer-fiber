@@ -1,13 +1,11 @@
 import {Validator} from "prop-types";
 import {IPropMap} from "../createReconciler";
 
-export type ICustomReactRenderer<TRootContainer> = any;
-
 export interface IPropTypeMap {
   [propName: string]: Validator<any>;
 }
 
-export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
+export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot> {
   propTypes: IPropTypeMap;
 
   createInstance(props: TProps, rootContainerInstance: TRoot): THost;

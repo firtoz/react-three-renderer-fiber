@@ -43,7 +43,7 @@ describe("render", () => {
 
   it("should be able to be rendered into a renderer", (done) => {
     mockConsole.expectLog("THREE.WebGLRenderer", "87");
-    mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
+    // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
     const renderer = new WebGLRenderer();
 
@@ -146,7 +146,7 @@ describe("render", () => {
         requestAnimationFrame(() => {
           expect(renderCallSpy.callCount).to.equal(0);
 
-          mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
+          // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
           ReactThreeRenderer.render(<render
             camera={<perspectiveCamera/>}
@@ -477,9 +477,11 @@ describe("render", () => {
   });
 
   it("should allow custom renderers", (done) => {
-    wrRenderer.render(<test/>, testDiv);
-
-    done();
+    wrRenderer.render(<test/>, testDiv, () => {
+      wrRenderer.unmountComponentAtNode(testDiv, () => {
+        done();
+      });
+    });
   });
 
   it("should trigger a render only when a visible property is updated", (done) => {

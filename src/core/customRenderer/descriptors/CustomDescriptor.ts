@@ -64,14 +64,12 @@ export abstract class CustomDescriptor< //
   TChild = any,
   TPropertyDescriptor extends CustomPropertyDescriptor<TProps, TInstance, any> = any,
   TPropertyGroupDescriptor extends CustomPropertyGroupDescriptor<TProps, TInstance, any> = any,
-  TRoot = any,
-  TRenderer = any>
+  TRoot = any>
   implements IHostDescriptor<TProps,
     TInstance,
     TParent,
     TChild,
-    TRoot,
-    TRenderer> {
+    TRoot> {
 
   public propTypes: IPropTypeMap;
 
@@ -433,7 +431,7 @@ export abstract class CustomDescriptor< //
 
       groupedUpdates[groupName][propName] = value;
     } else {
-      if (isInitialUpdate && propertyDescriptor.updateInitial !== true) {
+      if (isInitialUpdate && !propertyDescriptor.updateInitial) {
         return;
       }
 

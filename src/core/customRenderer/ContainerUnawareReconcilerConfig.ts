@@ -7,7 +7,6 @@ export class ContainerUnawareReconcilerConfig<TDescriptor extends IHostDescripto
   any,
   any,
   any,
-  any,
   any>> extends CustomReconcilerConfig<TDescriptor> {
   public appendChildToContainer(parent: any, childInstance: any): void {
     const descriptor = this.getDescriptorForInstance(childInstance) as TDescriptor;

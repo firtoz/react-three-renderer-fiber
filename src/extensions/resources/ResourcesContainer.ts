@@ -14,6 +14,10 @@ export default class ResourceContainer {
   }
 
   public setResource(key: string, resource: any) {
+    if (this.resources[key] !== undefined) {
+      console.error(`The resource with the resource ID '${key}' is already defined.`);
+    }
+
     this.resources[key] = resource;
   }
 

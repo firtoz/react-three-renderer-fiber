@@ -67,6 +67,9 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
           resourceContainer.removeResource(newResourceId);
         }
 
+        if (previousValue === instance) {
+          throw new Error("The resource property is somehow being overwritten.");
+        }
         // TODO handle repainting upon rerender?!
         // TODO somehow get context?!
 
@@ -154,7 +157,7 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
             wantsRepaint = true;
           }
 
-          // noinspection TsLint
+          // tslint:disable-next-line
           debugger;
 
           updatePayload.splice(keyIndex, 2);

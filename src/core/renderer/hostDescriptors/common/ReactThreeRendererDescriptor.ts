@@ -50,8 +50,7 @@ export default abstract class ReactThreeRendererDescriptor< //
     TChild,
     ReactThreeRendererPropertyDescriptor<TProps, TInstance, any>,
     R3RPropertyGroupDescriptor<TProps, TInstance, any>,
-    HTMLCanvasElement,
-    ReactThreeRenderer> {
+    HTMLCanvasElement> {
   constructor(public wantsRepaint: boolean = true) {
     super(ReactThreeRendererPropertyDescriptor, R3RPropertyGroupDescriptor);
 

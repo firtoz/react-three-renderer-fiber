@@ -33,7 +33,6 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   any,
   any,
   any,
-  any,
   any>> implements IReactFiberRendererConfig {
   public static readonly fiberSymbol: unique symbol = Symbol("custom-renderer-fiber");
   public static readonly contextSymbol: unique symbol = Symbol("custom-renderer-context");
@@ -298,7 +297,6 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
 }
 
 export default function createReconciler<TDescriptor extends IHostDescriptor<any,
-  any,
   any,
   any,
   any,

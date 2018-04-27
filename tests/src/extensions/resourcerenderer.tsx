@@ -81,18 +81,11 @@ describe("ResourceRenderer", () => {
       />
     </resources>, container);
 
-    // remove the geometry
+    mockConsole.expectError("The resource with the resource ID 'hey' is already defined.");
 
     resourceRenderer.render(<resources/>, container);
 
-    mockConsole.expectError("Two resources seem to have the same id, one geometry and another geometry.");
-
-    // chai.expect(resourceContainer).to.equal(resourcesRef.lastCall.args[0]);
-    // chai.expect(GetResourceContainer(geometry)).to.equal(resourcesRef.lastCall.args[0]);
-    // chai.expect(resourceContainer.get("hey")).to.equal(geometry);
-
     resourceRenderer.unmountComponentAtNode(container, () => {
-      // chai.expect(geometryRef.lastCall.args[0]).to.be.null();
       done();
     });
   });
