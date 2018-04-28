@@ -9,7 +9,7 @@ export interface IDescriptor {
   new(): TDescriptor;
 }
 
-function GetResourceID(instance: any): string {
+export function GetResourceID(instance: any): string {
   return instance[ResourceIDSymbol];
 }
 
@@ -17,35 +17,7 @@ function SetResourceId(instance: any, key: string) {
   instance[ResourceIDSymbol] = key;
 }
 
-function SetResourceContainer(instance: any, container: ResourceContainer | undefined): void {
-  instance[ResourceContainerSymbol] = container;
-}
-
-export const ResourceContainerSymbol = Symbol("resource-container");
 export const ResourceIDSymbol = Symbol("resource-id");
-
-function MountResourceToContainer(instance: any, parent: any) {
-  SetResourceContainer(instance, parent);
-
-  const resourceId = GetResourceID(instance);
-
-  if (resourceId !== undefined) {
-    parent.setResource(resourceId, instance);
-  }
-}
-
-function UnmountResourceFromContainer(instance: any) {
-  const resourceContainer = ResourceContainer.GetContainerForResource(instance);
-  if (resourceContainer !== undefined) {
-    const resourceId = GetResourceID(instance);
-
-    if (resourceId !== undefined) {
-      resourceContainer.removeResource(resourceId);
-    }
-  }
-
-  SetResourceContainer(instance, undefined);
-}
 
 export default function ResourceDescriptorWrapper(classType: IDescriptor): IDescriptor {
   return class extends classType {
@@ -82,7 +54,7 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
     public willBeRemovedFromParent(instance: any, parent: any): void {
       // console.log("BAAAAAH - willBeRemovedFromParent");
       if (parent instanceof ResourceContainer) {
-        UnmountResourceFromContainer(instance);
+        ResourceContainer.UnmountResourceFromContainer(instance);
 
         return;
       }
@@ -92,7 +64,7 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
 
     public insertBefore(parentInstance: any, childInstance: any, before: any): void {
       if (parentInstance instanceof ResourceContainer) {
-        MountResourceToContainer(childInstance, parentInstance);
+        parentInstance.MountResourceToContainer(childInstance);
 
         console.log("BAAAAAH - insertBefore");
 
@@ -109,7 +81,7 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
 
       if (parentInstance instanceof ResourceContainer) {
         // console.log("BAAAAAH - willBeAddedToParentBefore");
-        MountResourceToContainer(instance, parentInstance);
+        parentInstance.MountResourceToContainer(instance);
 
         return;
       }
@@ -120,7 +92,7 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
     public willBeAddedToParent(instance: any, parent: any): void {
       if (parent instanceof ResourceContainer) {
         // console.log("BAAAAAH - willBeAddedToParent");
-        MountResourceToContainer(instance, parent);
+        parent.MountResourceToContainer(instance);
 
         return;
       }
@@ -173,15 +145,18 @@ export default function ResourceDescriptorWrapper(classType: IDescriptor): IDesc
     }
 
     public createInstance(props: any, rootContainerInstance: any) {
+      let instance: any;
       if (props.hasOwnProperty("resource-id")) {
         const propsClone = Object.assign({}, props);
 
         delete propsClone["resource-id"];
 
-        return super.createInstance(propsClone, rootContainerInstance);
+        instance = super.createInstance(propsClone, rootContainerInstance);
+      } else {
+        instance = super.createInstance(props, rootContainerInstance);
       }
 
-      return super.createInstance(props, rootContainerInstance);
+      return instance;
     }
   };
 }

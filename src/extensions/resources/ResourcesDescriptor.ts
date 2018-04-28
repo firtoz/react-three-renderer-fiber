@@ -21,13 +21,15 @@ export class ResourcesDescriptor extends ReactThreeRendererDescriptor<{},
   }
 
   public appendChild(instance: ResourceContainer, child: any): void {
-    console.log("appending: ", child);
+    // console.log("appending: ", child);
+    // instance.Append(child);
 
     super.appendChild(instance, child);
   }
 
   public removeChild(instance: ResourceContainer, child: any): void {
     // console.log("removing: ", child);
+    // instance.Remove(child);
 
     super.removeChild(instance, child);
   }
@@ -43,12 +45,31 @@ export class ResourcesDescriptor extends ReactThreeRendererDescriptor<{},
     super.appendInitialChild(instance, child);
   }
 
-  public willBeRemovedFromParent(instance: ResourceContainer, parent: any): void {
+  public willBeRemovedFromParent(instance: ResourceContainer, parentInstance: any): void {
+    if (parentInstance instanceof ResourceContainer) {
+      ResourceContainer.UnmountResourceFromContainer(instance);
+    }
     // console.log("willBeRemovedFromParent", instance);
 
     // debugger;
 
-    super.willBeRemovedFromParent(instance, parent);
+    super.willBeRemovedFromParent(instance, parentInstance);
+  }
+
+  public willBeAddedToParentBefore(instance: ResourceContainer, parentInstance: any, before: any): void {
+    if (parentInstance instanceof ResourceContainer) {
+      parentInstance.MountResourceToContainer(instance);
+    }
+
+    super.willBeAddedToParentBefore(instance, parentInstance, before);
+  }
+
+  public willBeAddedToParent(instance: ResourceContainer, parentInstance: any): void {
+    if (parentInstance instanceof ResourceContainer) {
+      parentInstance.MountResourceToContainer(instance);
+    }
+
+    super.willBeAddedToParent(instance, parentInstance);
   }
 
 // public insertInContainerBefore(instance: Resources, container: any, before: any): void {

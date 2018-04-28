@@ -50,8 +50,6 @@ describe("ResourceRenderer", () => {
 
     const geometry = geometryRef.lastCall.args[0];
 
-    chai.expect(geometry).not.to.be.null();
-
     if (geometry == null) {
       return;
     }
@@ -117,8 +115,185 @@ describe("ResourceRenderer", () => {
     // chai.expect(resourceContainer.get("hey")).to.equal(geometry);
 
     resourceRenderer.unmountComponentAtNode(container, () => {
-      // chai.expect(geometryRef.lastCall.args[0]).to.be.null();
+      chai.expect(geometryRef.lastCall.args[0]).to.be.null();
       done();
     });
+  });
+
+  it("can mount to children", (done) => {
+    const container = {};
+
+    // const geometryRef = sinon.spy();
+
+    const resourceContainer: ResourceContainer = resourceRenderer.render(<resources>
+      <resources>
+        <boxGeometry
+          resource-id="hey"
+          width={20}
+          height={20}
+          depth={20}/>
+      </resources>
+      <resources>
+        <boxGeometry
+          resource-id="yo"
+          width={20}
+          height={20}
+          depth={20}/>
+        <resources>
+          <boxGeometry
+            resource-id="nesting"
+            width={20}
+            height={20}
+            depth={20}/>
+        </resources>
+      </resources>
+    </resources>, container);
+
+    // remove the geometry
+
+    // resourceRenderer.render(<resources/>, container);
+
+    // chai.expect(geometryRef.callCount).to.equal(2);
+    // chai.expect(geometryRef.lastCall.args[0]).to.be.null();
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined();
+
+    resourceRenderer.render(<resources>
+      <resources>
+        <boxGeometry
+          resource-id="hey"
+          width={20}
+          height={20}
+          depth={20}/>
+      </resources>
+      <resources>
+        <boxGeometry
+          resource-id="yo"
+          width={20}
+          height={20}
+          depth={20}/>
+        <resources>
+          <boxGeometry
+            resource-id="nesting"
+            width={20}
+            height={20}
+            depth={20}/>
+          <boxGeometry
+            resource-id="nesting 2"
+            width={20}
+            height={20}
+            depth={20}/>
+        </resources>
+      </resources>
+    </resources>, container);
+
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined();
+
+    resourceRenderer.render(<resources>
+      <resources>
+        <boxGeometry
+          resource-id="hey"
+          width={20}
+          height={20}
+          depth={20}/>
+      </resources>
+      <resources>
+        <boxGeometry
+          resource-id="yo"
+          width={20}
+          height={20}
+          depth={20}/>
+      </resources>
+    </resources>, container);
+
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting")).to.be.undefined();
+    chai.expect(resourceContainer.get("nesting 2")).to.be.undefined();
+
+    resourceRenderer.render(<resources>
+      <resources>
+        <boxGeometry
+          resource-id="hey"
+          width={20}
+          height={20}
+          depth={20}/>
+      </resources>
+      <resources>
+        <boxGeometry
+          resource-id="yo"
+          width={20}
+          height={20}
+          depth={20}/>
+        <resources>
+          <boxGeometry
+            resource-id="nesting"
+            width={20}
+            height={20}
+            depth={20}/>
+          <resources>
+            <resources>
+              <boxGeometry
+                resource-id="nesting 2"
+                width={20}
+                height={20}
+                depth={20}/>
+            </resources>
+          </resources>
+        </resources>
+      </resources>
+    </resources>, container);
+
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined();
+
+    resourceRenderer.render(<resources>
+      <resources>
+        <boxGeometry
+          resource-id="hey"
+          width={20}
+          height={20}
+          depth={20}/>
+      </resources>
+      <resources>
+        <boxGeometry
+          resource-id="yo"
+          width={20}
+          height={20}
+          depth={20}/>
+        <resources>
+          <resources>
+            <resources>
+              <boxGeometry
+                resource-id="nesting 2"
+                width={20}
+                height={20}
+                depth={20}/>
+            </resources>
+          </resources>
+        </resources>
+      </resources>
+    </resources>, container);
+
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("nesting")).to.be.undefined();
+    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined();
+
+    // chai.expect(resourceContainer).to.equal(resourcesRef.lastCall.args[0]);
+    // chai.expect(GetResourceContainer(geometry)).to.equal(resourcesRef.lastCall.args[0]);
+    // chai.expect(resourceContainer.get("hey")).to.equal(geometry);
+
+    resourceRenderer.unmountComponentAtNode(container, () => {
+      //   chai.expect(geometryRef.lastCall.args[0]).to.be.null();
+      done();
+    });
+
   });
 });
