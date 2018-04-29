@@ -62,10 +62,11 @@ function renderSubtreeIntoContainer(reconciler: IRenderer,
   return reconciler.getPublicRootInstance(root);
 }
 
-export default class CustomReactRenderer {
+export default class CustomReactRenderer<TReconcilerConfig extends //
+  CustomReconcilerConfig<any> = CustomReconcilerConfig<any>> {
   private readonly reconciler: IRenderer;
 
-  constructor(private reconcilerConfig: CustomReconcilerConfig<any>, wantsDevtools: boolean = true) {
+  constructor(reconcilerConfig: TReconcilerConfig, wantsDevtools: boolean = true) {
     if (wantsDevtools && isNonProduction) {
       hookDevtools(reconcilerConfig);
     }

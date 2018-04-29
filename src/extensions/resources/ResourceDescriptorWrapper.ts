@@ -1,12 +1,12 @@
 import ReactThreeRendererDescriptor from "../../core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ResourceContainer from "./ResourcesContainer";
 
-export type TDescriptor = ReactThreeRendererDescriptor & {
+export type TDescriptorInstance = ReactThreeRendererDescriptor & {
   createInstance(props: any, rootContainerInstance: any): any,
 };
 
-export interface IDescriptor {
-  new(): TDescriptor;
+export interface IDescriptorClass {
+  new(): TDescriptorInstance;
 }
 
 export function GetResourceID(instance: any): string {
@@ -19,7 +19,7 @@ function SetResourceId(instance: any, key: string) {
 
 export const ResourceIDSymbol = Symbol("resource-id");
 
-export default function ResourceDescriptorWrapper(classType: IDescriptor): IDescriptor {
+export default function ResourceDescriptorWrapper(classType: IDescriptorClass): IDescriptorClass {
   return class extends classType {
     constructor() {
       super();

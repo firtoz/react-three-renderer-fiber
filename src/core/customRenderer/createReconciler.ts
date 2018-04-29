@@ -44,7 +44,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
 
   public scheduleDeferredCallback: any = ReactDOMFrameScheduling.rIC;
   public useSyncScheduling: boolean = true;
-  private hostDescriptors: Map<string, TDescriptor> = new Map();
+  protected hostDescriptors: Map<string, TDescriptor> = new Map();
 
   @autoBind
   public getRootHostContext(rootContainerInstance: any) {
@@ -213,6 +213,10 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   }
 
   protected defineHostDescriptor(type: string, descriptor: TDescriptor): void {
+    if (this.hostDescriptors.get(type) !== undefined) {
+      throw new Error(`The descriptor for type '${type}' is already defined.`);
+    }
+
     this.hostDescriptors.set(type, descriptor);
   }
 
@@ -226,7 +230,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
     return this.hostDescriptors.get(type) as TDescriptor;
   }
 
-  private getDescriptorForType(type: string): TDescriptor {
+  protected getDescriptorForType(type: string): TDescriptor {
     if (!this.hostDescriptors.has(type)) {
       throw new Error(`Cannot find descriptor for type "${type}"`);
     }

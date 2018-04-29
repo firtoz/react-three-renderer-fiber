@@ -1,32 +1,29 @@
 import ContainerUnawareReconcilerConfig from "../../core/customRenderer/ContainerUnawareReconcilerConfig";
 import CustomReactRenderer from "../../core/customRenderer/customReactRenderer";
 import ReactThreeRendererDescriptor from "../../core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
-import BoxGeometryDescriptor from "../../core/renderer/hostDescriptors/descriptors/geometries/boxGeometry";
-import MeshBasicMaterialDescriptor from "../../core/renderer/hostDescriptors/descriptors/materials/meshBasicMaterial";
 import ResourceDescriptorWrapper from "./ResourceDescriptorWrapper";
 import {ResourcesDescriptor} from "./ResourcesDescriptor";
+
+import {ReactThreeRenderer} from "../../core/renderer/reactThreeRenderer";
 
 class ResourceReconcilerConfig extends ContainerUnawareReconcilerConfig<ReactThreeRendererDescriptor> {
   constructor() {
     super();
 
     [
-      ["boxGeometry", BoxGeometryDescriptor],
-      ["meshBasicMaterial", MeshBasicMaterialDescriptor],
-    ].forEach(([name, descriptor]: any) => {
-      this.defineHostDescriptor(name, new (ResourceDescriptorWrapper(descriptor))());
+      "meshBasicMaterial",
+      "boxGeometry",
+    ].forEach((descName) => {
+      const hostDescriptor = ReactThreeRenderer.getHostDescriptorClass(descName);
+
+      if (hostDescriptor === undefined) {
+        throw new Error(`Cannot find ${descName} descriptor.`);
+      }
+
+      this.defineHostDescriptor(descName, new (ResourceDescriptorWrapper(hostDescriptor))());
     });
-    // const wrappedBoxGeometry = WrapClass(BoxGeometryDescriptor);
 
     this.defineHostDescriptor("resources", new ResourcesDescriptor());
-    // descriptorsRequireContext
-    //   .keys()
-    //   .forEach((key: string) => {
-    //     const name = key.match(/(\w+)\.ts$/);
-    //     if (name !== null) {
-    //       this.defineHostDescriptor(name[1], new (descriptorsRequireContext(key).default)());
-    //     }
-    //   });
   }
 }
 

@@ -1,3 +1,4 @@
+import {IDescriptorClass} from "../../../extensions/resources/ResourceDescriptorWrapper";
 import ContainerUnawareReconcilerConfig from "../../customRenderer/ContainerUnawareReconcilerConfig";
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
 import {IHostContext} from "../../customRenderer/customReactRenderer";
@@ -9,17 +10,33 @@ declare function require(filename: string): any;
 const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.ts$/);
 
 export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<ReactThreeRendererDescriptor> {
-  constructor() {
-    super();
+  public static getHostDescriptorClass(key: string): IDescriptorClass | undefined {
+    return ReactThreeReconcilerConfig.descriptorMap.get(key);
+  }
+
+  private static descriptorMap: Map<string, IDescriptorClass> = (() => {
+    const map = new Map<string, IDescriptorClass>();
 
     descriptorsRequireContext
       .keys()
       .forEach((key: string) => {
         const name = key.match(/(\w+)\.ts$/);
         if (name !== null) {
-          this.defineHostDescriptor(name[1], new (descriptorsRequireContext(key).default)());
+          map.set(name[1], descriptorsRequireContext(key).default);
         }
       });
+
+    return map;
+  })();
+
+  constructor() {
+    super();
+
+    ReactThreeReconcilerConfig.descriptorMap.forEach((value, key) => {
+      if (name !== null) {
+        this.defineHostDescriptor(key, new (value)());
+      }
+    });
   }
 
   public appendChildToContainer(parent: any, childInstance: CustomRendererElementInstance): void {
