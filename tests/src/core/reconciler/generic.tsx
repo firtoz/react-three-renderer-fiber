@@ -12,14 +12,14 @@ describe("generic", () => {
       childObject = renderer;
     }
 
-    ReactThreeRenderer.render(<object3D ref={object3DRef} />, parentObject, () => {
+    ReactThreeRenderer.render(<object3D ref={object3DRef}/>, parentObject, () => {
       chai.expect(childObject).to.be.an.instanceOf(THREE.Object3D);
 
       chai.expect(childObject.parent).to.equal(parentObject);
       chai.expect(parentObject.children[0]).to.equal(childObject);
 
       ReactThreeRenderer.unmountComponentAtNode(parentObject, () => {
-        chai.expect(childObject, "childObject should have been null").to.be.null();
+        chai.expect(childObject, "childObject should have been null").to.be.null("");
 
         chai.expect(parentObject.children.length, "Child object should have been removed from the parent")
           .to.equal(0);

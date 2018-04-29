@@ -100,10 +100,10 @@ describe("getting started", () => {
 
     expect(renderer).to.equal(rendererRef.ref);
 
-    expect(scene.ref, "Scene should be set").not.to.be.null();
-    expect(camera.ref, "Camera should be set").not.to.be.null();
-    expect(mesh.ref, "Mesh should be set").not.to.be.null();
-    expect(pointLight.ref, "Light should be set").not.to.be.null();
+    expect(scene.ref, "Scene should be set").not.to.be.null("");
+    expect(camera.ref, "Camera should be set").not.to.be.null("");
+    expect(mesh.ref, "Mesh should be set").not.to.be.null("");
+    expect(pointLight.ref, "Light should be set").not.to.be.null("");
 
     if (mesh.ref !== null) {
       expect(boxGeometry.ref).to.equal(mesh.ref.geometry);

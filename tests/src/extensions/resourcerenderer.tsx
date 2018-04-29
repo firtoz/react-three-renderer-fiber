@@ -6,6 +6,7 @@ import {IPropsWithChildren} from "../../../src/core/renderer/hostDescriptors/com
 import ResourceContainer from "../../../src/extensions/resources/ResourcesContainer";
 import ResourceRenderer from "../../../src/extensions/resources/ResourcesRenderer";
 import {mockConsole} from "../index";
+import "../utils/dirty-chai-wrapper";
 
 const resourceRenderer = new ResourceRenderer();
 // export default new ReactThreeRenderer(r3rReconcilerConfig);
@@ -60,7 +61,7 @@ describe("ResourceRenderer", () => {
     chai.expect(resourceContainer.get("hey")).to.equal(geometry);
 
     resourceRenderer.unmountComponentAtNode(container, () => {
-      chai.expect(geometryRef.lastCall.args[0]).to.be.null();
+      chai.expect(geometryRef.lastCall.args[0]).to.be.null("");
       done();
     });
   });
@@ -107,15 +108,15 @@ describe("ResourceRenderer", () => {
     resourceRenderer.render(<resources/>, container);
 
     chai.expect(geometryRef.callCount).to.equal(2);
-    chai.expect(geometryRef.lastCall.args[0]).to.be.null();
-    chai.expect(resourceContainer.get("hey")).to.be.undefined();
+    chai.expect(geometryRef.lastCall.args[0]).to.be.null("");
+    chai.expect(resourceContainer.get("hey")).to.be.undefined("");
 
     // chai.expect(resourceContainer).to.equal(resourcesRef.lastCall.args[0]);
     // chai.expect(GetResourceContainer(geometry)).to.equal(resourcesRef.lastCall.args[0]);
     // chai.expect(resourceContainer.get("hey")).to.equal(geometry);
 
     resourceRenderer.unmountComponentAtNode(container, () => {
-      chai.expect(geometryRef.lastCall.args[0]).to.be.null();
+      chai.expect(geometryRef.lastCall.args[0]).to.be.null("");
       done();
     });
   });
@@ -155,9 +156,9 @@ describe("ResourceRenderer", () => {
 
     // chai.expect(geometryRef.callCount).to.equal(2);
     // chai.expect(geometryRef.lastCall.args[0]).to.be.null();
-    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined("");
 
     resourceRenderer.render(<resources>
       <resources>
@@ -188,10 +189,10 @@ describe("ResourceRenderer", () => {
       </resources>
     </resources>, container);
 
-    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined("");
 
     resourceRenderer.render(<resources>
       <resources>
@@ -210,10 +211,10 @@ describe("ResourceRenderer", () => {
       </resources>
     </resources>, container);
 
-    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting")).to.be.undefined();
-    chai.expect(resourceContainer.get("nesting 2")).to.be.undefined();
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting")).to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting 2")).to.be.undefined("");
 
     resourceRenderer.render(<resources>
       <resources>
@@ -248,10 +249,10 @@ describe("ResourceRenderer", () => {
       </resources>
     </resources>, container);
 
-    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined("");
 
     resourceRenderer.render(<resources>
       <resources>
@@ -281,10 +282,10 @@ describe("ResourceRenderer", () => {
       </resources>
     </resources>, container);
 
-    chai.expect(resourceContainer.get("hey")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("yo")).not.to.be.undefined();
-    chai.expect(resourceContainer.get("nesting")).to.be.undefined();
-    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined();
+    chai.expect(resourceContainer.get("hey")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("yo")).not.to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting")).to.be.undefined("");
+    chai.expect(resourceContainer.get("nesting 2")).not.to.be.undefined("");
 
     // chai.expect(resourceContainer).to.equal(resourcesRef.lastCall.args[0]);
     // chai.expect(GetResourceContainer(geometry)).to.equal(resourcesRef.lastCall.args[0]);
