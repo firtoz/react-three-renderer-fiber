@@ -11,8 +11,8 @@ export type IRenderableProp<TInstance, TProps> = IElement<TInstance, TProps> | T
 
 export class PropertyWrapper<TInstance, TProp> {
   public constructor(public propertyName: string,
-                     public types: Array<new (...args: any[]) => TProp>,
-                     public updateFunction: (instance: TInstance, newValue: TProp) => void) {
+                     public rawTypes: Array<new (...args: any[]) => TProp>,
+                     public rawTypeUpdateFunction: (instance: TInstance, newValue: TProp) => void) {
   }
 }
 
@@ -29,8 +29,8 @@ function containToInstance<TInstance>(instance: TInstance): TInstance {
   return instance;
 }
 
-function wrapperContainsType(wrapper: PropertyWrapper<any, any>, value: any) {
-  return wrapper.types.some((wrapperType) => value instanceof wrapperType);
+function wrapperContainsRawType(wrapper: PropertyWrapper<any, any>, value: any) {
+  return wrapper.rawTypes.some((wrapperType) => value instanceof wrapperType);
 }
 
 export class RefWrapper {
@@ -66,7 +66,9 @@ export class RefWrapper {
       throw new Error("Cannot use wrapProperties if a descriptor has not been linked to a refWrapper!");
     }
 
-    this.descriptor.hasPropGroup(wrappers.map((wrapper) => wrapper.propertyName), (instance: any, newMap: any) => {
+    const propNames = wrappers.map((wrapper) => wrapper.propertyName);
+
+    this.descriptor.hasPropGroup(propNames, (instance: any, newMap: any) => {
       const container = containerFunction(instance);
 
       const elements: Array<React.ReactElement<any> | null> = [];
@@ -78,8 +80,8 @@ export class RefWrapper {
         let valueElement: React.ReactElement<any> | null = null;
 
         if ((value != null)) {
-          if (wrapperContainsType(wrapper, value)) {
-            wrapper.updateFunction(instance, value);
+          if (wrapperContainsRawType(wrapper, value)) {
+            wrapper.rawTypeUpdateFunction(instance, value);
           } else {
             valueElement = this.wrapElementAndReturn(propertyName, value);
           }
@@ -89,11 +91,11 @@ export class RefWrapper {
       });
 
       ReactThreeRenderer.render(elements, container, () => {
-        wrappers.forEach((wrapper, i) => {
+        wrappers.forEach((wrapper) => {
           const value = newMap[wrapper.propertyName];
 
-          if ((value != null) && (wrapperContainsType(wrapper, value))) {
-            wrapper.updateFunction(instance, value);
+          if ((value != null) && (wrapperContainsRawType(wrapper, value))) {
+            wrapper.rawTypeUpdateFunction(instance, value);
           }
         });
       });
@@ -110,7 +112,7 @@ export class RefWrapper {
 
     const {
       propertyName: propName,
-      updateFunction,
+      rawTypeUpdateFunction,
     } = wrapper;
 
     this.descriptor.hasProp(propName, (instance: any, newValue: TProp) => {
@@ -119,16 +121,16 @@ export class RefWrapper {
       let valueElement: React.ReactElement<any> | null = null;
 
       if ((value != null)) {
-        if ((wrapperContainsType(wrapper, value))) {
-          updateFunction(instance, value);
+        if ((wrapperContainsRawType(wrapper, value))) {
+          rawTypeUpdateFunction(instance, value);
         } else {
           valueElement = this.wrapElementAndReturn(propName, value as any);
         }
       }
 
       ReactThreeRenderer.render(valueElement, containerFunction(instance), () => {
-        if ((value != null) && (wrapperContainsType(wrapper, value))) {
-          updateFunction(instance, value);
+        if ((value != null) && (wrapperContainsRawType(wrapper, value))) {
+          rawTypeUpdateFunction(instance, value);
         }
       });
     });

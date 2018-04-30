@@ -14,8 +14,8 @@ describe("for mesh", () => {
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
     >
-      <boxGeometry ref={geometryRef} width={5} height={10} depth={15} />
-      <meshBasicMaterial ref={materialRef} color={0xff0000} />
+      <boxGeometry ref={geometryRef} width={5} height={10} depth={15}/>
+      <meshBasicMaterial ref={materialRef} color={0xff0000}/>
     </mesh>, propsTarget);
 
     const mesh: Mesh = meshRef.lastCall.args[0];
@@ -38,10 +38,9 @@ describe("for mesh", () => {
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
 
-      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15} />}
-      material={<meshBasicMaterial ref={materialRef} color={0xff0000} />}
-    >
-    </mesh>, propsTarget);
+      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15}/>}
+      material={<meshBasicMaterial ref={materialRef} color={0xff0000}/>}
+    />, propsTarget);
 
     const mesh: Mesh = meshRef.lastCall.args[0];
     const geometry: Geometry = geometryRef.lastCall.args[0];
@@ -85,8 +84,8 @@ describe("for mesh", () => {
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
 
-      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15} />}
-      material={<meshBasicMaterial ref={materialRef} color={0xff0000} />}
+      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15}/>}
+      material={<meshBasicMaterial ref={materialRef} color={0xff0000}/>}
     />, propsTarget);
 
     const mesh: Mesh = meshRef.lastCall.args[0];
@@ -116,8 +115,8 @@ describe("for mesh", () => {
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
 
-      geometry={<boxGeometry ref={geometryRef} width={50} height={50} depth={50} />}
-      material={<meshBasicMaterial ref={materialRef} color={0xff0000} />}
+      geometry={<boxGeometry ref={geometryRef} width={50} height={50} depth={50}/>}
+      material={<meshBasicMaterial ref={materialRef} color={0xff0000}/>}
     />, propsTarget);
 
     const newerGeometry: Geometry = geometryRef.lastCall.args[0];
@@ -135,8 +134,8 @@ describe("for mesh", () => {
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
 
-      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15} />}
-      material={<meshBasicMaterial ref={materialRef} color={0xff0000} />}
+      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15}/>}
+      material={<meshBasicMaterial ref={materialRef} color={0xff0000}/>}
     />, propsTarget);
 
     const mesh: Mesh = meshRef.lastCall.args[0];
@@ -156,22 +155,25 @@ describe("for mesh", () => {
       ref={meshRef}
 
       geometry={newGeometry}
-      material={<meshBasicMaterial ref={materialRef} color={0xff0000} />}
+      material={<meshBasicMaterial ref={materialRef} color={0xff0000}/>}
     />, propsTarget);
 
     expect(mesh.geometry, "Geometry should have been updated for the mesh").to.equal(newGeometry);
     expect(mesh.material, "Material should have been updated for the mesh").to.equal(material);
+    expect(materialRef.callCount, "MaterialRef should not have been called again").to.equal(1);
 
     const newMaterial = new MeshBasicMaterial({color: 0x00FF00});
 
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
 
-      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15} />}
+      geometry={<boxGeometry ref={geometryRef} width={5} height={10} depth={15}/>}
       material={newMaterial}
     />, propsTarget);
 
     expect(mesh.geometry, "Geometry should have been assigned to the mesh").to.equal(geometryRef.lastCall.args[0]);
     expect(mesh.material, "Material should have been updated for the mesh").to.equal(newMaterial);
+    expect(materialRef.callCount, "materialRef should have been called again").to.equal(2);
+    expect(materialRef.lastCall.args[0], "materialRef should have received a null parameter").to.equal(null);
   });
 });

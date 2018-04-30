@@ -1,7 +1,5 @@
-import {WebGLRenderer} from "three";
 import Viewport from "../../utils/viewport";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
-import {IObject3DProps} from "../common/object3DBase";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
 import {IElement} from "../common/RefWrapper";
 import {RenderAction} from "./render";

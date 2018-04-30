@@ -219,7 +219,7 @@ export abstract class CustomDescriptor< //
       .filter((key: string) => {
         const groupDescriptor = (this.propertyGroups[key] as any);
 
-        return updatedGroupsMap[key] !== true &&
+        return !updatedGroupsMap[key] &&
           groupDescriptor.updateInitial &&
           groupDescriptor.defaultValue !== undefined;
       });
@@ -321,7 +321,7 @@ export abstract class CustomDescriptor< //
         const errors: string[] = [];
 
         Object.keys(validatorMap).forEach((propName: string) => {
-          if (missingKeys[propName] === true) {
+          if (missingKeys[propName]) {
             missingKeys[propName] = false;
           } else {
             errors.push(

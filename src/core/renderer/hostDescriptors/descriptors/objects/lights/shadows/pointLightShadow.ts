@@ -31,7 +31,8 @@ class PointLightShadowDescriptor extends ReactThreeRendererDescriptor<IPointLigh
   constructor() {
     super();
 
-    new RefWrapper(["camera"], this).wrapProperty(new SimplePropertyWrapper("camera", [PerspectiveCamera]));
+    new RefWrapper(["camera"], this)
+      .wrapProperty(new SimplePropertyWrapper("camera", [PerspectiveCamera]));
   }
 
   public createInstance(props: IPointLightShadowProps) {
