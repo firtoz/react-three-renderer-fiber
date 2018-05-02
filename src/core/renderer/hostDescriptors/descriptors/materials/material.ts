@@ -1,10 +1,17 @@
 import {
+  Geometry,
   Material, MaterialParameters,
-  Mesh, MeshBasicMaterial,
+  Mesh, MeshBasicMaterial, Texture,
 } from "three";
 import {TUpdatePayload} from "../../../../customRenderer/createReconciler";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
+import {IRenderableProp, PropertyWrapper, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
+import {ITextureProps, TTextureParents} from "../textures/texture";
+
+interface IMaterialProps extends MaterialParameters {
+  map?: IRenderableProp<Texture, ITextureProps>;
+}
 
 declare global {
   namespace JSX {
@@ -18,11 +25,10 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
   TType extends Material = Material> extends ReactThreeRendererDescriptor<TProps,
   TType,
   Mesh> {
-  constructor() {
-    super();
-  }
-
   public applyInitialPropUpdates(instance: TType, props: TProps): void {
+
+    // if(props.map)
+    // if(props.)
     // skip the updates, we know what we're doing here
     // TODO verify that it is the case for ALL material kinds.
     instance.setValues(props);
@@ -46,6 +52,20 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     if (parent.material === instance) {
       (parent as any).material = new MeshBasicMaterial();
     }
+  }
+
+  protected hasMap(): void {
+    new RefWrapper([
+      "map",
+    ], this)
+      .wrapProperty(new PropertyWrapper<TTextureParents, Texture>(
+        "map",
+        [Texture],
+        (instance, newValue) => {
+          instance.map = newValue;
+
+          instance.needsUpdate = true;
+        }));
   }
 }
 

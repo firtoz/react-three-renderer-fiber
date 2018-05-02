@@ -1,21 +1,21 @@
-import {IDescriptorClass} from "../../../extensions/resources/ResourceDescriptorWrapper";
+import {IReactThreeRendererDescriptorClass} from "../../../extensions/resources/ResourceDescriptorWrapper";
 import ContainerUnawareReconcilerConfig from "../../customRenderer/ContainerUnawareReconcilerConfig";
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
 import {IHostContext} from "../../customRenderer/customReactRenderer";
 import {CustomRendererElementInstance} from "../hostDescriptors/common/object3DBase";
-import ReactThreeRendererDescriptor from "../hostDescriptors/common/ReactThreeRendererDescriptor";
+import {IReactThreeRendererDescriptor} from "../hostDescriptors/common/ReactThreeRendererDescriptor";
 
 declare function require(filename: string): any;
 
 const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.ts$/);
 
-export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<ReactThreeRendererDescriptor> {
-  public static getHostDescriptorClass(key: string): IDescriptorClass | undefined {
+export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<IReactThreeRendererDescriptor> {
+  public static getHostDescriptorClass(key: string): IReactThreeRendererDescriptorClass | undefined {
     return ReactThreeReconcilerConfig.descriptorMap.get(key);
   }
 
-  private static descriptorMap: Map<string, IDescriptorClass> = (() => {
-    const map = new Map<string, IDescriptorClass>();
+  private static descriptorMap: Map<string, IReactThreeRendererDescriptorClass> = (() => {
+    const map = new Map<string, IReactThreeRendererDescriptorClass>();
 
     descriptorsRequireContext
       .keys()
@@ -42,7 +42,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
   public appendChildToContainer(parent: any, childInstance: CustomRendererElementInstance): void {
     super.appendChildToContainer(parent, childInstance);
 
-    const descriptor = this.getDescriptorForInstance(childInstance) as ReactThreeRendererDescriptor;
+    const descriptor = this.getDescriptorForInstance(childInstance);
 
     if (descriptor.wantsRepaint) {
       const context = childInstance[CustomReconcilerConfig.contextSymbol];
@@ -58,7 +58,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
                                  before: CustomRendererElementInstance): void {
     super.insertInContainerBefore(container, childInstance, before);
 
-    const descriptor = this.getDescriptorForInstance(childInstance) as ReactThreeRendererDescriptor;
+    const descriptor = this.getDescriptorForInstance(childInstance);
 
     if (descriptor.wantsRepaint) {
       const context = childInstance[CustomReconcilerConfig.contextSymbol];
@@ -72,7 +72,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
   public removeChildFromContainer(container: any, childInstance: CustomRendererElementInstance): void {
     super.removeChildFromContainer(container, childInstance);
 
-    const descriptor = this.getDescriptorForInstance(childInstance) as ReactThreeRendererDescriptor;
+    const descriptor = this.getDescriptorForInstance(childInstance);
 
     if (descriptor.wantsRepaint) {
       const context: IHostContext = childInstance[CustomReconcilerConfig.contextSymbol];
@@ -88,7 +88,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
     super.removeChild(parentInstance, childInstance);
 
     for (const instance of [parentInstance, childInstance]) {
-      const descriptor = this.getDescriptorForInstance(instance) as ReactThreeRendererDescriptor;
+      const descriptor = this.getDescriptorForInstance(instance);
 
       if (descriptor.wantsRepaint) {
         const context = instance[CustomReconcilerConfig.contextSymbol];
@@ -106,7 +106,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
     super.insertBefore(parentInstance, childInstance, before);
 
     for (const instance of [parentInstance, childInstance]) {
-      const descriptor = this.getDescriptorForInstance(instance) as ReactThreeRendererDescriptor;
+      const descriptor = this.getDescriptorForInstance(instance);
 
       if (descriptor.wantsRepaint) {
         const context: IHostContext = instance[CustomReconcilerConfig.contextSymbol];
@@ -124,7 +124,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
     super.appendChild(parentInstance, childInstance);
 
     for (const instance of [parentInstance, childInstance]) {
-      const descriptor = this.getDescriptorForInstance(instance) as ReactThreeRendererDescriptor;
+      const descriptor = this.getDescriptorForInstance(instance);
 
       if (descriptor.wantsRepaint) {
         const context: IHostContext = instance[CustomReconcilerConfig.contextSymbol];
@@ -142,7 +142,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
     super.appendInitialChild(parentInstance, childInstance);
 
     for (const instance of [parentInstance, childInstance]) {
-      const descriptor = this.getDescriptorForInstance(instance) as ReactThreeRendererDescriptor;
+      const descriptor = this.getDescriptorForInstance(instance);
 
       if (descriptor.wantsRepaint) {
         const context = instance[CustomReconcilerConfig.contextSymbol];
@@ -161,7 +161,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
                       oldProps: IPropMap,
                       newProps: IPropMap): void {
     if (this.getDescriptorForInstance(instance).commitUpdate(instance, updatePayload, oldProps, newProps)) {
-      const descriptor = this.getDescriptorForInstance(instance) as ReactThreeRendererDescriptor;
+      const descriptor = this.getDescriptorForInstance(instance);
 
       if (descriptor.wantsRepaint) {
         const context = instance[CustomReconcilerConfig.contextSymbol];

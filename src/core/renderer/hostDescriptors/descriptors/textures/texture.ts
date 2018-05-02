@@ -1,9 +1,15 @@
 import {MeshBasicMaterial, SpriteMaterial, Texture, TextureLoader} from "three";
-import {MeshPhongMaterial, MeshStandardMaterial, PointsMaterial} from "three/three-core";
+import {MeshPhongMaterial, MeshStandardMaterial, PointsMaterial, Wrapping, Material} from "three/three-core";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
+import * as PropTypes from "prop-types";
+import {Validator} from "prop-types";
+import {TReactThreeRendererDescriptorInstance} from "../../../../../extensions/resources/ResourceDescriptorWrapper";
 
 export interface ITextureProps {
   url: string;
+  anisotropy?: number;
+  wrapS?: Wrapping;
+  wrapT?: Wrapping;
 }
 
 export type TTextureParents =
@@ -15,8 +21,68 @@ export type TTextureParents =
   | SpriteMaterial;
 
 class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Texture, TTextureParents> {
+  constructor() {
+    super();
+
+    this.hasPropLegacy("slot", {
+      default: "map",
+      type: PropTypes.oneOf([
+        "map",
+        "specularMap",
+        "lightMap",
+        "aoMap",
+        "emissiveMap",
+        "bumpMap",
+        "normalMap",
+        "displacementMap",
+        "roughnessMap",
+        "metalnessMap",
+        "alphaMap",
+        "envMap",
+      ]),
+      update: (texture: any, slot: string) => {
+        const lastSlot = texture.userData._materialSlot;
+        texture.userData._materialSlot = slot;
+
+        if (texture.userData.markup) {
+          const parentMarkup = texture.userData.markup.parentMarkup;
+          if (parentMarkup) {
+            const parent = parentMarkup.threeObject;
+
+            if (parent instanceof Material) {
+              if (process.env.NODE_ENV !== "production") {
+                this.validateParentSlot(parent, slot);
+              }
+
+              // remove from previous slot and assign to new slot
+              // TODO add test for this
+              this.removeFromSlotOfMaterial(parent, lastSlot, texture);
+              this.addToSlotOfMaterial(parent, slot, texture);
+            }
+          }
+        }
+      },
+      updateInitial: true,
+    });
+  }
+
+  public hasPropLegacy<TProp>(propName: string, propData: {
+    default?: TProp,
+    type: Validator<TProp>,
+    updateInitial?: boolean,
+    update(instance: Texture, value: TProp): void;
+  }) {
+    // TODO
+  }
+
   public createInstance(props: ITextureProps, rootContainerInstance: any): Texture {
-    return new TextureLoader().load(props.url);
+    const texture = new TextureLoader().load(props.url);
+
+    if (props.anisotropy !== undefined) {
+      texture.anisotropy = props.anisotropy;
+    }
+
+    return texture;
   }
 
   public willBeAddedToParent(instance: Texture, parent: TTextureParents): void {

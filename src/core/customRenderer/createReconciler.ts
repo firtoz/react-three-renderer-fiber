@@ -2,12 +2,10 @@ import {
   IFiber,
   IReactFiberRendererConfig,
   IRenderer,
-  ReactDebugCurrentFiber,
   ReactDOMFrameScheduling,
   ReactFiberReconciler,
 } from "react-fiber-export";
 
-import * as PropTypes from "prop-types";
 import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
 import {IHostContext} from "./customReactRenderer";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
@@ -21,12 +19,6 @@ export interface IPropMap {
 }
 
 export type TUpdatePayload = any[];
-
-const checkPropTypes: (typeSpecs: any,
-                       values: IPropMap,
-                       location: string,
-                       componentName: string,
-                       getStack?: () => (string | null)) => void = (PropTypes as any).checkPropTypes;
 
 @bindAcceptor
 export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
@@ -80,11 +72,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
     const descriptor = this.getDescriptorForType(type);
 
     if (isNonProduction) {
-      checkPropTypes(descriptor.propTypes,
-        props,
-        "prop",
-        type,
-        ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+      descriptor.checkPropTypes(props, type);
     }
 
     if (descriptor === undefined) {
@@ -240,11 +228,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
 
   private diffProperties(type: string, lastProps: IPropMap, nextProps: IPropMap): TUpdatePayload | null {
     if (isNonProduction) {
-      checkPropTypes(this.getDescriptorForType(type).propTypes,
-        nextProps,
-        "prop",
-        type,
-        ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+      this.getDescriptorForType(type).checkPropTypes(nextProps, type);
     }
 
     let updatePayload: TUpdatePayload | null = null;

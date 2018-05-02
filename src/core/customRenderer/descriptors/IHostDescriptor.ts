@@ -6,9 +6,9 @@ export interface IPropTypeMap {
 }
 
 export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot> {
-  propTypes: IPropTypeMap;
-
   createInstance(props: TProps, rootContainerInstance: TRoot): THost;
+
+  checkPropTypes(props: TProps, type: string): any;
 
   applyInitialPropUpdates(instance: THost, props: TProps): void;
 

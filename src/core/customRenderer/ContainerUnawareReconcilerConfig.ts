@@ -9,19 +9,19 @@ export class ContainerUnawareReconcilerConfig<TDescriptor extends IHostDescripto
   any,
   any>> extends CustomReconcilerConfig<TDescriptor> {
   public appendChildToContainer(parent: any, childInstance: any): void {
-    const descriptor = this.getDescriptorForInstance(childInstance) as TDescriptor;
+    const descriptor = this.getDescriptorForInstance(childInstance);
 
     descriptor.willBeAddedToParent(childInstance, parent);
   }
 
   public insertInContainerBefore(container: any, childInstance: any, before: any): void {
-    const descriptor = this.getDescriptorForInstance(childInstance) as TDescriptor;
+    const descriptor = this.getDescriptorForInstance(childInstance);
 
     descriptor.willBeAddedToParentBefore(childInstance, container, before);
   }
 
   public removeChildFromContainer(container: any, childInstance: any): void {
-    const descriptor = this.getDescriptorForInstance(childInstance) as TDescriptor;
+    const descriptor = this.getDescriptorForInstance(childInstance);
 
     descriptor.willBeRemovedFromParent(childInstance, container);
   }

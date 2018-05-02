@@ -1,9 +1,9 @@
-import {IDescriptorClass} from "../../extensions/resources/ResourceDescriptorWrapper";
+import {IReactThreeRendererDescriptorClass} from "../../extensions/resources/ResourceDescriptorWrapper";
 import CustomReactRenderer from "../customRenderer/customReactRenderer";
 import r3rReconcilerConfig, {ReactThreeReconcilerConfig} from "./reconciler/r3rReconcilerConfig";
 
 export class ReactThreeRenderer extends CustomReactRenderer<ReactThreeReconcilerConfig> {
-  public static getHostDescriptorClass(descriptorName: string): IDescriptorClass | undefined {
+  public static getHostDescriptorClass(descriptorName: string): IReactThreeRendererDescriptorClass | undefined {
     return ReactThreeReconcilerConfig.getHostDescriptorClass(descriptorName);
   }
 

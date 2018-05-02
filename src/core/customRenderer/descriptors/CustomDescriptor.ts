@@ -1,11 +1,13 @@
 import {Validator} from "prop-types";
-import {TUpdatePayload} from "../createReconciler";
+import * as PropTypes from "prop-types";
+import {IPropMap, TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
 import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
 import {PropertyUpdater} from "./properties/PropertyUpdater";
+import {ReactDebugCurrentFiber} from "react-fiber-export";
 
 export interface IPropertyUpdaterMap<TProps,
   TInstance,
@@ -36,6 +38,12 @@ export type TPropertyGroupDescriptorConstructor<TProps,
         updateFunction: PropertyUpdater<TProps, TInstance, any>,
         updateInitial: boolean,
         validatorAcceptor: ((validator: IPropTypeMap) => void) | null) => TPropertyGroupDescriptor;
+
+const checkPropTypes: (typeSpecs: any,
+                       values: IPropMap,
+                       location: string,
+                       componentName: string,
+                       getStack?: () => (string | null)) => void = (PropTypes as any).checkPropTypes;
 
 export abstract class CustomDescriptor< //
   /**
@@ -70,11 +78,10 @@ export abstract class CustomDescriptor< //
     TParent,
     TChild,
     TRoot> {
-
-  public propTypes: IPropTypeMap;
-
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance, TPropertyDescriptor>;
   protected propertyGroups: IPropertyGroupMap<TProps, TInstance, TPropertyGroupDescriptor>;
+
+  private readonly propTypes: IPropTypeMap;
 
   constructor(private propertyDescriptorConstructor: TPropertyDescriptorConstructor<TProps,
                 TInstance,
@@ -85,6 +92,14 @@ export abstract class CustomDescriptor< //
     this.propertyDescriptors = {};
     this.propertyGroups = {};
     this.propTypes = {};
+  }
+
+  public checkPropTypes(props: TProps, type: string): any {
+    checkPropTypes(this.propTypes,
+      props,
+      "prop",
+      type,
+      ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
   }
 
   /**

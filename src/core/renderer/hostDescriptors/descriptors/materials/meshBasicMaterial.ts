@@ -13,6 +13,11 @@ declare global {
 
 class MeshBasicMaterialDescriptor extends MaterialDescriptorBase<THREE.MeshBasicMaterialParameters,
   MeshBasicMaterial> {
+  constructor() {
+    super();
+
+    this.hasMap();
+  }
 
   public createInstance(props: THREE.MeshBasicMaterialParameters) {
     return new THREE.MeshBasicMaterial(props);
