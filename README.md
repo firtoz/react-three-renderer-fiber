@@ -22,8 +22,9 @@ This is even more WIP than `react-three-renderer` itself! Literally unusable. Th
 
 ## Wanna play around?
 - Clone repository
-- `> yarn` or `> npm install` (both in this directory and in examples)
-- `> yarn start` or `> npm run start`
+- `> yarn`
+- `> cd examples && yarn && cd ..`
+- `> yarn start`
 - Open http://localhost:8080
 - Look at react devtools
 - Tweak code and break things!
