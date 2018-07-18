@@ -2,7 +2,7 @@ import {
   Geometry,
   Material,
   MaterialParameters,
-  Points,
+  Points, PointsMaterial,
 } from "three";
 
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
@@ -23,10 +23,8 @@ declare global {
   }
 }
 
-export type PointsMaterialType = Material;
-
 export type PointsChildType = Geometry |
-  PointsMaterialType;
+  PointsMaterial;
 
 class PointsDescriptor extends Object3DDescriptorBase<IPointsProps, Points, PointsChildType> {
   constructor() {
@@ -63,7 +61,7 @@ class PointsDescriptor extends Object3DDescriptorBase<IPointsProps, Points, Poin
     console.log("append initial", child);
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = child;
     } else {
       super.appendInitialChild(instance, child);
@@ -75,7 +73,7 @@ class PointsDescriptor extends Object3DDescriptorBase<IPointsProps, Points, Poin
 
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = child;
     } else {
       super.appendChild(instance, child);
@@ -86,7 +84,7 @@ class PointsDescriptor extends Object3DDescriptorBase<IPointsProps, Points, Poin
 
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = child;
     } else {
       super.insertBefore(instance, child, before);
@@ -96,7 +94,7 @@ class PointsDescriptor extends Object3DDescriptorBase<IPointsProps, Points, Poin
   public removeChild(instance: Points, child: PointsChildType): void {
     if (child instanceof Geometry) {
       instance.geometry = null as any;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = null as any;
     } else {
       super.removeChild(instance, child);

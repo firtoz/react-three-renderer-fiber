@@ -399,4 +399,6 @@ class TextureDescriptor extends THREEElementDescriptor<Texture> {
   }
 }
 
-module.exports = TextureDescriptor;
+export default TextureDescriptor;
+
+// module.exports = TextureDescriptor;

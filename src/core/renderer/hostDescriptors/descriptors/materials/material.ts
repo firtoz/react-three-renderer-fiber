@@ -3,6 +3,7 @@ import {
   Material, MaterialParameters,
   Mesh, MeshBasicMaterial, Texture,
 } from "three";
+import {MeshMaterial} from "three/three-core";
 import {TUpdatePayload} from "../../../../customRenderer/createReconciler";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
@@ -31,7 +32,7 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
     // if(props.)
     // skip the updates, we know what we're doing here
     // TODO verify that it is the case for ALL material kinds.
-    instance.setValues(props);
+    (instance as Material).setValues(props);
   }
 
   public commitUpdate(instance: TType,
@@ -39,18 +40,18 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
                       oldProps: TProps,
                       newProps: TProps): boolean {
     // that simple!?
-    instance.setValues(newProps);
+    (instance as Material).setValues(newProps);
 
     return true;
   }
 
   public willBeAddedToParent(instance: TType, parent: Mesh) {
-    parent.material = instance;
+    parent.material = instance as any as MeshMaterial;
   }
 
   public willBeRemovedFromParent(instance: TType, parent: Mesh): void {
-    if (parent.material === instance) {
-      (parent as any).material = new MeshBasicMaterial();
+    if (parent.material === instance as any as MeshMaterial) {
+      parent.material = new MeshBasicMaterial();
     }
   }
 

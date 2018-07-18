@@ -1,7 +1,14 @@
 import * as PropTypes from "prop-types";
 import {Validator} from "prop-types";
-import {MeshBasicMaterial, SpriteMaterial, Texture, TextureLoader} from "three";
-import {Material, MeshPhongMaterial, MeshStandardMaterial, PointsMaterial, Wrapping} from "three/three-core";
+import {
+  Material,
+  MeshBasicMaterial,
+  MeshPhongMaterial,
+  MeshStandardMaterial,
+  PointsMaterial,
+  SpriteMaterial, Texture, TextureLoader,
+  Wrapping,
+} from "three";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 
 export interface ITextureProps {

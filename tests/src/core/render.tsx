@@ -3,8 +3,7 @@ import * as React from "react";
 import * as Sinon from "sinon";
 import {
   BoxGeometry,
-  Camera, Group,
-  Mesh,
+  Camera, Mesh,
   MeshLambertMaterial, Object3D,
   PerspectiveCamera,
   Scene, Vector3,
@@ -17,6 +16,7 @@ import {RenderAction} from "../../../src/core/renderer/hostDescriptors/descripto
 import webGLRenderer from "../../../src/core/renderer/hostDescriptors/descriptors/webGLRenderer";
 import wrRenderer from "../../../src/core/WR/wrRenderer";
 import {mockConsole, testContainers} from "../index";
+import Done = Mocha.Done;
 
 const {div: testDiv} = testContainers;
 
@@ -42,7 +42,7 @@ describe("render", () => {
   }
 
   it("should be able to be rendered into a renderer", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "94");
     // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
     const renderer = new WebGLRenderer();
@@ -112,8 +112,8 @@ describe("render", () => {
     });
   });
 
-  it("should not render if scene or camera are null", (done: () => {}) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+  it("should not render if scene or camera are null", (done: Done) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "94");
 
     const renderer = new WebGLRenderer();
 
@@ -197,9 +197,14 @@ describe("render", () => {
     expect(firstScene.name).to.equal("some scene");
 
     // they should have mounted into the same group
-    const renderActionGroup: Group = firstScene.parent;
+    const renderActionGroup = firstScene.parent;
 
     expect(renderActionGroup).to.not.equal(null);
+
+    if (renderActionGroup == null) {
+      throw new Error();
+    }
+
     expect(renderActionGroup).to.equal(firstCamera.parent);
 
     ReactThreeRenderer.render(<webGLRenderer
@@ -335,7 +340,7 @@ describe("render", () => {
   });
 
   it("should accept a scene as a parameter", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "94");
 
     const renderer = new WebGLRenderer();
 
@@ -362,7 +367,7 @@ describe("render", () => {
   });
 
   it("should accept a camera as a parameter", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "94");
 
     const renderer = new WebGLRenderer();
 
@@ -389,7 +394,7 @@ describe("render", () => {
   });
 
   it("should trigger a render when a visible element is added or removed", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "94");
 
     const renderer = new WebGLRenderer();
 
@@ -398,8 +403,8 @@ describe("render", () => {
     let setChildren: ((childCount: number, callback: () => void) => void) | null = null;
 
     class TestContainer extends React.Component<any, { childCount: number }> {
-      constructor() {
-        super();
+      constructor(props: any, context: any) {
+        super(props, context);
 
         this.state = {
           childCount: 0,
@@ -485,7 +490,7 @@ describe("render", () => {
   });
 
   it("should trigger a render only when a visible property is updated", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "94");
 
     const renderer = new WebGLRenderer();
 
@@ -496,8 +501,8 @@ describe("render", () => {
       name: string,
       position: Vector3,
     }> {
-      constructor() {
-        super();
+      constructor(props: any, context: any) {
+        super(props, context);
 
         this.state = {
           name: "test",

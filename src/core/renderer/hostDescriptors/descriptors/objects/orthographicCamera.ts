@@ -1,5 +1,5 @@
 import {EventEmitter} from "events";
-import {OrthographicCamera, PerspectiveCamera} from "three";
+import {OrthographicCamera} from "three";
 import {
   CameraElementProps, cameraEventProjectionMatrixUpdated, cameraEventsSymbol,
   ICameraProps,

@@ -1,4 +1,4 @@
-import {Geometry, Material, MaterialParameters, Mesh} from "three";
+import {Geometry, Material, MaterialParameters, Mesh, MeshMaterial, ShaderMaterial} from "three";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
@@ -13,7 +13,7 @@ export interface IGeometryElementProps extends ITestProps<Geometry> {
 
 export interface IMeshProps extends IObject3DProps {
   geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
-  material?: IRenderableProp<Material, MaterialParameters>;
+  material?: IRenderableProp<MeshMaterial, MaterialParameters>;
 }
 
 declare global {
@@ -24,7 +24,7 @@ declare global {
   }
 }
 
-export type MeshChildType = Geometry | Material;
+export type MeshChildType = Geometry | MeshMaterial;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   constructor() {
@@ -40,7 +40,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
 
   public createInstance(props: IMeshProps) {
     let geometry: Geometry | undefined;
-    let material: Material | undefined;
+    let material: MeshMaterial | undefined;
 
     if (props.geometry instanceof Geometry) {
       geometry = props.geometry;
@@ -56,7 +56,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   public appendInitialChild(instance: Mesh, child: MeshChildType): void {
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = child;
     } else {
       super.appendInitialChild(instance, child);
@@ -66,7 +66,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   public appendChild(instance: Mesh, child: MeshChildType): void {
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = child;
     } else {
       super.appendChild(instance, child);
@@ -77,7 +77,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
 
     if (child instanceof Geometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = child;
     } else {
       super.insertBefore(instance, child, before);
@@ -87,7 +87,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   public removeChild(instance: Mesh, child: MeshChildType): void {
     if (child instanceof Geometry) {
       instance.geometry = null as any;
-    } else if (child instanceof Material) {
+    } else if ((child as any) instanceof Material) {
       instance.material = null as any;
     } else {
       super.removeChild(instance, child);
