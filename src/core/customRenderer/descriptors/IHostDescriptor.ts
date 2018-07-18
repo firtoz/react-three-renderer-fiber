@@ -35,5 +35,5 @@ export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot> {
   commitUpdate(instance: any,
                updatePayload: any[],
                oldProps: IPropMap,
-               newProps: IPropMap): void;
+               newProps: IPropMap): boolean;
 }

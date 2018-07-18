@@ -1,9 +1,8 @@
-import {MeshBasicMaterial, SpriteMaterial, Texture, TextureLoader} from "three";
-import {MeshPhongMaterial, MeshStandardMaterial, PointsMaterial, Wrapping, Material} from "three/three-core";
-import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 import * as PropTypes from "prop-types";
 import {Validator} from "prop-types";
-import {TReactThreeRendererDescriptorInstance} from "../../../../../extensions/resources/ResourceDescriptorWrapper";
+import {MeshBasicMaterial, SpriteMaterial, Texture, TextureLoader} from "three";
+import {Material, MeshPhongMaterial, MeshStandardMaterial, PointsMaterial, Wrapping} from "three/three-core";
+import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 
 export interface ITextureProps {
   url: string;
@@ -94,6 +93,18 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
       // using "as any" here because it's assuming the map cannot be set to null, but it actually can
       (parent as any).map = null;
     }
+  }
+
+  private validateParentSlot(parent: Material, slot: string) {
+    // TODO
+  }
+
+  private removeFromSlotOfMaterial(parent: Material, lastSlot: any, texture: any) {
+    // TODO
+  }
+
+  private addToSlotOfMaterial(parent: Material, slot: string, texture: any) {
+    // TODO
   }
 }
 

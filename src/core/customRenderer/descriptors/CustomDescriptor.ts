@@ -1,5 +1,6 @@
 import {Validator} from "prop-types";
 import * as PropTypes from "prop-types";
+import {ReactDebugCurrentFiber} from "react-fiber-export";
 import {IPropMap, TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
@@ -7,7 +8,6 @@ import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
 import {PropertyUpdater} from "./properties/PropertyUpdater";
-import {ReactDebugCurrentFiber} from "react-fiber-export";
 
 export interface IPropertyUpdaterMap<TProps,
   TInstance,
@@ -113,7 +113,7 @@ export abstract class CustomDescriptor< //
   public commitUpdate(instance: TInstance,
                       updatePayload: TUpdatePayload,
                       oldProps: TProps,
-                      newProps: TProps): void {
+                      newProps: TProps): boolean {
     const groupedUpdates: {
       [groupName: string]: {
         [propertyName: string]: any;
@@ -134,6 +134,8 @@ export abstract class CustomDescriptor< //
       const propertyGroup = this.propertyGroups[groupName];
       propertyGroup.updateFunction(instance, newData, oldProps, newProps);
     }
+
+    return false;
   }
 
   /**
