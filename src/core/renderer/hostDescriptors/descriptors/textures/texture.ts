@@ -27,6 +27,22 @@ export type TTextureParents =
   | SpriteMaterial;
 
 class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Texture, TTextureParents> {
+  private static removeFromSlotOfMaterial(parent: Material, lastSlot: any, texture: any) {
+    if ((parent as any)[lastSlot] === texture) {
+      (parent as any)[lastSlot] = null;
+      // TODO check if needsUpdate is necessary
+      parent.needsUpdate = true;
+    }
+  }
+
+  private static addToSlotOfMaterial(parent: Material, slot: string, texture: any) {
+    if ((parent as any)[slot] !== texture) {
+      (parent as any)[slot] = texture;
+      // TODO check if needsUpdate is necessary
+      parent.needsUpdate = true;
+    }
+  }
+
   constructor() {
     super();
 
@@ -62,8 +78,8 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
 
               // remove from previous slot and assign to new slot
               // TODO add test for this
-              this.removeFromSlotOfMaterial(parent, lastSlot, texture);
-              this.addToSlotOfMaterial(parent, slot, texture);
+              TextureDescriptor.removeFromSlotOfMaterial(parent, lastSlot, texture);
+              TextureDescriptor.addToSlotOfMaterial(parent, slot, texture);
             }
           }
         }
@@ -78,7 +94,15 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
     updateInitial?: boolean,
     update(instance: Texture, value: TProp): void;
   }) {
-    // TODO
+    // TODO test this
+    const prop = this.hasProp<TProp>(propName, (instance, newValue) => {
+        propData.update(instance, newValue);
+      }, propData.updateInitial === undefined ? true : propData.updateInitial)
+      .withType(propData.type);
+
+    if (propData.default !== undefined) {
+      prop.withDefault(propData.default);
+    }
   }
 
   public createInstance(props: ITextureProps, rootContainerInstance: any): Texture {
@@ -103,15 +127,7 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
   }
 
   private validateParentSlot(parent: Material, slot: string) {
-    // TODO
-  }
-
-  private removeFromSlotOfMaterial(parent: Material, lastSlot: any, texture: any) {
-    // TODO
-  }
-
-  private addToSlotOfMaterial(parent: Material, slot: string, texture: any) {
-    // TODO
+    // TODO check if the parent has these fields
   }
 }
 
