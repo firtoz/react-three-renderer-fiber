@@ -129,6 +129,7 @@ export class RefWrapper {
       }
 
       ReactThreeRenderer.render(valueElement, containerFunction(instance), () => {
+        // TODO check how can value has changed?
         if ((value != null) && (wrapperContainsRawType(wrapper, value))) {
           rawTypeUpdateFunction(instance, value);
         }

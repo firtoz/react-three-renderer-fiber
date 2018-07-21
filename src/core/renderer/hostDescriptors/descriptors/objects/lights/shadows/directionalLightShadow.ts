@@ -2,7 +2,7 @@ import {LightShadow, Matrix4, OrthographicCamera, Vector2} from "three";
 import {DirectionalLight, DirectionalLightShadow} from "three";
 import {IThreeElementPropsBase} from "../../../../common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../../../common/ReactThreeRendererDescriptor";
-import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../../../common/RefWrapper";
+import {IRenderableProp, PropertyWrapper, RefWrapper, SimplePropertyWrapper} from "../../../../common/RefWrapper";
 import {IOrthographicCameraProps} from "../../orthographicCamera";
 
 export interface IDirectionalLightShadowProps {
@@ -22,18 +22,27 @@ declare global {
   }
 }
 
-const defaultDirectionalLightCamera = new DirectionalLight().shadow.camera;
+export const defaultDirectionalLightCamera = new DirectionalLight().shadow.camera;
 
 // TODO LightShadow base descriptor
 // TODO bias/map/mapsize/matrix/radius props
 class DirectionalLightShadowDescriptor extends ReactThreeRendererDescriptor<IDirectionalLightShadowProps,
   LightShadow,
-  DirectionalLight> {
+  DirectionalLight,
+  OrthographicCamera> {
   constructor() {
     super();
 
     new RefWrapper(["camera"], this)
-      .wrapProperty(new SimplePropertyWrapper("camera", [OrthographicCamera]));
+      .wrapProperty(new PropertyWrapper("camera",
+        [OrthographicCamera], (instance, newValue) => {
+          console.log("setting?", newValue);
+        }));
+
+    this.hasProp<Vector2>("mapSize",
+      (instance, newValue) => {
+        instance.mapSize.copy(newValue);
+      });
   }
 
   public createInstance(props: IDirectionalLightShadowProps) {
@@ -46,7 +55,24 @@ class DirectionalLightShadowDescriptor extends ReactThreeRendererDescriptor<IDir
   }
 
   public willBeAddedToParent(instance: DirectionalLightShadow, container: DirectionalLight): void {
+    console.log("dir light shadow being added to parent");
     container.shadow = instance;
+  }
+
+  public appendInitialChild(instance: LightShadow, child: OrthographicCamera): void {
+    console.log("?!", child);
+    instance.camera.copy(child);
+  }
+
+  public appendChild(instance: DirectionalLightShadow, child: OrthographicCamera): void {
+    console.log("?!", child);
+    instance.camera.copy(child);
+  }
+
+  public removeChild(instance: DirectionalLightShadow, child: OrthographicCamera): void {
+    if (instance.camera === child) {
+      instance.camera.copy(defaultDirectionalLightCamera);
+    }
   }
 }
 

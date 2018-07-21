@@ -1,4 +1,4 @@
-import {Light} from "three";
+import {Light, LightShadow} from "three";
 import {default as Object3DDescriptorBase, IObject3DProps} from "./object3DBase";
 
 export interface ILightProps extends IObject3DProps {
@@ -7,8 +7,8 @@ export interface ILightProps extends IObject3DProps {
 }
 
 abstract class LightDescriptorBase<TProps extends ILightProps,
-  TInstance extends Light>
-  extends Object3DDescriptorBase<TProps, TInstance> {
+  TInstance extends Light, TShadow extends LightShadow>
+  extends Object3DDescriptorBase<TProps, TInstance, TShadow> {
   protected constructor() {
     super();
 
