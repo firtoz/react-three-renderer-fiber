@@ -120,7 +120,7 @@ export class RefWrapperBase {
 
       const propertyWrapper = this.propertyWrappers[identifier];
 
-      if (propertyWrapper.onRender !== null) {
+      if (propertyWrapper && propertyWrapper.onRender !== null) {
         propertyWrapper.onRender(this.owner, instance);
       }
     };

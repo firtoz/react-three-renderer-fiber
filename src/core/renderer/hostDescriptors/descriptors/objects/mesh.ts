@@ -66,9 +66,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if ((child as any) instanceof Material) {
-      // TODO make material set itself instead
-      // debugger;
-      // instance.material = child;
+      // Materials can take care of themselves
     } else {
       super.appendInitialChild(instance, child);
     }
@@ -78,11 +76,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if ((child as any) instanceof Material) {
-      // TODO make material set itself instead
-
-      // debugger;
-
-      // instance.material = child;
+      // Materials can take care of themselves
     } else {
       super.appendChild(instance, child);
     }
@@ -93,11 +87,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
     if (child instanceof Geometry) {
       instance.geometry = child;
     } else if ((child as any) instanceof Material) {
-      // TODO make material set itself instead
-
-      // debugger;
-
-      // instance.material = child;
+      // Materials can take care of themselves
     } else {
       super.insertBefore(instance, child, before);
     }
@@ -107,9 +97,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
     if (child instanceof Geometry) {
       instance.geometry = null as any;
     } else if ((child as any) instanceof Material) {
-      // TODO make material set itself instead
-
-      // instance.material = null as any;
+      // Materials can take care of themselves
     } else {
       super.removeChild(instance, child);
       // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');

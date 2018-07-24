@@ -14,7 +14,6 @@ import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 import object3D from "../../../src/core/renderer/hostDescriptors/descriptors/objects/object3D";
 import {RenderAction} from "../../../src/core/renderer/hostDescriptors/descriptors/render";
 import webGLRenderer from "../../../src/core/renderer/hostDescriptors/descriptors/webGLRenderer";
-import wrRenderer from "../../../src/core/WR/wrRenderer";
 import {mockConsole, testContainers} from "../index";
 import Done = Mocha.Done;
 
@@ -477,14 +476,6 @@ describe("render", () => {
             });
           });
         });
-      });
-    });
-  });
-
-  it("should allow custom renderers", (done) => {
-    wrRenderer.render(<test/>, testDiv, () => {
-      wrRenderer.unmountComponentAtNode(testDiv, () => {
-        done();
       });
     });
   });

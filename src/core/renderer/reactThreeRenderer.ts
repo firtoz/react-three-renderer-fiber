@@ -1,8 +1,8 @@
+import {IRenderer} from "react-fiber-export";
 import {IReactThreeRendererDescriptorClass} from "../../extensions/resources/ResourceDescriptorWrapper";
 import CustomReactRenderer from "../customRenderer/customReactRenderer";
-import r3rReconcilerConfig, {ReactThreeReconcilerConfig} from "./reconciler/r3rReconcilerConfig";
-import {IRenderer} from "react-fiber-export";
 import {RenderAction} from "./hostDescriptors/descriptors/render";
+import r3rReconcilerConfig, {ReactThreeReconcilerConfig} from "./reconciler/r3rReconcilerConfig";
 
 export interface IHostContext {
   triggerRender(): void;

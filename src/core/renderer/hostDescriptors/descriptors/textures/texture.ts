@@ -57,7 +57,7 @@ export type TTextureParents =
 const defaultSlotValue: TextureSlotType = "map";
 
 class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, ThreeTexture, TTextureParents> {
-  private static removeFromSlotOfMaterial(parent: TTextureParents, lastSlot: TextureSlotType, texture: ThreeTexture) {
+  private static removeFromSlotOfParent(parent: TTextureParents, lastSlot: TextureSlotType, texture: ThreeTexture) {
     if (!(parent as any instanceof Material)) {
       return;
     }
@@ -69,7 +69,7 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
     }
   }
 
-  private static addToSlotOfMaterial(parent: TTextureParents, slot: TextureSlotType, texture: ThreeTexture) {
+  private static addToSlotOfParent(parent: TTextureParents, slot: TextureSlotType, texture: ThreeTexture) {
     if (!(parent as any instanceof Material)) {
       return;
     }
@@ -101,8 +101,8 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
       if (parent !== null) {
         const previousSlot = metadata.slot;
 
-        TextureDescriptor.removeFromSlotOfMaterial(parent, previousSlot, instance);
-        TextureDescriptor.addToSlotOfMaterial(parent, newValue, instance);
+        TextureDescriptor.removeFromSlotOfParent(parent, previousSlot, instance);
+        TextureDescriptor.addToSlotOfParent(parent, newValue, instance);
       }
 
       metadata.slot = newValue;
@@ -155,13 +155,14 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
     const metadata = instance[textureMetadataSymbol];
     metadata.parent = parent;
 
-    TextureDescriptor.addToSlotOfMaterial(parent, metadata.slot, instance);
+    TextureDescriptor.addToSlotOfParent(parent, metadata.slot, instance);
   }
 
   public willBeRemovedFromParent(instance: ThreeTexture, parent: TTextureParents): void {
     const metadata = instance[textureMetadataSymbol];
+    metadata.parent = null;
 
-    TextureDescriptor.removeFromSlotOfMaterial(parent, metadata.slot, instance);
+    TextureDescriptor.removeFromSlotOfParent(parent, metadata.slot, instance);
   }
 
   private validateParentSlot(parent: Material, slot: string) {
