@@ -244,6 +244,20 @@
 
                 ref={sphereRef}
               />
+              <mesh
+                geometry={<planeBufferGeometry
+                  width={20000}
+                  height={20000}/>}
+                material={<meshLambertMaterial>
+                  <texture
+                    url="textures/terrain/grasslight-big.jpg"
+                    anisotropy={16}
+                  />
+                </meshLambertMaterial>}
+                position={new THREE.Vector3(0, -250, 0)}
+                rotation={new THREE.Euler(-Math.PI / 2, 0, 0)}
+                receiveShadow
+              />
             </scene>
           </webGLRenderer>
         </React3>;
@@ -254,16 +268,6 @@
 
     /**/
 
-    // // sphere
-    //
-    //
-    // sphere = new THREE.Mesh(ballGeo, ballMaterial);
-    // sphere.castShadow = true;
-    // sphere.receiveShadow = true;
-    // scene.add(sphere);
-    //
-    // // ground
-    //
     // var groundTexture = loader.load('textures/terrain/grasslight-big.jpg');
     // groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
     // groundTexture.repeat.set(25, 25);

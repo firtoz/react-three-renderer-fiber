@@ -91,16 +91,18 @@ export abstract class MaterialDescriptorBase<TProps extends IMaterialProps = IMa
   }
 
   public applyInitialPropUpdates(instance: TEnhancedMaterial, props: TProps): void {
-    delete (props as any).children;
+    const propsClone = Object.assign({}, props);
+
+    delete (propsClone as any).children;
 
     // skip the updates, we know what we're doing here
     // TODO verify that it is the case for ALL material kinds.
-    (instance as Material).setValues(props);
+    (instance as Material).setValues(propsClone);
 
     let slot: MaterialSlotType | null = null;
 
-    if (props.slot !== undefined) {
-      slot = props.slot;
+    if (propsClone.slot !== undefined) {
+      slot = propsClone.slot;
     } else {
       slot = defaultSlotValue;
     }

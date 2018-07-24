@@ -25,8 +25,6 @@ declare global {
       boxGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
       // TODO implement boxBufferGeometry
       boxBufferGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
-      // TODO implement planeBufferGeometry
-      planeBufferGeometry: IThreeElementPropsBase<PlaneBufferGeometry> & IPlaneGeometryProps;
     }
   }
 }

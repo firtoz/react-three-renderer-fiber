@@ -5,7 +5,7 @@ import {
   MeshBasicMaterial,
   MeshPhongMaterial,
   MeshStandardMaterial,
-  PointsMaterial,
+  PointsMaterial, RepeatWrapping,
   SpriteMaterial, Texture, TextureLoader,
   Wrapping,
 } from "three";
@@ -147,6 +147,10 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
     }
 
     texture[textureMetadataSymbol] = new TextureMetadata(null, slot);
+
+    // TODO make them props
+    // texture.wrapS = texture.wrapT = RepeatWrapping;
+    // texture.repeat.set(25, 25);
 
     return texture;
   }
