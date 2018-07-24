@@ -1,15 +1,16 @@
 import {IReactThreeRendererDescriptorClass} from "../../../extensions/resources/ResourceDescriptorWrapper";
 import ContainerUnawareReconcilerConfig from "../../customRenderer/ContainerUnawareReconcilerConfig";
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
-import {IHostContext} from "../../customRenderer/customReactRenderer";
 import {CustomRendererElementInstance} from "../hostDescriptors/common/object3DBase";
 import {IReactThreeRendererDescriptor} from "../hostDescriptors/common/ReactThreeRendererDescriptor";
+import {IHostContext} from "../reactThreeRenderer";
 
 declare function require(filename: string): any;
 
 const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.ts$/);
 
-export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<IReactThreeRendererDescriptor> {
+export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<IReactThreeRendererDescriptor,
+  IHostContext> {
   public static getHostDescriptorClass(key: string): IReactThreeRendererDescriptorClass | undefined {
     return ReactThreeReconcilerConfig.descriptorMap.get(key);
   }

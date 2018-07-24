@@ -7,7 +7,6 @@ import {
 } from "react-fiber-export";
 
 import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
-import {IHostContext} from "./customReactRenderer";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
 import {IHostDescriptor} from "./descriptors/IHostDescriptor";
 import isNonProduction from "./utils/isNonProduction";
@@ -25,7 +24,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   any,
   any,
   any,
-  any>> implements IReactFiberRendererConfig {
+  any>, TContext = any> implements IReactFiberRendererConfig {
   public static readonly fiberSymbol: unique symbol = Symbol("custom-renderer-fiber");
   public static readonly contextSymbol: unique symbol = Symbol("custom-renderer-context");
   public static readonly rootContainerSymbol: unique symbol = Symbol("custom-renderer-root-container-symbol");
@@ -67,7 +66,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   public createInstance(type: string,
                         props: IPropMap,
                         rootContainerInstance: CustomRendererElementInstance,
-                        hostContext: IHostContext,
+                        hostContext: TContext,
                         fiber: IFiber) {
     const descriptor = this.getDescriptorForType(type);
 

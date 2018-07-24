@@ -133,6 +133,48 @@
       camera = _camera;
     };
 
+    const resourceRenderer = new ResourceRenderer();
+
+    const resourceContainer = {};
+
+    let clothTexture;
+
+    const resources = resourceRenderer.render(<resources>
+      <parametricGeometry
+        func={clothFunction}
+        slices={cloth.w}
+        stacks={cloth.h}
+        resource-id="clothGeometry"
+      />
+      <meshLambertMaterial
+        side={THREE.DoubleSide}
+        resource-id="clothMaterial"
+        alphaTest={0.5}
+      >
+        <texture
+          url="textures/patterns/circuit_pattern.png"
+          resource-id="clothTexture"
+          anisotropy={16}
+        />
+      </meshLambertMaterial>
+    </resources>, resourceContainer);
+
+    const clothMaterial = resources.get("clothMaterial");
+
+    // console.log("material", clothMaterial);
+
+    clothGeometry = resources.get("clothGeometry");
+
+    clothTexture = clothMaterial.map;
+
+    console.log(resources);
+
+    const sphereRef = (_sphere: Mesh) => {
+      sphere = _sphere;
+    };
+
+    var ballGeo = new THREE.SphereBufferGeometry(ballSize, 32, 16);
+
     ClothExample = class ClothExample extends React.Component {
       render() {
         const d = 300;
@@ -178,55 +220,44 @@
                   />}
                 />}
               />
+              <mesh
+                geometry={clothGeometry}
+                material={clothMaterial}
+                position={new THREE.Vector3(0, 0, 0)}
+                castShadow
+                customDepthMaterial={<meshDepthMaterial
+                  depthPacking={THREE.RGBADepthPacking}
+                  map={clothTexture}
+                  alphaTest={0.5}
+                />}
+              />
+              <mesh
+                name="sphere"
+                geometry={<sphereBufferGeometry
+                  radius={ballSize}
+                  widthSegments={32}
+                  heightSegments={16}
+                />}
+                material={<meshLambertMaterial/>}
+                castShadow
+                receiveShadow
+
+                ref={sphereRef}
+              />
             </scene>
           </webGLRenderer>
         </React3>;
       }
     }
-    //
-    //
-    // // lights
-    //
-    // var light, materials;
-    //
-    //
-    // // cloth material
-    //
-    // var loader = new THREE.TextureLoader();
-    // var clothTexture = loader.load('textures/patterns/circuit_pattern.png');
-    // clothTexture.anisotropy = 16;
-    //
-    // var clothMaterial = new THREE.MeshLambertMaterial({
-    //   map: clothTexture,
-    //   side: THREE.DoubleSide,
-    //   alphaTest: 0.5
-    // });
-    //
-    // // cloth geometry
-    //
-    clothGeometry = new THREE.ParametricGeometry(clothFunction, cloth.w, cloth.h);
-    //
-    // // cloth mesh
-    //
-    // object = new THREE.Mesh(clothGeometry, clothMaterial);
-    // object.position.set(0, 0, 0);
-    // object.castShadow = true;
-    // scene.add(object);
-    //
-    // object.customDepthMaterial = new THREE.MeshDepthMaterial({
-    //
-    //   depthPacking: THREE.RGBADepthPacking,
-    //   map: clothTexture,
-    //   alphaTest: 0.5
-    //
-    // });
-    //
+
+    ReactDOM.render(<ClothExample/>, container);
+
+    /**/
+
     // // sphere
     //
-    var ballGeo = new THREE.SphereBufferGeometry(ballSize, 32, 16);
-    var ballMaterial = new THREE.MeshLambertMaterial();
     //
-    sphere = new THREE.Mesh(ballGeo, ballMaterial);
+    // sphere = new THREE.Mesh(ballGeo, ballMaterial);
     // sphere.castShadow = true;
     // sphere.receiveShadow = true;
     // scene.add(sphere);
@@ -293,7 +324,6 @@
     // renderer.setPixelRatio(window.devicePixelRatio);
     // renderer.setSize(window.innerWidth, window.innerHeight);
 
-    ReactDOM.render(<ClothExample/>, container);
 
     //
     // container.appendChild(renderer.domElement);

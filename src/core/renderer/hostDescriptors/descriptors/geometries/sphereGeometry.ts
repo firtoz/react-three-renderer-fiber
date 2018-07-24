@@ -18,8 +18,6 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       sphereGeometry: IThreeElementPropsBase<THREE.SphereGeometry> & ISphereGeometryProps;
-      // TODO implement sphereBufferGeometry
-      sphereBufferGeometry: IThreeElementPropsBase<THREE.SphereGeometry> & ISphereGeometryProps;
     }
   }
 }

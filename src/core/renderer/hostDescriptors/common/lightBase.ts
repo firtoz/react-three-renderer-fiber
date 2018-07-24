@@ -7,8 +7,8 @@ export interface ILightProps extends IObject3DProps {
 }
 
 abstract class LightDescriptorBase<TProps extends ILightProps,
-  TInstance extends Light, TShadow extends LightShadow>
-  extends Object3DDescriptorBase<TProps, TInstance, TShadow> {
+  TInstance extends Light, TChild = any>
+  extends Object3DDescriptorBase<TProps, TInstance, TChild> {
   protected constructor() {
     super();
 

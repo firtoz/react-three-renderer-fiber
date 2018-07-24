@@ -11,12 +11,40 @@ import {
 } from "three";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
 
+export type TextureSlotType = "map" |
+  "specularMap" |
+  "lightMap" |
+  "aoMap" |
+  "emissiveMap" |
+  "bumpMap" |
+  "normalMap" |
+  "displacementMap" |
+  "roughnessMap" |
+  "metalnessMap" |
+  "alphaMap" |
+  "envMap";
+
 export interface ITextureProps {
   url: string;
   anisotropy?: number;
   wrapS?: Wrapping;
   wrapT?: Wrapping;
+  onLoad?: (texture: ThreeTexture) => void;
+  slot?: TextureSlotType;
 }
+
+const textureMetadataSymbol = Symbol("r3r-texture-metadata");
+
+class TextureMetadata {
+  public constructor(public parent: TTextureParents | null,
+                     public slot: TextureSlotType) {
+
+  }
+}
+
+export type ThreeTexture = Texture & {
+  [textureMetadataSymbol]: TextureMetadata;
+};
 
 export type TTextureParents =
   MeshBasicMaterial
@@ -26,8 +54,14 @@ export type TTextureParents =
   | PointsMaterial
   | SpriteMaterial;
 
-class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Texture, TTextureParents> {
-  private static removeFromSlotOfMaterial(parent: Material, lastSlot: any, texture: any) {
+const defaultSlotValue: TextureSlotType = "map";
+
+class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, ThreeTexture, TTextureParents> {
+  private static removeFromSlotOfMaterial(parent: TTextureParents, lastSlot: TextureSlotType, texture: ThreeTexture) {
+    if (!(parent as any instanceof Material)) {
+      return;
+    }
+
     if ((parent as any)[lastSlot] === texture) {
       (parent as any)[lastSlot] = null;
       // TODO check if needsUpdate is necessary
@@ -35,7 +69,11 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
     }
   }
 
-  private static addToSlotOfMaterial(parent: Material, slot: string, texture: any) {
+  private static addToSlotOfMaterial(parent: TTextureParents, slot: TextureSlotType, texture: ThreeTexture) {
+    if (!(parent as any instanceof Material)) {
+      return;
+    }
+
     if ((parent as any)[slot] !== texture) {
       (parent as any)[slot] = texture;
       // TODO check if needsUpdate is necessary
@@ -46,9 +84,30 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
   constructor() {
     super();
 
-    this.hasPropLegacy("slot", {
-      default: "map",
-      type: PropTypes.oneOf([
+    this.hasProp<string>("url", (instance, newValue) => {
+      throw new Error("Nope");
+    }, false);
+
+    this.hasProp<(texture: ThreeTexture) => void>("onLoad", (instance, newValue) => {
+      throw new Error("Nope");
+    }, false);
+
+    this.hasProp<TextureSlotType>("slot", (instance, newValue) => {
+      // TODO test this
+      const metadata = instance[textureMetadataSymbol];
+
+      const parent = metadata.parent;
+
+      if (parent !== null) {
+        const previousSlot = metadata.slot;
+
+        TextureDescriptor.removeFromSlotOfMaterial(parent, previousSlot, instance);
+        TextureDescriptor.addToSlotOfMaterial(parent, newValue, instance);
+      }
+
+      metadata.slot = newValue;
+    }).withDefault(defaultSlotValue)
+      .withType(PropTypes.oneOf([
         "map",
         "specularMap",
         "lightMap",
@@ -61,69 +120,48 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Text
         "metalnessMap",
         "alphaMap",
         "envMap",
-      ]),
-      update: (texture: any, slot: string) => {
-        const lastSlot = texture.userData._materialSlot;
-        texture.userData._materialSlot = slot;
+      ]));
 
-        if (texture.userData.markup) {
-          const parentMarkup = texture.userData.markup.parentMarkup;
-          if (parentMarkup) {
-            const parent = parentMarkup.threeObject;
-
-            if (parent instanceof Material) {
-              if (process.env.NODE_ENV !== "production") {
-                this.validateParentSlot(parent, slot);
-              }
-
-              // remove from previous slot and assign to new slot
-              // TODO add test for this
-              TextureDescriptor.removeFromSlotOfMaterial(parent, lastSlot, texture);
-              TextureDescriptor.addToSlotOfMaterial(parent, slot, texture);
-            }
-          }
-        }
-      },
-      updateInitial: true,
-    });
+    this.hasProp("anisotropy", (instance: ThreeTexture, value: number) => {
+      instance.anisotropy = value;
+      if (instance.image) {
+        instance.needsUpdate = true;
+      }
+    }).withDefault(1)
+      .withType(PropTypes.number);
   }
 
-  public hasPropLegacy<TProp>(propName: string, propData: {
-    default?: TProp,
-    type: Validator<TProp>,
-    updateInitial?: boolean,
-    update(instance: Texture, value: TProp): void;
-  }) {
-    // TODO test this
-    const prop = this.hasProp<TProp>(propName, (instance, newValue) => {
-        propData.update(instance, newValue);
-      }, propData.updateInitial === undefined ? true : propData.updateInitial)
-      .withType(propData.type);
-
-    if (propData.default !== undefined) {
-      prop.withDefault(propData.default);
-    }
-  }
-
-  public createInstance(props: ITextureProps, rootContainerInstance: any): Texture {
-    const texture = new TextureLoader().load(props.url);
+  public createInstance(props: ITextureProps, rootContainerInstance: any): ThreeTexture {
+    const texture = new TextureLoader().load(props.url, props.onLoad) as ThreeTexture;
 
     if (props.anisotropy !== undefined) {
       texture.anisotropy = props.anisotropy;
     }
 
+    let slot: TextureSlotType | null = null;
+
+    if (props.slot !== undefined) {
+      slot = props.slot;
+    } else {
+      slot = defaultSlotValue;
+    }
+
+    texture[textureMetadataSymbol] = new TextureMetadata(null, slot);
+
     return texture;
   }
 
-  public willBeAddedToParent(instance: Texture, parent: TTextureParents): void {
-    parent.map = instance;
+  public willBeAddedToParent(instance: ThreeTexture, parent: TTextureParents): void {
+    const metadata = instance[textureMetadataSymbol];
+    metadata.parent = parent;
+
+    TextureDescriptor.addToSlotOfMaterial(parent, metadata.slot, instance);
   }
 
-  public willBeRemovedFromParent(instance: Texture, parent: TTextureParents): void {
-    if (parent.map === instance) {
-      // using "as any" here because it's assuming the map cannot be set to null, but it actually can
-      (parent as any).map = null;
-    }
+  public willBeRemovedFromParent(instance: ThreeTexture, parent: TTextureParents): void {
+    const metadata = instance[textureMetadataSymbol];
+
+    TextureDescriptor.removeFromSlotOfMaterial(parent, metadata.slot, instance);
   }
 
   private validateParentSlot(parent: Material, slot: string) {

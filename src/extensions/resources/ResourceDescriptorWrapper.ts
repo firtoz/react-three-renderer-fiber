@@ -60,6 +60,8 @@ export default function ResourceDescriptorWrapper(classType: IReactThreeRenderer
         return;
       }
 
+      // TODO check parent's resource container and hook onto that??
+
       super.willBeRemovedFromParent(instance, parent);
     }
 

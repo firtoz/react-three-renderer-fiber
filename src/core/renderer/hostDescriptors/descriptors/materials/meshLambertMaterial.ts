@@ -15,6 +15,8 @@ class MeshLambertMaterialDescriptor extends MaterialDescriptorBase<THREE.MeshLam
   MeshLambertMaterial> {
 
   public createInstance(props: THREE.MeshLambertMaterialParameters) {
+    delete (props as any).children;
+
     return new THREE.MeshLambertMaterial(props);
   }
 }

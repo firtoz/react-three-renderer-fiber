@@ -1,7 +1,7 @@
 import {
   Geometry,
   Material, MaterialParameters,
-  Mesh, MeshBasicMaterial, Texture,
+  Mesh, MeshBasicMaterial, MeshDepthMaterial, Texture,
 } from "three";
 import {MeshMaterial} from "three/three-core";
 import {TUpdatePayload} from "../../../../customRenderer/createReconciler";
@@ -27,6 +27,7 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
   TType,
   Mesh> {
   public applyInitialPropUpdates(instance: TType, props: TProps): void {
+    delete (props as any).children;
 
     // if(props.map)
     // if(props.)
@@ -46,13 +47,15 @@ export abstract class MaterialDescriptorBase<TProps extends MaterialParameters =
   }
 
   public willBeAddedToParent(instance: TType, parent: Mesh) {
-    parent.material = instance as any as MeshMaterial;
+    // TODO use slot like texture
+    // parent.material = instance as any as MeshMaterial;
   }
 
   public willBeRemovedFromParent(instance: TType, parent: Mesh): void {
-    if (parent.material === instance as any as MeshMaterial) {
-      parent.material = new MeshBasicMaterial();
-    }
+    // TODO use slot like texture
+    // if (parent.material === instance as any as MeshMaterial) {
+    //   parent.material = new MeshBasicMaterial();
+    // }
   }
 
   protected hasMap(): void {

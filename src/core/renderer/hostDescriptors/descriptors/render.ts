@@ -1,14 +1,13 @@
 import * as React from "react";
 import {Camera, Group, Scene, WebGLRenderer, WebGLRendererParameters} from "three";
 import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
-import {IHostContext} from "../../../customRenderer/customReactRenderer";
-import {default as ReactThreeRenderer} from "../../reactThreeRenderer";
+import {default as ReactThreeRenderer, IHostContext} from "../../reactThreeRenderer";
 import Viewport from "../../utils/viewport";
 import {CameraElementProps} from "../common/cameraBase";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import {CustomRendererElementInstance} from "../common/object3DBase";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
-import {IRenderableProp, RefWrapper} from "../common/RefWrapper";
+import {IRenderableProp, RefWrapper, RefWrapperBase} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
 import {ViewportElementProps} from "./viewport";
 
@@ -30,7 +29,7 @@ declare global {
   }
 }
 
-export class RenderAction extends RefWrapper implements IHostContext {
+export class RenderAction extends RefWrapperBase implements IHostContext {
   private renderer: WebGLRenderer | null;
 
   private readonly group: Group & CustomRendererElementInstance;
