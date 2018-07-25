@@ -2,15 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  mode: 'development',
   entry: require.resolve("./src/index.tsx"),
   output: {
     filename: "bundle.js",
     path: path.join(__dirname, "dist")
   },
-
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: "cheap-module-source-map-eval",
 
   devServer: {
     publicPath: "/dist/"
@@ -56,3 +52,10 @@ module.exports = {
     "react-dom": "ReactDOM"
   },
 };
+
+if (process.env.NODE_ENV === "production") {
+  module.exports.mode = "production";
+} else {
+  module.exports.mode = "development";
+  module.exports.devtool = "cheap-module-source-map-eval";
+}

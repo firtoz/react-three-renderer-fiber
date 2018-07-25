@@ -109,7 +109,7 @@
   var sphere;
   var object;
 
-  var ClothExample;
+  // var ClothExample;
 
   init();
   animate();
@@ -131,6 +131,10 @@
 
     var cameraRef = function (_camera) {
       camera = _camera;
+
+      if (camera != null) {
+        camera.position.copy(new THREE.Vector3(1000, 50, 1500));
+      }
     };
 
     const resourceRenderer = new ResourceRenderer();
@@ -157,220 +161,179 @@
           anisotropy={16}
         />
       </meshLambertMaterial>
+      <boxBufferGeometry
+        width={5}
+        height={375}
+        depth={5}
+        resource-id="poleGeo"
+      />
+      <meshLambertMaterial
+        resource-id="poleMat"
+      />
+      <boxBufferGeometry
+        width={10}
+        height={10}
+        depth={10}
+        resource-id="gg"
+      />
     </resources>, resourceContainer);
 
     const clothMaterial = resources.get("clothMaterial");
 
-    // console.log("material", clothMaterial);
-
     clothGeometry = resources.get("clothGeometry");
 
-    clothTexture = clothMaterial.map;
+    const poleGeo = resources.get("poleGeo");
+    const poleMat = resources.get("poleMat");
+    const gg = resources.get("gg");
 
-    console.log(resources);
+    clothTexture = clothMaterial.map;
 
     const sphereRef = (_sphere: Mesh) => {
       sphere = _sphere;
     };
 
-    var ballGeo = new THREE.SphereBufferGeometry(ballSize, 32, 16);
+    const d = 300;
 
-    ClothExample = class ClothExample extends React.Component {
-      render() {
-        const d = 300;
+    ReactDOM.render(<React3>
+      <webGLRenderer
+        width={window.innerWidth}
+        height={window.innerHeight}
+        devicePixelRatio={window.devicePixelRatio}
+        gammaInput
+        gammaOutput
+        shadowMap={<webGLShadowMap
+          enabled
+        />}
 
-        return <React3>
-          <webGLRenderer
-            width={window.innerWidth}
-            height={window.innerHeight}
-            devicePixelRatio={window.devicePixelRatio}
+        ref={rendererRef}
+      >
+        <scene
+          ref={sceneRef}
+          background={new THREE.Color(0xcce0ff)}
+          fog={new THREE.Fog(0xcce0ff, 500, 10000)}
+        >
+          <perspectiveCamera
+            ref={cameraRef}
+            fov={30}
+            aspect={window.innerWidth / window.innerHeight}
+            near={1}
+            far={10000}
+          />
+          <ambientLight
+            color={0x666666}
+          />
+          <directionalLight
+            color={0xdfebff}
+            intensity={1}
+            position={new THREE.Vector3(50, 200, 100)
+              .multiplyScalar(1.3)}
+            castShadow
+            shadow={<directionalLightShadow
+              mapSize={new THREE.Vector2(1024, 1024)}
+              camera={<orthographicCamera
+                left={-d}
+                right={d}
+                top={d}
+                bottom={-d}
+                far={1000}
+              />}
+            />}
+          />
+          <mesh
+            geometry={clothGeometry}
+            material={clothMaterial}
+            position={new THREE.Vector3(0, 0, 0)}
+            castShadow
+            customDepthMaterial={<meshDepthMaterial
+              depthPacking={THREE.RGBADepthPacking}
+              map={clothTexture}
+              alphaTest={0.5}
+            />}
+          />
+          <mesh
+            name="sphere"
+            geometry={<sphereBufferGeometry
+              radius={ballSize}
+              widthSegments={32}
+              heightSegments={16}
+            />}
+            material={<meshLambertMaterial/>}
+            castShadow
+            receiveShadow
 
-            ref={rendererRef}
-          >
-            <scene
-              ref={sceneRef}
-              background={new THREE.Color(0xCCE0FF)}
-              fog={new THREE.Fog(0xCCE0FF, 500, 10000)}
-            >
-              <perspectiveCamera
-                ref={cameraRef}
-                fov={30}
-                aspect={window.innerWidth / window.innerHeight}
-                near={1}
-                far={10000}
-                position={new THREE.Vector3(1000, 50, 1500)}
+            ref={sphereRef}
+          />
+          <mesh
+            geometry={<planeBufferGeometry
+              width={20000}
+              height={20000}/>}
+            material={<meshLambertMaterial>
+              <texture
+                url="textures/terrain/grasslight-big.jpg"
+                wrapS={THREE.RepeatWrapping}
+                wrapT={THREE.RepeatWrapping}
+                repeat={new THREE.Vector2(25, 25)}
+                anisotropy={16}
               />
-              <ambientLight
-                color={0x666666}
-              />
-              <directionalLight
-                color={0xdfebff}
-                intensity={1}
-                position={new THREE.Vector3(50, 200, 100)
-                  .multiplyScalar(1.3)}
-                castShadow
-                shadow={<directionalLightShadow
-                  mapSize={new THREE.Vector2(1024, 1024)}
-                  camera={<orthographicCamera
-                    left={-d}
-                    right={d}
-                    top={d}
-                    bottom={-d}
-                    far={1000}
-                  />}
-                />}
-              />
-              <mesh
-                geometry={clothGeometry}
-                material={clothMaterial}
-                position={new THREE.Vector3(0, 0, 0)}
-                castShadow
-                customDepthMaterial={<meshDepthMaterial
-                  depthPacking={THREE.RGBADepthPacking}
-                  map={clothTexture}
-                  alphaTest={0.5}
-                />}
-              />
-              <mesh
-                name="sphere"
-                geometry={<sphereBufferGeometry
-                  radius={ballSize}
-                  widthSegments={32}
-                  heightSegments={16}
-                />}
-                material={<meshLambertMaterial/>}
-                castShadow
-                receiveShadow
+            </meshLambertMaterial>}
+            position={new THREE.Vector3(0, -250, 0)}
+            rotation={new THREE.Euler(-Math.PI / 2, 0, 0)}
+            receiveShadow
+          />
+          <mesh
+            geometry={poleGeo}
+            material={poleMat}
+            position={new THREE.Vector3(-125, -62, 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={poleGeo}
+            material={poleMat}
+            position={new THREE.Vector3(125, -62, 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={<boxBufferGeometry width={255} height={5} depth={5}/>}
+            material={poleMat}
+            position={new THREE.Vector3(0, -250 + (750 / 2), 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={gg}
+            material={poleMat}
+            position={new THREE.Vector3(125, -250, 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={gg}
+            material={poleMat}
+            position={new THREE.Vector3(-125, -250, 0)}
+            castShadow
+            receiveShadow
+          />
+        </scene>
+      </webGLRenderer>
+    </React3>, container);
 
-                ref={sphereRef}
-              />
-              <mesh
-                geometry={<planeBufferGeometry
-                  width={20000}
-                  height={20000}/>}
-                material={<meshLambertMaterial>
-                  <texture
-                    url="textures/terrain/grasslight-big.jpg"
-                    anisotropy={16}
-                  />
-                </meshLambertMaterial>}
-                position={new THREE.Vector3(0, -250, 0)}
-                rotation={new THREE.Euler(-Math.PI / 2, 0, 0)}
-                receiveShadow
-              />
-            </scene>
-          </webGLRenderer>
-        </React3>;
-      }
-    }
+    // controls
+    var controls = new THREE.OrbitControls(camera, container);
+    controls.maxPolarAngle = Math.PI * 0.5;
+    controls.minDistance = 1000;
+    controls.maxDistance = 5000;
 
-    ReactDOM.render(<ClothExample/>, container);
-
-    /**/
-
-    // var groundTexture = loader.load('textures/terrain/grasslight-big.jpg');
-    // groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-    // groundTexture.repeat.set(25, 25);
-    // groundTexture.anisotropy = 16;
-    //
-    // var groundMaterial = new THREE.MeshLambertMaterial({map: groundTexture});
-    //
-    // var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), groundMaterial);
-    // mesh.position.y = -250;
-    // mesh.rotation.x = -Math.PI / 2;
-    // mesh.receiveShadow = true;
-    // scene.add(mesh);
-    //
-    // // poles
-    //
-    // var poleGeo = new THREE.BoxBufferGeometry(5, 375, 5);
-    // var poleMat = new THREE.MeshLambertMaterial();
-    //
-    // var mesh = new THREE.Mesh(poleGeo, poleMat);
-    // mesh.position.x = -125;
-    // mesh.position.y = -62;
-    // mesh.receiveShadow = true;
-    // mesh.castShadow = true;
-    // scene.add(mesh);
-    //
-    // var mesh = new THREE.Mesh(poleGeo, poleMat);
-    // mesh.position.x = 125;
-    // mesh.position.y = -62;
-    // mesh.receiveShadow = true;
-    // mesh.castShadow = true;
-    // scene.add(mesh);
-    //
-    // var mesh = new THREE.Mesh(new THREE.BoxBufferGeometry(255, 5, 5), poleMat);
-    // mesh.position.y = -250 + (750 / 2);
-    // mesh.position.x = 0;
-    // mesh.receiveShadow = true;
-    // mesh.castShadow = true;
-    // scene.add(mesh);
-    //
-    // var gg = new THREE.BoxBufferGeometry(10, 10, 10);
-    // var mesh = new THREE.Mesh(gg, poleMat);
-    // mesh.position.y = -250;
-    // mesh.position.x = 125;
-    // mesh.receiveShadow = true;
-    // mesh.castShadow = true;
-    // scene.add(mesh);
-    //
-    // var mesh = new THREE.Mesh(gg, poleMat);
-    // mesh.position.y = -250;
-    // mesh.position.x = -125;
-    // mesh.receiveShadow = true;
-    // mesh.castShadow = true;
-    // scene.add(mesh);
-    //
-    // // renderer
-    //
-    // renderer = new THREE.WebGLRenderer({antialias: true});
-    // renderer.setPixelRatio(window.devicePixelRatio);
-    // renderer.setSize(window.innerWidth, window.innerHeight);
-
-
-    //
-    // container.appendChild(renderer.domElement);
-    //
-    // renderer.gammaInput = true;
-    // renderer.gammaOutput = true;
-    //
-    // renderer.shadowMap.enabled = true;
-    //
-    // // controls
-    // var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    // controls.maxPolarAngle = Math.PI * 0.5;
-    // controls.minDistance = 1000;
-    // controls.maxDistance = 5000;
-    //
-    // // performance monitor
+    // performance monitor
     //
     stats = new Stats();
     container.appendChild(stats.dom);
-    //
-    // //
-    //
-    // window.addEventListener('resize', onWindowResize, false);
-    //
-    // sphere.visible = !true;
 
+    sphere.visible = false;
   }
-
-  //
-
-  function onWindowResize() {
-
-    // camera.aspect = window.innerWidth / window.innerHeight;
-    // camera.updateProjectionMatrix();
-    //
-    // renderer.setSize(window.innerWidth, window.innerHeight);
-
-  }
-
-  //
 
   function animate() {
-
     requestAnimationFrame(animate);
 
     var time = Date.now();
@@ -384,11 +347,9 @@
     simulate(time);
     render();
     stats.update();
-
   }
 
   function render() {
-
     var p = cloth.particles;
 
     for (var i = 0, il = p.length; i < il; i++) {
@@ -404,9 +365,9 @@
 
     sphere.position.copy(ballPosition);
 
-    renderer.render(scene, camera);
+    // ReactDOM.render(<ClothExample/>, container);
 
-    ReactDOM.render(<ClothExample/>, container);
+    renderer.render(scene, camera);
   }
 
 </script>

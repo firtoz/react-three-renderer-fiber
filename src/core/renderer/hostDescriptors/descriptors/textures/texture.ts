@@ -1,12 +1,13 @@
 import * as PropTypes from "prop-types";
 import {Validator} from "prop-types";
 import {
+  ClampToEdgeWrapping,
   Material,
   MeshBasicMaterial,
   MeshPhongMaterial,
-  MeshStandardMaterial,
+  MeshStandardMaterial, MirroredRepeatWrapping,
   PointsMaterial, RepeatWrapping,
-  SpriteMaterial, Texture, TextureLoader,
+  SpriteMaterial, Texture, TextureLoader, Vector2,
   Wrapping,
 } from "three";
 import ReactThreeRendererDescriptor from "../../common/ReactThreeRendererDescriptor";
@@ -129,6 +130,26 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
       }
     }).withDefault(1)
       .withType(PropTypes.number);
+
+    // TODO check if needs update
+    [
+      "wrapS",
+      "wrapT",
+    ].forEach((name) => {
+      this.hasSimpleProp(name)
+        .withType(PropTypes.oneOf([
+          RepeatWrapping,
+          ClampToEdgeWrapping,
+          MirroredRepeatWrapping,
+        ]))
+        .withDefault(ClampToEdgeWrapping);
+    });
+
+    // TODO check if needs update
+    this.hasProp<Vector2>("repeat", (instance, newValue) => {
+      instance.repeat.copy(newValue);
+    }).withType(PropTypes.instanceOf(Vector2))
+      .withDefault(new Vector2(1, 1));
   }
 
   public createInstance(props: ITextureProps, rootContainerInstance: any): ThreeTexture {
@@ -147,10 +168,6 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
     }
 
     texture[textureMetadataSymbol] = new TextureMetadata(null, slot);
-
-    // TODO make them props
-    // texture.wrapS = texture.wrapT = RepeatWrapping;
-    // texture.repeat.set(25, 25);
 
     return texture;
   }

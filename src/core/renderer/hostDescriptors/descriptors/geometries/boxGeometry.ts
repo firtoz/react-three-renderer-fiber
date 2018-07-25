@@ -23,8 +23,6 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       boxGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
-      // TODO implement boxBufferGeometry
-      boxBufferGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
     }
   }
 }

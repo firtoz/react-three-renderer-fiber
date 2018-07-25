@@ -32,11 +32,16 @@ class DirectionalLightDescriptor
       throw new Error("Modification of target property for directionalLight is not implemented yet!");
     });
 
+    // TODO find out why shadows don't work
+    // try to create the light properties by hand first
+    // then change scene settings
+    // then change renderer settings
     new RefWrapper(["shadow"], this)
       .wrapProperty(
         new PropertyWrapper("shadow",
           [DirectionalLightShadow],
-          (instance, newValue) => {
+          (instance: DirectionalLight, newValue) => {
+            instance.shadow.copy(newValue);
             console.log("setting shadow?", newValue);
           }), (instance) => {
           return instance;
@@ -46,8 +51,6 @@ class DirectionalLightDescriptor
 
   public createInstance(props: IDirectionalLightProps) {
     const result = new THREE.DirectionalLight(props.color, props.intensity);
-
-    console.log(props.shadow);
 
     if (props.shadow instanceof DirectionalLightShadow) {
       result.shadow = props.shadow;

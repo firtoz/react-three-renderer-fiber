@@ -17,6 +17,7 @@ class ResourceReconcilerConfig extends ContainerUnawareReconcilerConfig<ReactThr
       "texture",
       "meshLambertMaterial",
       "parametricGeometry",
+      "boxBufferGeometry",
     ].forEach((descName) => {
       const hostDescriptor = ReactThreeRenderer.getHostDescriptorClass(descName);
 
