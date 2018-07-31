@@ -164,7 +164,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
         parentInstance.add(instance);
       }
     } else {
-      console.warn("Trying to add a child into a non-object parent...");
+      throw new Error("Trying to add a child into a non-object parent...");
     }
   }
 
