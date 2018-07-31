@@ -1,11 +1,11 @@
 {
   "name": "react-three-renderer-fiber",
   "version": "0.0.1-0",
-  "main": "./lib/main.js",
-  "types": "./lib/main.d.ts",
+  "main": "./lib/src/index.js",
+  "types": "./lib/src/index.d.ts",
   "author": "Firtina `toxicFork` Ozbalikci (http://toxicfork.com)",
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
     "react": "16.4.1",
     "react-dom": "16.4.1",
     "three": "0.94.0"

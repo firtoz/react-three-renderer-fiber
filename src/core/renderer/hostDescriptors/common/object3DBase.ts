@@ -16,6 +16,7 @@ export interface IObject3DProps extends IPropsWithChildren {
   visible?: boolean;
   castShadow?: boolean;
   receiveShadow?: boolean;
+  renderOrder?: number;
   // TODO add prop setting for customDepthMaterial
   customDepthMaterial?: MeshDepthMaterial;
 }
@@ -57,6 +58,8 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("castShadow", true, true);
     // TODO find default for receiveShadow
     this.hasSimpleProp("receiveShadow", true, true);
+    this.hasSimpleProp("renderOrder", true, true)
+      .withDefault(0);
 
     // this.hasSimpleProp("name", true, true);
     this.hasProp("position", (instance: T,
@@ -161,7 +164,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
         parentInstance.add(instance);
       }
     } else {
-      throw new Error("Trying to add a child into a non-object parent...");
+      console.warn("Trying to add a child into a non-object parent...");
     }
   }
 

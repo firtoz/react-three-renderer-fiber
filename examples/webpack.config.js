@@ -39,7 +39,8 @@ module.exports = {
       'process.env': {
         'ENABLE_REACT_ADDON_HOOKS': process.env.ENABLE_REACT_ADDON_HOOKS ? "true" : "false",
         'DISABLE_REACT_ADDON_HOOKS': process.env.DISABLE_REACT_ADDON_HOOKS ? "true" : "false",
-      }
+      },
+      VERSION: JSON.stringify(require("package.json").version)
     })
   ],
 

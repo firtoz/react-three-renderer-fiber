@@ -15,6 +15,7 @@ declare const process: {
 };
 
 declare function require(filename: string): any;
+declare const VERSION: string;
 
 export function hookDevtools(reconcilerConfig: CustomReconcilerConfig<any>) {
   if (process.env.DISABLE_REACT_ADDON_HOOKS !== "true" &&
@@ -23,7 +24,7 @@ export function hookDevtools(reconcilerConfig: CustomReconcilerConfig<any>) {
     // Allows for debugging when the hook is injected on the page.
     if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined") {
       // tslint:disable-next-line:no-var-requires
-      const R3RVersion = require("../../../../package.json").version;
+      const R3RVersion = VERSION;
 
       enum BundleType {
         PROD = 0,

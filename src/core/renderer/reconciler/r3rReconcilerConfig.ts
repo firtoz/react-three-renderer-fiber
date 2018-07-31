@@ -7,7 +7,7 @@ import {IHostContext} from "../reactThreeRenderer";
 
 declare function require(filename: string): any;
 
-const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.ts$/);
+const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.js$/);
 
 export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<IReactThreeRendererDescriptor,
   IHostContext> {
@@ -21,7 +21,7 @@ export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig
     descriptorsRequireContext
       .keys()
       .forEach((key: string) => {
-        const name = key.match(/(\w+)\.ts$/);
+        const name = key.match(/(\w+)\.js$/);
         if (name !== null) {
           map.set(name[1], descriptorsRequireContext(key).default);
         }
