@@ -16,6 +16,8 @@ export interface IObject3DProps extends IPropsWithChildren {
   visible?: boolean;
   castShadow?: boolean;
   receiveShadow?: boolean;
+  renderOrder?: number;
+  scale?: Vector3;
   // TODO add prop setting for customDepthMaterial
   customDepthMaterial?: MeshDepthMaterial;
 }
@@ -57,6 +59,14 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("castShadow", true, true);
     // TODO find default for receiveShadow
     this.hasSimpleProp("receiveShadow", true, true);
+    this.hasSimpleProp("renderOrder", true, true)
+      .withDefault(0);
+
+    this.hasProp<Vector3>("scale",
+      (instance, newValue) => { instance.scale.copy(newValue); },
+      true,
+      true)
+      .withDefault(new Vector3(1, 1, 1));
 
     // this.hasSimpleProp("name", true, true);
     this.hasProp("position", (instance: T,
