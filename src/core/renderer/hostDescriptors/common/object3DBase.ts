@@ -62,8 +62,8 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("renderOrder", true, true)
       .withDefault(0);
 
-    this.hasProp("scale",
-      (instance: Object3D, newValue: Vector3) => { instance.scale.copy(newValue); },
+    this.hasProp<Vector3>("scale",
+      (instance, newValue) => { instance.scale.copy(newValue); },
       true,
       true)
       .withDefault(new Vector3(1, 1, 1));

@@ -74,7 +74,6 @@ class LineDescriptor extends Object3DDescriptorBase<ISpriteProps, Sprite, Sprite
       instance.material = null as any;
     } else {
       super.removeChild(instance, child);
-      // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');
     }
   }
 }

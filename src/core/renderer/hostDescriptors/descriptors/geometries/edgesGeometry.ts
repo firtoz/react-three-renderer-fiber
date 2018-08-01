@@ -1,10 +1,10 @@
-import { EdgesGeometry, Geometry } from "three";
-import { BufferGeometryWrapperBase, GeometryContainerType } from "../../common/geometryBase";
+import {BufferGeometry, EdgesGeometry, Geometry} from "three";
+import {BufferGeometryWrapperBase, GeometryContainerType} from "../../common/geometryBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IEdgesGeometryProps {
-  geometry: Geometry;
+  geometry: BufferGeometry | Geometry;
   thresholdAngle: number;
 }
 
