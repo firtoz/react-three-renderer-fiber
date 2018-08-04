@@ -1,4 +1,4 @@
-import {BoxGeometry, PlaneBufferGeometry} from "three";
+import {BoxGeometry} from "three";
 import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
@@ -10,13 +10,6 @@ export interface IBoxGeometryProps {
   widthSegments?: number;
   heightSegments?: number;
   depthSegments?: number;
-}
-
-export interface IPlaneGeometryProps {
-  width: number;
-  height: number;
-  widthSegments?: number;
-  heightSegments?: number;
 }
 
 declare global {
@@ -49,7 +42,8 @@ class BoxGeometryDescriptor extends WrappedEntityDescriptor<BoxGeometryWrapper,
       "height",
       "depth",
       "widthSegments",
-      "heightSegments");
+      "heightSegments",
+      "depthSegments");
   }
 }
 
