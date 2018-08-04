@@ -1,4 +1,4 @@
-import {BoxGeometry} from "three";
+import { BoxBufferGeometry, BoxGeometry } from "three";
 import createGeometryDescriptor from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
@@ -19,8 +19,15 @@ declare global {
   }
 }
 
-export const BoxGeometryDescriptor = createGeometryDescriptor<IBoxGeometryProps, BoxGeometry>(
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryDescriptor<IBoxGeometryProps, BoxGeometry, BoxBufferGeometry>(
   (props) => new BoxGeometry(props.width,
+    props.height,
+    props.depth,
+    props.widthSegments,
+    props.heightSegments,
+    props.depthSegments),
+  (props) => new BoxBufferGeometry(props.width,
     props.height,
     props.depth,
     props.widthSegments,
@@ -33,6 +40,7 @@ export const BoxGeometryDescriptor = createGeometryDescriptor<IBoxGeometryProps,
     "heightSegments",
     "depthSegments"],
   BoxGeometry,
+  BoxBufferGeometry,
 );
 
-export default BoxGeometryDescriptor;
+export default geometryDescriptor;
