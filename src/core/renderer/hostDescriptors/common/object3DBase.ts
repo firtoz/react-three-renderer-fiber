@@ -1,6 +1,6 @@
 import * as PropTypes from "prop-types";
 import {IFiber} from "react-fiber-export";
-import { Euler, Matrix4, MeshDepthMaterial, Object3D, Quaternion, Vector3 } from "three";
+import {Euler, Matrix4, MeshDepthMaterial, Object3D, Quaternion, Vector3} from "three";
 import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
 import isNonProduction from "../../../customRenderer/utils/isNonProduction";
 import {IHostContext} from "../../reactThreeRenderer";
