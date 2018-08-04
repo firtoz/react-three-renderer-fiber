@@ -8,7 +8,7 @@ export interface IExtrudeGeometryProps {
   shapes: THREE.Shape[];
   curveSegments?: number;
   steps?: number;
-  amount?: number;
+  depth?: number;
   bevelEnabled?: boolean;
   bevelThickness?: number;
   bevelSize?: number;
@@ -49,7 +49,7 @@ class ExtrudeGeometryDescriptor extends WrappedEntityDescriptor<ExtrudeGeometryW
       "extrudeGeometry",
       "curveSegments",
       "steps",
-      "amount",
+      "depth",
       "bevelEnabled",
       "bevelThickness",
       "bevelSize",
