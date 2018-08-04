@@ -1,7 +1,6 @@
 import {BoxGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import createGeometryDescriptor from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IBoxGeometryProps {
   width: number;
@@ -20,31 +19,20 @@ declare global {
   }
 }
 
-export class BoxGeometryWrapper extends GeometryWrapperBase<IBoxGeometryProps, BoxGeometry> {
-  protected constructGeometry(props: IBoxGeometryProps): BoxGeometry {
-    return new BoxGeometry(props.width,
-      props.height,
-      props.depth,
-      props.widthSegments,
-      props.heightSegments,
-      props.depthSegments);
-  }
-}
-
-class BoxGeometryDescriptor extends WrappedEntityDescriptor<BoxGeometryWrapper,
-  IBoxGeometryProps,
+export const BoxGeometryDescriptor = createGeometryDescriptor<IBoxGeometryProps, BoxGeometry>(
+  (props) => new BoxGeometry(props.width,
+    props.height,
+    props.depth,
+    props.widthSegments,
+    props.heightSegments,
+    props.depthSegments),
+  ["width",
+    "height",
+    "depth",
+    "widthSegments",
+    "heightSegments",
+    "depthSegments"],
   BoxGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(BoxGeometryWrapper, BoxGeometry);
-
-    this.hasRemountProps("width",
-      "height",
-      "depth",
-      "widthSegments",
-      "heightSegments",
-      "depthSegments");
-  }
-}
+);
 
 export default BoxGeometryDescriptor;
