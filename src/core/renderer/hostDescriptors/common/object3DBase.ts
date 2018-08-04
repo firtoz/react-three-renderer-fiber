@@ -1,6 +1,6 @@
 import * as PropTypes from "prop-types";
 import {IFiber} from "react-fiber-export";
-import {Euler, MeshDepthMaterial, Object3D, Quaternion, Vector3} from "three";
+import {Euler, Matrix4, MeshDepthMaterial, Object3D, Quaternion, Vector3} from "three";
 import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
 import isNonProduction from "../../../customRenderer/utils/isNonProduction";
 import {IHostContext} from "../../reactThreeRenderer";
@@ -63,6 +63,14 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
 
     this.hasProp<Vector3>("scale",
       (instance, newValue) => { instance.scale.copy(newValue); },
+      true,
+      true);
+
+    this.hasProp<Matrix4>("matrix",
+      (instance, newValue) => {
+        instance.matrix = newValue;
+        instance.matrix.decompose(instance.position, instance.quaternion, instance.scale);
+      },
       true,
       true);
 
