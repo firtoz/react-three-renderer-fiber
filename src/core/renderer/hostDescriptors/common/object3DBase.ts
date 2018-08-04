@@ -59,14 +59,12 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("castShadow", true, true);
     // TODO find default for receiveShadow
     this.hasSimpleProp("receiveShadow", true, true);
-    this.hasSimpleProp("renderOrder", true, true)
-      .withDefault(0);
+    this.hasSimpleProp("renderOrder", true, true);
 
     this.hasProp<Vector3>("scale",
       (instance, newValue) => { instance.scale.copy(newValue); },
       true,
-      true)
-      .withDefault(new Vector3(1, 1, 1));
+      true);
 
     this.hasProp<Matrix4>("matrix",
       (instance, newValue) => {
