@@ -1,5 +1,5 @@
 import {BufferGeometry, EdgesGeometry, Geometry} from "three";
-import {createBufferGeometryDescriptor} from "../../common/createGeometryDescriptor";
+import {createGeometryDescriptor} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IEdgesGeometryProps {
@@ -16,7 +16,7 @@ declare global {
 }
 
 export const bufferGeometryDescriptor =
-  createBufferGeometryDescriptor<IEdgesGeometryProps, EdgesGeometry>(
+  createGeometryDescriptor<IEdgesGeometryProps, EdgesGeometry>(
     (props) => new EdgesGeometry(
       props.geometry,
       props.thresholdAngle,

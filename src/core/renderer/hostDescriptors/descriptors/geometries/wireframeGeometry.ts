@@ -1,5 +1,5 @@
 import {BufferGeometry, Geometry, WireframeGeometry} from "three";
-import {createBufferGeometryDescriptor} from "../../common/createGeometryDescriptor";
+import {createGeometryDescriptor} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IWireframeGeometryProps {
@@ -15,7 +15,7 @@ declare global {
 }
 
 export const bufferGeometryDescriptor =
-  createBufferGeometryDescriptor<IWireframeGeometryProps, WireframeGeometry>(
+  createGeometryDescriptor<IWireframeGeometryProps, WireframeGeometry>(
     (props) => new WireframeGeometry(
       props.geometry,
     ),
