@@ -1,12 +1,13 @@
 import {EventEmitter} from "events";
-import {DirectionalLightShadow, Object3D, OrthographicCamera, Scene, WebGLRenderer} from "three";
+import {DirectionalLightShadow, Object3D, OrthographicCamera} from "three";
 import {
-  CameraElementProps, cameraEventProjectionMatrixUpdated, cameraEventsSymbol,
+  CameraElementProps,
+  cameraEventProjectionMatrixUpdated,
+  cameraEventsSymbol,
   ICameraProps,
 } from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
-import {SceneParents} from "./scene";
 import {defaultDirectionalLightCamera} from "./lights/shadows/directionalLightShadow";
 
 export interface IOrthographicCameraProps extends ICameraProps {
