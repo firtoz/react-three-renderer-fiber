@@ -84,7 +84,7 @@ export abstract class MaterialDescriptorBase<TProps extends IMaterialProps = IMa
 
       metadata.slot = newValue;
     }).withDefault(defaultSlotValue)
-      .withType(PropTypes.oneOf([
+      .withType(PropTypes.oneOf<MaterialSlotType>([
         "material",
         "customDepthMaterial",
       ]));

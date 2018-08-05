@@ -1,15 +1,15 @@
 import {
-  BufferGeometry, DirectionalLightShadow,
+  BufferGeometry,
   Geometry,
   Material,
   MaterialParameters,
   Mesh,
   MeshDepthMaterial,
-  MeshMaterial,
+  MeshMaterialType,
 } from "three";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
-import {IRenderableProp, PropertyWrapper, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
+import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
 
 // tslint:disable-next-line
 export interface ITestProps<TInstance> {
@@ -21,7 +21,7 @@ export interface IGeometryElementProps extends ITestProps<Geometry> {
 
 export interface IMeshProps extends IObject3DProps {
   geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
-  material?: IRenderableProp<MeshMaterial, MaterialParameters>;
+  material?: IRenderableProp<MeshMaterialType, MaterialParameters>;
 }
 
 declare global {
@@ -32,7 +32,7 @@ declare global {
   }
 }
 
-export type MeshChildType = Geometry | MeshMaterial;
+export type MeshChildType = Geometry | MeshMaterialType;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   constructor() {
@@ -49,7 +49,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
 
   public createInstance(props: IMeshProps) {
     let geometry: Geometry | undefined;
-    let material: MeshMaterial | undefined;
+    let material: MeshMaterialType | undefined;
 
     if (props.geometry instanceof Geometry) {
       geometry = props.geometry;

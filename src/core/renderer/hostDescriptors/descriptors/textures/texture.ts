@@ -1,5 +1,4 @@
 import * as PropTypes from "prop-types";
-import {Validator} from "prop-types";
 import {
   ClampToEdgeWrapping,
   Material,
@@ -108,7 +107,7 @@ class TextureDescriptor extends ReactThreeRendererDescriptor<ITextureProps, Thre
 
       metadata.slot = newValue;
     }).withDefault(defaultSlotValue)
-      .withType(PropTypes.oneOf([
+      .withType(PropTypes.oneOf<TextureSlotType>([
         "map",
         "specularMap",
         "lightMap",

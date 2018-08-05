@@ -1,4 +1,4 @@
-import {Validator} from "prop-types";
+import {Requireable} from "prop-types";
 import CustomPropertyDescriptor from "../../../../customRenderer/descriptors/properties/CustomPropertyDescriptor";
 import {PropertyUpdater} from "../../../../customRenderer/descriptors/properties/PropertyUpdater";
 
@@ -10,7 +10,7 @@ export default class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TPr
   constructor(groupName: string | null,
               updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
               updateInitial: boolean,
-              validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
+              validatorAcceptor: ((validator: Requireable<TProp>) => void) | null) {
     super(groupName, updateFunction, updateInitial, validatorAcceptor);
   }
 

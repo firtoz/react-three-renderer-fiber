@@ -1,4 +1,4 @@
-import {Validator} from "prop-types";
+import {Requireable} from "prop-types";
 import {PropertyUpdater} from "./PropertyUpdater";
 
 export default class CustomPropertyDescriptor<TProps, TInstance, TProp> {
@@ -7,7 +7,7 @@ export default class CustomPropertyDescriptor<TProps, TInstance, TProp> {
   constructor(public groupName: string | null,
               public updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
               public updateInitial: boolean,
-              private validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
+              private validatorAcceptor: ((validator: Requireable<TProp>) => void) | null) {
 
   }
 
@@ -17,7 +17,7 @@ export default class CustomPropertyDescriptor<TProps, TInstance, TProp> {
     return this;
   }
 
-  public withType(validator: Validator<TProp>): this {
+  public withType(validator: Requireable<TProp>): this {
     if (this.validatorAcceptor === null) {
       throw new Error("This property cannot have type validation");
     }
