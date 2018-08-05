@@ -32,7 +32,7 @@ declare global {
   }
 }
 
-export type MeshChildType = Geometry | MeshMaterial;
+export type MeshChildType = Geometry | BufferGeometry | MeshMaterial;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   constructor() {
@@ -48,10 +48,10 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public createInstance(props: IMeshProps) {
-    let geometry: Geometry | undefined;
+    let geometry: Geometry | BufferGeometry | undefined;
     let material: MeshMaterial | undefined;
 
-    if (props.geometry instanceof Geometry) {
+    if (props.geometry instanceof Geometry || props.geometry instanceof BufferGeometry) {
       geometry = props.geometry;
     }
 
@@ -63,7 +63,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public appendInitialChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = child;
     } else if ((child as any) instanceof Material) {
       // Materials can take care of themselves
@@ -73,7 +73,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public appendChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = child;
     } else if ((child as any) instanceof Material) {
       // Materials can take care of themselves
@@ -84,7 +84,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
 
   public insertBefore(instance: Mesh, child: MeshChildType, before: any): void {
 
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = child;
     } else if ((child as any) instanceof Material) {
       // Materials can take care of themselves
@@ -94,7 +94,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public removeChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = null as any;
     } else if ((child as any) instanceof Material) {
       // Materials can take care of themselves

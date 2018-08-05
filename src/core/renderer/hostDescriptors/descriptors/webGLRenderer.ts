@@ -9,7 +9,7 @@ import {
 
 let shadowMapType = WebGLShadowMap;
 
-if (!shadowMapType) {
+if (shadowMapType == null) {
 // tslint:disable-next-line
   shadowMapType = require("three/src/renderers/webgl/WebGLShadowMap").WebGLShadowMap;
 }
@@ -269,7 +269,7 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<RendererWrapperDet
       const cameraContainer = new THREE.Object3D();
       let camera: PerspectiveCamera;
 
-      ReactThreeRenderer.render(cameraElement, cameraContainer, function (this: PerspectiveCamera) {
+      ReactThreeRenderer.render(cameraElement, cameraContainer, function(this: PerspectiveCamera) {
         camera = this;
       });
     });
