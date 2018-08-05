@@ -1,8 +1,6 @@
-import {ParametricGeometry} from "three";
-import {Vector3} from "three/three-core";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {ParametricGeometry, Vector3} from "three";
+import {createGeometryDescriptor} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IParametricGeometryProps {
   func: (u: number, v: number, dest: Vector3) => void;
@@ -18,23 +16,19 @@ declare global {
   }
 }
 
-export class ParametricGeometryWrapper extends GeometryWrapperBase<IParametricGeometryProps, ParametricGeometry> {
-  protected constructGeometry(props: IParametricGeometryProps): ParametricGeometry {
-    return new ParametricGeometry(props.func, props.slices, props.stacks);
-  }
-}
-
-class ParametricGeometryDescriptor extends WrappedEntityDescriptor<ParametricGeometryWrapper,
-  IParametricGeometryProps,
-  ParametricGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(ParametricGeometryWrapper, ParametricGeometry);
-
-    this.hasRemountProps("func",
+export const geometryDescriptor =
+  createGeometryDescriptor<IParametricGeometryProps, ParametricGeometry>(
+    (props) => new ParametricGeometry(
+      props.func,
+      props.slices,
+      props.stacks,
+    ),
+    [
+      "func",
       "slices",
-      "stacks");
-  }
-}
+      "stacks",
+    ],
+    ParametricGeometry,
+  );
 
-export default ParametricGeometryDescriptor;
+export default geometryDescriptor;

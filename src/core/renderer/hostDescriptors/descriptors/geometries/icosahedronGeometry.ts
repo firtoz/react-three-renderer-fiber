@@ -1,43 +1,37 @@
-import * as THREE from "three";
-import {IcosahedronGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {IcosahedronBufferGeometry, IcosahedronGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IIcosahedronGeometryProps {
-  radius: number;
-  detail: number;
+  radius?: number;
+  detail?: number;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      icosahedronGeometry: IThreeElementPropsBase<THREE.IcosahedronGeometry> & IIcosahedronGeometryProps;
+      icosahedronGeometry: IThreeElementPropsBase<IcosahedronGeometry> & IIcosahedronGeometryProps;
+      icosahedronBufferGeometry: IThreeElementPropsBase<IcosahedronBufferGeometry> & IIcosahedronGeometryProps;
     }
   }
 }
 
-export class IcosahedronGeometryWrapper extends GeometryWrapperBase<IIcosahedronGeometryProps, IcosahedronGeometry> {
-  protected constructGeometry(props: IIcosahedronGeometryProps): IcosahedronGeometry {
-    return new IcosahedronGeometry(
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<IIcosahedronGeometryProps, IcosahedronGeometry, IcosahedronBufferGeometry>(
+    (props) => new IcosahedronGeometry(
       props.radius,
       props.detail,
-    );
-  }
-}
-
-class IcosahedronGeometryDescriptor extends WrappedEntityDescriptor<IcosahedronGeometryWrapper,
-  IIcosahedronGeometryProps,
-  IcosahedronGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(IcosahedronGeometryWrapper, IcosahedronGeometry);
-
-    this.hasRemountProps(
+    ),
+    (props) => new IcosahedronBufferGeometry(
+      props.radius,
+      props.detail,
+    ),
+    [
       "radius",
       "detail",
-    );
-  }
-}
+    ],
+    IcosahedronGeometry,
+    IcosahedronBufferGeometry,
+  );
 
-export default IcosahedronGeometryDescriptor;
+export default geometryDescriptor;

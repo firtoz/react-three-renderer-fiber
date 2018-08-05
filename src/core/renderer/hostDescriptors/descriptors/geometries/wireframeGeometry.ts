@@ -1,31 +1,28 @@
-import {BufferGeometry, EdgesGeometry, Geometry} from "three";
+import {BufferGeometry, Geometry, WireframeGeometry} from "three";
 import {createBufferGeometryDescriptor} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
-export interface IEdgesGeometryProps {
+export interface IWireframeGeometryProps {
   geometry: BufferGeometry | Geometry;
-  thresholdAngle: number;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      edgesGeometry: IThreeElementPropsBase<EdgesGeometry> & IEdgesGeometryProps;
+      wireframeGeometry: IThreeElementPropsBase<WireframeGeometry> & IWireframeGeometryProps;
     }
   }
 }
 
 export const bufferGeometryDescriptor =
-  createBufferGeometryDescriptor<IEdgesGeometryProps, EdgesGeometry>(
-    (props) => new EdgesGeometry(
+  createBufferGeometryDescriptor<IWireframeGeometryProps, WireframeGeometry>(
+    (props) => new WireframeGeometry(
       props.geometry,
-      props.thresholdAngle,
     ),
     [
       "geometry",
-      "thresholdAngle",
     ],
-    EdgesGeometry,
+    WireframeGeometry,
   );
 
 export default bufferGeometryDescriptor;

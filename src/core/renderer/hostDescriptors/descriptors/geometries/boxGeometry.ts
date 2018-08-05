@@ -1,5 +1,5 @@
-import { BoxBufferGeometry, BoxGeometry } from "three";
-import createGeometryDescriptor from "../../common/createGeometryDescriptor";
+import {BoxBufferGeometry, BoxGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IBoxGeometryProps {
@@ -15,30 +15,37 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       boxGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
+      boxBufferGeometry: IThreeElementPropsBase<BoxBufferGeometry> & IBoxGeometryProps;
     }
   }
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryDescriptor<IBoxGeometryProps, BoxGeometry, BoxBufferGeometry>(
-  (props) => new BoxGeometry(props.width,
+  createGeometryAndBufferGeometryDescriptors<IBoxGeometryProps, BoxGeometry, BoxBufferGeometry>(
+  (props) => new BoxGeometry(
+    props.width,
     props.height,
     props.depth,
     props.widthSegments,
     props.heightSegments,
-    props.depthSegments),
-  (props) => new BoxBufferGeometry(props.width,
+    props.depthSegments,
+  ),
+  (props) => new BoxBufferGeometry(
+    props.width,
     props.height,
     props.depth,
     props.widthSegments,
     props.heightSegments,
-    props.depthSegments),
-  ["width",
+    props.depthSegments,
+  ),
+  [
+    "width",
     "height",
     "depth",
     "widthSegments",
     "heightSegments",
-    "depthSegments"],
+    "depthSegments",
+  ],
   BoxGeometry,
   BoxBufferGeometry,
 );

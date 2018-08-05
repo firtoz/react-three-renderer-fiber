@@ -1,8 +1,6 @@
-import * as THREE from "three";
-import {ConeGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {ConeBufferGeometry, ConeGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IConeGeometryProps {
   radius?: number;
@@ -17,14 +15,15 @@ export interface IConeGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      coneGeometry: IThreeElementPropsBase<THREE.ConeGeometry> & IConeGeometryProps;
+      coneGeometry: IThreeElementPropsBase<ConeGeometry> & IConeGeometryProps;
+      coneBufferGeometry: IThreeElementPropsBase<ConeBufferGeometry> & IConeGeometryProps;
     }
   }
 }
 
-export class ConeGeometryWrapper extends GeometryWrapperBase<IConeGeometryProps, ConeGeometry> {
-  protected constructGeometry(props: IConeGeometryProps): ConeGeometry {
-    return new ConeGeometry(
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<IConeGeometryProps, ConeGeometry, ConeBufferGeometry>(
+    (props) => new ConeGeometry(
       props.radius,
       props.height,
       props.radialSegments,
@@ -32,18 +31,17 @@ export class ConeGeometryWrapper extends GeometryWrapperBase<IConeGeometryProps,
       props.openEnded,
       props.thetaStart,
       props.thetaLength,
-    );
-  }
-}
-
-class ConeGeometryDescriptor extends WrappedEntityDescriptor<ConeGeometryWrapper,
-  IConeGeometryProps,
-  ConeGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(ConeGeometryWrapper, ConeGeometry);
-
-    this.hasRemountProps(
+    ),
+    (props) => new ConeBufferGeometry(
+      props.radius,
+      props.height,
+      props.radialSegments,
+      props.heightSegments,
+      props.openEnded,
+      props.thetaStart,
+      props.thetaLength,
+    ),
+    [
       "radius",
       "height",
       "radialSegments",
@@ -51,8 +49,9 @@ class ConeGeometryDescriptor extends WrappedEntityDescriptor<ConeGeometryWrapper
       "openEnded",
       "thetaStart",
       "thetaLength",
-    );
-  }
-}
+    ],
+    ConeGeometry,
+    ConeBufferGeometry,
+  );
 
-export default ConeGeometryDescriptor;
+export default geometryDescriptor;

@@ -1,11 +1,9 @@
-import * as THREE from "three";
-import {ExtrudeGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {CurvePath, ExtrudeBufferGeometry, ExtrudeGeometry, Shape} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IExtrudeGeometryProps {
-  shapes: THREE.Shape[];
+  shapes: Shape | Shape[];
   curveSegments?: number;
   steps?: number;
   depth?: number;
@@ -13,7 +11,7 @@ export interface IExtrudeGeometryProps {
   bevelThickness?: number;
   bevelSize?: number;
   bevelSegments?: number;
-  extrudePath?: THREE.CurvePath<any>;
+  extrudePath?: CurvePath<any>;
   frames?: object;
   UVGenerator?: object;
 }
@@ -21,32 +19,30 @@ export interface IExtrudeGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      extrudeGeometry: IThreeElementPropsBase<THREE.ExtrudeGeometry> & IExtrudeGeometryProps;
+      extrudeGeometry: IThreeElementPropsBase<ExtrudeGeometry> & IExtrudeGeometryProps;
+      extrudeBufferGeometry: IThreeElementPropsBase<ExtrudeBufferGeometry> & IExtrudeGeometryProps;
     }
   }
 }
 
-export class ExtrudeGeometryWrapper extends GeometryWrapperBase<IExtrudeGeometryProps, ExtrudeGeometry> {
-  protected constructGeometry(props: IExtrudeGeometryProps): ExtrudeGeometry {
-    const {shapes, ...opts} = props;
-
-    return new ExtrudeGeometry(
-      shapes,
-      opts,
-    );
-  }
-}
-
-class ExtrudeGeometryDescriptor extends WrappedEntityDescriptor<ExtrudeGeometryWrapper,
-  IExtrudeGeometryProps,
-  ExtrudeGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(ExtrudeGeometryWrapper, ExtrudeGeometry);
-
-    this.hasRemountProps(
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<IExtrudeGeometryProps, ExtrudeGeometry, ExtrudeBufferGeometry>(
+    (props) => {
+      const {shapes, ...options} = props;
+      return new ExtrudeGeometry(
+        shapes as Shape[],
+        options,
+      );
+    },
+    (props) => {
+      const {shapes, ...options} = props;
+      return new ExtrudeBufferGeometry(
+        shapes as Shape[],
+        options,
+      );
+    },
+    [
       "shapes",
-      "extrudeGeometry",
       "curveSegments",
       "steps",
       "depth",
@@ -57,8 +53,9 @@ class ExtrudeGeometryDescriptor extends WrappedEntityDescriptor<ExtrudeGeometryW
       "extrudePath",
       "frames",
       "UVGenerator",
-    );
-  }
-}
+    ],
+    ExtrudeGeometry,
+    ExtrudeBufferGeometry,
+  );
 
-export default ExtrudeGeometryDescriptor;
+export default geometryDescriptor;

@@ -1,8 +1,6 @@
-import * as THREE from "three";
-import {CylinderGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {CylinderBufferGeometry, CylinderGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface ICylinderGeometryProps {
   radiusTop?: number;
@@ -18,14 +16,15 @@ export interface ICylinderGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      cylinderGeometry: IThreeElementPropsBase<THREE.CylinderGeometry> & ICylinderGeometryProps;
+      cylinderGeometry: IThreeElementPropsBase<CylinderGeometry> & ICylinderGeometryProps;
+      cylinderBufferGeometry: IThreeElementPropsBase<CylinderBufferGeometry> & ICylinderGeometryProps;
     }
   }
 }
 
-export class CylinderGeometryWrapper extends GeometryWrapperBase<ICylinderGeometryProps, CylinderGeometry> {
-  protected constructGeometry(props: ICylinderGeometryProps): CylinderGeometry {
-    return new CylinderGeometry(
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<ICylinderGeometryProps, CylinderGeometry, CylinderBufferGeometry>(
+    (props) => new CylinderGeometry(
       props.radiusTop,
       props.radiusBottom,
       props.height,
@@ -34,18 +33,18 @@ export class CylinderGeometryWrapper extends GeometryWrapperBase<ICylinderGeomet
       props.openEnded,
       props.thetaStart,
       props.thetaLength,
-    );
-  }
-}
-
-class CylinderGeometryDescriptor extends WrappedEntityDescriptor<CylinderGeometryWrapper,
-  ICylinderGeometryProps,
-  CylinderGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(CylinderGeometryWrapper, CylinderGeometry);
-
-    this.hasRemountProps(
+    ),
+    (props) => new CylinderBufferGeometry(
+      props.radiusTop,
+      props.radiusBottom,
+      props.height,
+      props.radialSegments,
+      props.heightSegments,
+      props.openEnded,
+      props.thetaStart,
+      props.thetaLength,
+    ),
+    [
       "radiusTop",
       "radiusBottom",
       "height",
@@ -54,8 +53,9 @@ class CylinderGeometryDescriptor extends WrappedEntityDescriptor<CylinderGeometr
       "openEnded",
       "thetaStart",
       "thetaLength",
-    );
-  }
-}
+    ],
+    CylinderGeometry,
+    CylinderBufferGeometry,
+  );
 
-export default CylinderGeometryDescriptor;
+export default geometryDescriptor;

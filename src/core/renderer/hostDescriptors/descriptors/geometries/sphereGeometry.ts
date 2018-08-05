@@ -1,11 +1,9 @@
-import * as THREE from "three";
-import {SphereGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {SphereBufferGeometry, SphereGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface ISphereGeometryProps {
-  radius: number;
+  radius?: number;
   widthSegments?: number;
   heightSegments?: number;
   phiStart?: number;
@@ -17,40 +15,43 @@ export interface ISphereGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      sphereGeometry: IThreeElementPropsBase<THREE.SphereGeometry> & ISphereGeometryProps;
+      sphereGeometry: IThreeElementPropsBase<SphereGeometry> & ISphereGeometryProps;
+      sphereBufferGeometry: IThreeElementPropsBase<SphereBufferGeometry> & ISphereGeometryProps;
     }
   }
 }
 
-export class SphereGeometryWrapper extends GeometryWrapperBase<ISphereGeometryProps, SphereGeometry> {
-  protected constructGeometry(props: ISphereGeometryProps): SphereGeometry {
-    return new SphereGeometry(props.radius,
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<ISphereGeometryProps, SphereGeometry, SphereBufferGeometry>(
+    (props) => new SphereGeometry(
+      props.radius as number,
       props.widthSegments,
       props.heightSegments,
       props.phiStart,
       props.phiLength,
       props.thetaStart,
       props.thetaLength,
-    );
-  }
-}
-
-class SphereGeometryDescriptor extends WrappedEntityDescriptor<SphereGeometryWrapper,
-  ISphereGeometryProps,
-  SphereGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(SphereGeometryWrapper, SphereGeometry);
-
-    this.hasRemountProps("radius",
+    ),
+    (props) => new SphereBufferGeometry(
+      props.radius as number,
+      props.widthSegments,
+      props.heightSegments,
+      props.phiStart,
+      props.phiLength,
+      props.thetaStart,
+      props.thetaLength,
+    ),
+    [
+      "radius",
       "widthSegments",
       "heightSegments",
       "phiStart",
       "phiLength",
       "thetaStart",
       "thetaLength",
-    );
-  }
-}
+    ],
+    SphereGeometry,
+    SphereBufferGeometry,
+  );
 
-export default SphereGeometryDescriptor;
+export default geometryDescriptor;
