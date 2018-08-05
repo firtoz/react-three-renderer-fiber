@@ -22,36 +22,16 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ITorusKnotGeometryProps, TorusKnotGeometry, TorusKnotBufferGeometry>(
-    (props) => new TorusKnotGeometry(
-      props.radius,
-      props.tube,
-      props.radialSegments,
-      props.tubularSegments,
-      props.p,
-      props.q,
-      props.heightScale,
-    ),
-    (props) => new TorusKnotBufferGeometry(
-      props.radius,
-      props.tube,
-      props.radialSegments,
-      props.tubularSegments,
-      props.p,
-      props.q,
-      props.heightScale,
-    ),
-    [
-      "radius",
-      "tube",
-      "radialSegments",
-      "tubularSegments",
-      "p",
-      "q",
-      "heightScale",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ITorusKnotGeometryProps>()(
     TorusKnotGeometry,
     TorusKnotBufferGeometry,
+    "radius",
+    "tube",
+    "radialSegments",
+    "tubularSegments",
+    "p",
+    "q",
+    "heightScale",
   );
 
 export default geometryDescriptor;

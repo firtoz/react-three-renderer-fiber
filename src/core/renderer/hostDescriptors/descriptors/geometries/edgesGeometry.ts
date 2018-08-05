@@ -16,16 +16,10 @@ declare global {
 }
 
 export const bufferGeometryDescriptor =
-  createGeometryDescriptor<IEdgesGeometryProps, EdgesGeometry>(
-    (props) => new EdgesGeometry(
-      props.geometry,
-      props.thresholdAngle,
-    ),
-    [
-      "geometry",
-      "thresholdAngle",
-    ],
+  createGeometryDescriptor<IEdgesGeometryProps>()(
     EdgesGeometry,
+    "geometry",
+    "thresholdAngle",
   );
 
 export default bufferGeometryDescriptor;

@@ -23,39 +23,17 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ICylinderGeometryProps, CylinderGeometry, CylinderBufferGeometry>(
-    (props) => new CylinderGeometry(
-      props.radiusTop,
-      props.radiusBottom,
-      props.height,
-      props.radialSegments,
-      props.heightSegments,
-      props.openEnded,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    (props) => new CylinderBufferGeometry(
-      props.radiusTop,
-      props.radiusBottom,
-      props.height,
-      props.radialSegments,
-      props.heightSegments,
-      props.openEnded,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    [
-      "radiusTop",
-      "radiusBottom",
-      "height",
-      "radialSegments",
-      "heightSegments",
-      "openEnded",
-      "thetaStart",
-      "thetaLength",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ICylinderGeometryProps>()(
     CylinderGeometry,
     CylinderBufferGeometry,
+    "radiusTop",
+    "radiusBottom",
+    "height",
+    "radialSegments",
+    "heightSegments",
+    "openEnded",
+    "thetaStart",
+    "thetaLength",
   );
 
 export default geometryDescriptor;

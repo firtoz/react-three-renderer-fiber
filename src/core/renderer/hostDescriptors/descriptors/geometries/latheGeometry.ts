@@ -19,27 +19,13 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ILatheGeometryProps, LatheGeometry, LatheBufferGeometry>(
-    (props) => new LatheGeometry(
-      props.points,
-      props.segments,
-      props.phiStart,
-      props.phiLength,
-    ),
-    (props) => new LatheBufferGeometry(
-      props.points,
-      props.segments,
-      props.phiStart,
-      props.phiLength,
-    ),
-    [
-      "points",
-      "segments",
-      "phiStart",
-      "phiLength",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ILatheGeometryProps>()(
     LatheGeometry,
     LatheBufferGeometry,
+    "points",
+    "segments",
+    "phiStart",
+    "phiLength",
   );
 
 export default geometryDescriptor;

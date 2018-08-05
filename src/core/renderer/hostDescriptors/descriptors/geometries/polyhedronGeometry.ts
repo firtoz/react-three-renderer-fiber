@@ -19,27 +19,13 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IPolyhedronGeometryProps, PolyhedronGeometry, PolyhedronBufferGeometry>(
-    (props) => new PolyhedronGeometry(
-      props.vertices,
-      props.indices,
-      props.radius,
-      props.detail,
-    ),
-    (props) => new PolyhedronBufferGeometry(
-      props.vertices,
-      props.indices,
-      props.radius as number,
-      props.detail as number,
-    ),
-    [
-      "vertices",
-      "indices",
-      "radius",
-      "detail",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IPolyhedronGeometryProps>()(
     PolyhedronGeometry,
     PolyhedronBufferGeometry,
+    "vertices",
+    "indices",
+    "radius",
+    "detail",
   );
 
 export default geometryDescriptor;

@@ -2,8 +2,9 @@ import {TextBufferGeometry, TextGeometry, TextGeometryParameters} from "three";
 import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
-export interface ITextGeometryProps extends TextGeometryParameters {
+export interface ITextGeometryProps {
   text: string;
+  parameters: TextGeometryParameters;
 }
 
 declare global {
@@ -16,34 +17,11 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ITextGeometryProps, TextGeometry, TextBufferGeometry>(
-    (props) => {
-      const {text, ...parameters} = props;
-      return new TextGeometry(
-        text,
-        parameters,
-      );
-    },
-    (props) => {
-      const {text, ...parameters} = props;
-      return new TextBufferGeometry(
-        text,
-        parameters,
-      );
-    },
-    [
-      "text",
-      "font",
-      "size",
-      "height",
-      "curveSegments",
-      "bevelEnabled",
-      "bevelThickness",
-      "bevelSize",
-      "bevelSegments",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ITextGeometryProps>()(
     TextGeometry,
     TextBufferGeometry,
+    "text",
+    "parameters",
   );
 
 export default geometryDescriptor;

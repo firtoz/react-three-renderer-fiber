@@ -17,22 +17,11 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IDodecahedronGeometryProps, DodecahedronGeometry,
-    DodecahedronBufferGeometry>(
-    (props) => new DodecahedronGeometry(
-      props.radius,
-      props.detail,
-    ),
-    (props) => new DodecahedronBufferGeometry(
-      props.radius,
-      props.detail,
-    ),
-    [
-      "radius",
-      "detail",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IDodecahedronGeometryProps>()(
     DodecahedronGeometry,
     DodecahedronBufferGeometry,
+    "radius",
+    "detail",
   );
 
 export default geometryDescriptor;

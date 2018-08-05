@@ -17,21 +17,11 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IShapeGeometryProps, ShapeGeometry, ShapeBufferGeometry>(
-    (props) => new ShapeGeometry(
-      props.shapes as Shape[],
-      props.curveSegments,
-    ),
-    (props) => new ShapeBufferGeometry(
-      props.shapes as Shape[],
-      props.curveSegments,
-    ),
-    [
-      "shapes",
-      "curveSegments",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IShapeGeometryProps>()(
     ShapeGeometry,
     ShapeBufferGeometry,
+    "shapes",
+    "curveSegments",
   );
 
 export default geometryDescriptor;

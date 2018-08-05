@@ -241,6 +241,7 @@ export class WrappedEntityDescriptor<TWrapper extends WrapperDetails<TProps, TIn
         false,
         null).withWantsRepaint(true);
     }
+    Object.keys();
 
     for (const propName of propNames) {
       this.propertyGroups[remountGroupName].properties.push(propName);

@@ -17,21 +17,11 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IOctahedronGeometryProps, OctahedronGeometry, OctahedronBufferGeometry>(
-    (props) => new OctahedronGeometry(
-      props.radius,
-      props.detail,
-    ),
-    (props) => new OctahedronBufferGeometry(
-      props.radius,
-      props.detail,
-    ),
-    [
-      "radius",
-      "detail",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IOctahedronGeometryProps>()(
     OctahedronGeometry,
     OctahedronBufferGeometry,
+    "radius",
+    "detail",
   );
 
 export default geometryDescriptor;

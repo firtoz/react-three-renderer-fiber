@@ -22,36 +22,16 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ISphereGeometryProps, SphereGeometry, SphereBufferGeometry>(
-    (props) => new SphereGeometry(
-      props.radius as number,
-      props.widthSegments,
-      props.heightSegments,
-      props.phiStart,
-      props.phiLength,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    (props) => new SphereBufferGeometry(
-      props.radius as number,
-      props.widthSegments,
-      props.heightSegments,
-      props.phiStart,
-      props.phiLength,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    [
-      "radius",
-      "widthSegments",
-      "heightSegments",
-      "phiStart",
-      "phiLength",
-      "thetaStart",
-      "thetaLength",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ISphereGeometryProps>()(
     SphereGeometry,
     SphereBufferGeometry,
+    "radius",
+    "widthSegments",
+    "heightSegments",
+    "phiStart",
+    "phiLength",
+    "thetaStart",
+    "thetaLength",
   );
 
 export default geometryDescriptor;

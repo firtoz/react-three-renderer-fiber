@@ -20,30 +20,14 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ITorusGeometryProps, TorusGeometry, TorusBufferGeometry>(
-    (props) => new TorusGeometry(
-      props.radius,
-      props.tube,
-      props.radialSegments,
-      props.tubularSegments,
-      props.arc,
-    ),
-    (props) => new TorusBufferGeometry(
-      props.radius,
-      props.tube,
-      props.radialSegments,
-      props.tubularSegments,
-      props.arc,
-    ),
-    [
-      "radius",
-      "tube",
-      "radialSegments",
-      "tubularSegments",
-      "arc",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ITorusGeometryProps>()(
     TorusGeometry,
     TorusBufferGeometry,
+    "radius",
+    "tube",
+    "radialSegments",
+    "tubularSegments",
+    "arc",
   );
 
 export default geometryDescriptor;

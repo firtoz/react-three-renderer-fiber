@@ -22,36 +22,16 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IConeGeometryProps, ConeGeometry, ConeBufferGeometry>(
-    (props) => new ConeGeometry(
-      props.radius,
-      props.height,
-      props.radialSegments,
-      props.heightSegments,
-      props.openEnded,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    (props) => new ConeBufferGeometry(
-      props.radius,
-      props.height,
-      props.radialSegments,
-      props.heightSegments,
-      props.openEnded,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    [
-      "radius",
-      "height",
-      "radialSegments",
-      "heightSegments",
-      "openEnded",
-      "thetaStart",
-      "thetaLength",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IConeGeometryProps>()(
     ConeGeometry,
     ConeBufferGeometry,
+    "radius",
+    "height",
+    "radialSegments",
+    "heightSegments",
+    "openEnded",
+    "thetaStart",
+    "thetaLength",
   );
 
 export default geometryDescriptor;

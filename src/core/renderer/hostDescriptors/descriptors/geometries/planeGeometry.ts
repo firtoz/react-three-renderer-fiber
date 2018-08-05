@@ -19,27 +19,13 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IPlaneGeometryProps, PlaneGeometry, PlaneBufferGeometry>(
-    (props) => new PlaneGeometry(
-      props.width,
-      props.height,
-      props.widthSegments,
-      props.heightSegments,
-    ),
-    (props) => new PlaneBufferGeometry(
-      props.width,
-      props.height,
-      props.widthSegments,
-      props.heightSegments,
-    ),
-    [
-      "width",
-      "height",
-      "widthSegments",
-      "heightSegments",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IPlaneGeometryProps>()(
     PlaneGeometry,
     PlaneBufferGeometry,
+    "width",
+    "height",
+    "widthSegments",
+    "heightSegments",
   );
 
 export default geometryDescriptor;

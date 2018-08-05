@@ -21,33 +21,15 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IBoxGeometryProps, BoxGeometry, BoxBufferGeometry>(
-  (props) => new BoxGeometry(
-    props.width,
-    props.height,
-    props.depth,
-    props.widthSegments,
-    props.heightSegments,
-    props.depthSegments,
-  ),
-  (props) => new BoxBufferGeometry(
-    props.width,
-    props.height,
-    props.depth,
-    props.widthSegments,
-    props.heightSegments,
-    props.depthSegments,
-  ),
-  [
-    "width",
-    "height",
-    "depth",
-    "widthSegments",
-    "heightSegments",
-    "depthSegments",
-  ],
+  createGeometryAndBufferGeometryDescriptors<IBoxGeometryProps>()(
   BoxGeometry,
   BoxBufferGeometry,
+  "width",
+  "height",
+  "depth",
+  "widthSegments",
+  "heightSegments",
+  "depthSegments",
 );
 
 export default geometryDescriptor;

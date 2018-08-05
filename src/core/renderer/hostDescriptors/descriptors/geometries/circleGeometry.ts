@@ -19,27 +19,13 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ICircleGeometryProps, CircleGeometry, CircleBufferGeometry>(
-    (props) => new CircleGeometry(
-      props.radius,
-      props.segments,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    (props) => new CircleBufferGeometry(
-      props.radius,
-      props.segments,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    [
-      "radius",
-      "segments",
-      "thetaStart",
-      "thetaLength",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ICircleGeometryProps>()(
     CircleGeometry,
     CircleBufferGeometry,
+    "radius",
+    "segments",
+    "thetaStart",
+    "thetaLength",
   );
 
 export default geometryDescriptor;

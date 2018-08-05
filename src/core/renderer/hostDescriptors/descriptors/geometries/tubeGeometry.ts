@@ -20,30 +20,14 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<ITubeGeometryProps, TubeGeometry, TubeBufferGeometry>(
-    (props) => new TubeGeometry(
-      props.path,
-      props.tubularSegments,
-      props.radius,
-      props.radiusSegments,
-      props.closed,
-    ),
-    (props) => new TubeBufferGeometry(
-      props.path,
-      props.tubularSegments,
-      props.radius,
-      props.radiusSegments,
-      props.closed,
-    ),
-    [
-      "path",
-      "tubularSegments",
-      "radius",
-      "radiusSegments",
-      "closed",
-    ],
+  createGeometryAndBufferGeometryDescriptors<ITubeGeometryProps>()(
     TubeGeometry,
     TubeBufferGeometry,
+    "path",
+    "tubularSegments",
+    "radius",
+    "radiusSegments",
+    "closed",
   );
 
 export default geometryDescriptor;

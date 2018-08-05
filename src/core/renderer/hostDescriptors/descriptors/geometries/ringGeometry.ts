@@ -21,33 +21,15 @@ declare global {
 }
 
 export const { bufferGeometryDescriptor, geometryDescriptor } =
-  createGeometryAndBufferGeometryDescriptors<IRingGeometryProps, RingGeometry, RingBufferGeometry>(
-    (props) => new RingGeometry(
-      props.innerRadius,
-      props.outerRadius,
-      props.thetaSegments,
-      props.phiSegments,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    (props) => new RingBufferGeometry(
-      props.innerRadius,
-      props.outerRadius,
-      props.thetaSegments,
-      props.phiSegments,
-      props.thetaStart,
-      props.thetaLength,
-    ),
-    [
-      "innerRadius",
-      "outerRadius",
-      "thetaSegments",
-      "phiSegments",
-      "thetaStart",
-      "thetaLength",
-    ],
+  createGeometryAndBufferGeometryDescriptors<IRingGeometryProps>()(
     RingGeometry,
     RingBufferGeometry,
+    "innerRadius",
+    "outerRadius",
+    "thetaSegments",
+    "phiSegments",
+    "thetaStart",
+    "thetaLength",
   );
 
 export default geometryDescriptor;
