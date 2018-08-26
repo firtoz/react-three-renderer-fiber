@@ -1,11 +1,9 @@
-import * as THREE from "three";
-import {CircleGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {CircleBufferGeometry, CircleGeometry } from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface ICircleGeometryProps {
-  radius: number;
+  radius?: number;
   segments?: number;
   thetaStart?: number;
   thetaLength?: number;
@@ -14,36 +12,20 @@ export interface ICircleGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      circleGeometry: IThreeElementPropsBase<THREE.CircleGeometry> & ICircleGeometryProps;
+      circleGeometry: IThreeElementPropsBase<CircleGeometry> & ICircleGeometryProps;
+      circleBufferGeometry: IThreeElementPropsBase<CircleBufferGeometry> & ICircleGeometryProps;
     }
   }
 }
 
-export class CircleGeometryWrapper extends GeometryWrapperBase<ICircleGeometryProps, CircleGeometry> {
-  protected constructGeometry(props: ICircleGeometryProps): CircleGeometry {
-    return new CircleGeometry(
-      props.radius,
-      props.segments,
-      props.thetaStart,
-      props.thetaLength,
-    );
-  }
-}
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<ICircleGeometryProps>()(
+    CircleGeometry,
+    CircleBufferGeometry,
+    "radius",
+    "segments",
+    "thetaStart",
+    "thetaLength",
+  );
 
-class CircleGeometryDescriptor extends WrappedEntityDescriptor<CircleGeometryWrapper,
-  ICircleGeometryProps,
-  CircleGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(CircleGeometryWrapper, CircleGeometry);
-
-    this.hasRemountProps(
-      "radius",
-      "segments",
-      "thetaStart",
-      "thetaLength",
-    );
-  }
-}
-
-export default CircleGeometryDescriptor;
+export default geometryDescriptor;

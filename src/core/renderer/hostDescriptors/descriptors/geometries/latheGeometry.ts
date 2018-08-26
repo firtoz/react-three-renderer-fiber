@@ -1,11 +1,9 @@
-import * as THREE from "three";
-import {LatheGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {LatheBufferGeometry, LatheGeometry, Vector2} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface ILatheGeometryProps {
-  points: THREE.Vector2[];
+  points: Vector2[];
   segments?: number;
   phiStart?: number;
   phiLength?: number;
@@ -14,36 +12,20 @@ export interface ILatheGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      latheGeometry: IThreeElementPropsBase<THREE.LatheGeometry> & ILatheGeometryProps;
+      latheGeometry: IThreeElementPropsBase<LatheGeometry> & ILatheGeometryProps;
+      latheBufferGeometry: IThreeElementPropsBase<LatheBufferGeometry> & ILatheGeometryProps;
     }
   }
 }
 
-export class LatheGeometryWrapper extends GeometryWrapperBase<ILatheGeometryProps, LatheGeometry> {
-  protected constructGeometry(props: ILatheGeometryProps): LatheGeometry {
-    return new LatheGeometry(
-      props.points as any,
-      props.segments,
-      props.phiStart,
-      props.phiLength,
-    );
-  }
-}
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<ILatheGeometryProps>()(
+    LatheGeometry,
+    LatheBufferGeometry,
+    "points",
+    "segments",
+    "phiStart",
+    "phiLength",
+  );
 
-class LatheGeometryDescriptor extends WrappedEntityDescriptor<LatheGeometryWrapper,
-  ILatheGeometryProps,
-  LatheGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(LatheGeometryWrapper, LatheGeometry);
-
-    this.hasRemountProps(
-      "points",
-      "segments",
-      "phiStart",
-      "phiLength",
-    );
-  }
-}
-
-export default LatheGeometryDescriptor;
+export default geometryDescriptor;
