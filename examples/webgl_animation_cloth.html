@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+<head>
+    <title>three.js webgl - cloth simulation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #000;
+            color: #000;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        #info {
+            position: absolute;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+        }
+
+        a {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="info">Simple Cloth Simulation<br/>
+    Verlet integration with relaxed constraints<br/>
+    <a onclick="wind = !wind;">Wind</a> |
+    <a onclick="sphere.visible = !sphere.visible;">Ball</a> |
+    <a onclick="togglePins();">Pins</a>
+</div>
+
+<!--<script src="node_modules/three/build/three.js"></script>-->
+
+<script src="node_modules/react/umd/react.development.js"></script>
+<script src="node_modules/react-dom/umd/react-dom.development.js"></script>
+
+<script>
+  var THREE;
+</script>
+
+<script src="./dist/bundle.js"></script>
+
+<script src="node_modules/three/examples/js/Detector.js"></script>
+<script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
+<script src="node_modules/three/examples/js/libs/stats.min.js"></script>
+<script src="node_modules/three/examples/js/Cloth.js"></script>
+<script src="node_modules/babel-standalone/babel.min.js"></script>
+
+
+<!--
+<script src="node_modules/react/umd/react.development.js"></script>
+<script src="node_modules/react-dom/umd/react-dom.development.js"></script>
+
+<script src="js/Cloth.js"></script>
+
+<script>
+  function onReady(initializeExample) {
+    initializeExample("cloth");
+  }
+</script>
+<script src="./dist/bundle.js"></script>
+
+-->
+
+<script type="text/babel">
+
+  /* testing cloth simulation */
+
+  var pinsFormation = [];
+  var pins = [6];
+
+  pinsFormation.push(pins);
+
+  pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  pinsFormation.push(pins);
+
+  pins = [0];
+  pinsFormation.push(pins);
+
+  pins = []; // cut the rope ;)
+  pinsFormation.push(pins);
+
+  pins = [0, cloth.w]; // classic 2 pins
+  pinsFormation.push(pins);
+
+  pins = pinsFormation[1];
+
+
+  function togglePins() {
+
+    pins = pinsFormation[~~(Math.random() * pinsFormation.length)];
+
+  }
+
+  if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+  var container, stats;
+  var camera, scene, renderer;
+
+  var clothGeometry;
+  var sphere;
+  var object;
+
+  // var ClothExample;
+
+  init();
+  animate();
+
+  function init() {
+    //
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    console.log("!?");
+
+    var rendererRef = function (_renderer) {
+      renderer = _renderer;
+    };
+
+    var sceneRef = function (_scene) {
+      scene = _scene;
+    };
+
+    var cameraRef = function (_camera) {
+      camera = _camera;
+
+      if (camera != null) {
+        camera.position.copy(new THREE.Vector3(1000, 50, 1500));
+      }
+    };
+
+    const resourceRenderer = new ResourceRenderer();
+
+    const resourceContainer = {};
+
+    let clothTexture;
+
+    const resources = resourceRenderer.render(<resources>
+      <parametricGeometry
+        func={clothFunction}
+        slices={cloth.w}
+        stacks={cloth.h}
+        resource-id="clothGeometry"
+      />
+      <meshLambertMaterial
+        side={THREE.DoubleSide}
+        resource-id="clothMaterial"
+        alphaTest={0.5}
+      >
+        <texture
+          url="textures/patterns/circuit_pattern.png"
+          resource-id="clothTexture"
+          anisotropy={16}
+        />
+      </meshLambertMaterial>
+      <boxBufferGeometry
+        width={5}
+        height={375}
+        depth={5}
+        resource-id="poleGeo"
+      />
+      <meshLambertMaterial
+        resource-id="poleMat"
+      />
+      <boxBufferGeometry
+        width={10}
+        height={10}
+        depth={10}
+        resource-id="gg"
+      />
+    </resources>, resourceContainer);
+
+    const clothMaterial = resources.get("clothMaterial");
+
+    clothGeometry = resources.get("clothGeometry");
+
+    const poleGeo = resources.get("poleGeo");
+    const poleMat = resources.get("poleMat");
+    const gg = resources.get("gg");
+
+    clothTexture = clothMaterial.map;
+
+    const sphereRef = (_sphere: Mesh) => {
+      sphere = _sphere;
+    };
+
+    const d = 300;
+
+    ReactDOM.render(<React3>
+      <webGLRenderer
+        width={window.innerWidth}
+        height={window.innerHeight}
+        devicePixelRatio={window.devicePixelRatio}
+        gammaInput
+        gammaOutput
+        shadowMap={<webGLShadowMap
+          enabled
+        />}
+
+        ref={rendererRef}
+      >
+        <scene
+          ref={sceneRef}
+          background={new THREE.Color(0xcce0ff)}
+          fog={new THREE.Fog(0xcce0ff, 500, 10000)}
+        >
+          <perspectiveCamera
+            ref={cameraRef}
+            fov={30}
+            aspect={window.innerWidth / window.innerHeight}
+            near={1}
+            far={10000}
+          />
+          <ambientLight
+            color={0x666666}
+          />
+          <directionalLight
+            color={0xdfebff}
+            intensity={1}
+            position={new THREE.Vector3(50, 200, 100)
+              .multiplyScalar(1.3)}
+            castShadow
+            shadow={<directionalLightShadow
+              mapSize={new THREE.Vector2(1024, 1024)}
+              camera={<orthographicCamera
+                left={-d}
+                right={d}
+                top={d}
+                bottom={-d}
+                far={1000}
+              />}
+            />}
+          />
+          <mesh
+            geometry={clothGeometry}
+            material={clothMaterial}
+            position={new THREE.Vector3(0, 0, 0)}
+            castShadow
+            customDepthMaterial={<meshDepthMaterial
+              depthPacking={THREE.RGBADepthPacking}
+              map={clothTexture}
+              alphaTest={0.5}
+            />}
+          />
+          <mesh
+            name="sphere"
+            geometry={<sphereBufferGeometry
+              radius={ballSize}
+              widthSegments={32}
+              heightSegments={16}
+            />}
+            material={<meshLambertMaterial/>}
+            castShadow
+            receiveShadow
+
+            ref={sphereRef}
+          />
+          <mesh
+            geometry={<planeBufferGeometry
+              width={20000}
+              height={20000}/>}
+            material={<meshLambertMaterial>
+              <texture
+                url="textures/terrain/grasslight-big.jpg"
+                wrapS={THREE.RepeatWrapping}
+                wrapT={THREE.RepeatWrapping}
+                repeat={new THREE.Vector2(25, 25)}
+                anisotropy={16}
+              />
+            </meshLambertMaterial>}
+            position={new THREE.Vector3(0, -250, 0)}
+            rotation={new THREE.Euler(-Math.PI / 2, 0, 0)}
+            receiveShadow
+          />
+          <mesh
+            geometry={poleGeo}
+            material={poleMat}
+            position={new THREE.Vector3(-125, -62, 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={poleGeo}
+            material={poleMat}
+            position={new THREE.Vector3(125, -62, 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={<boxBufferGeometry width={255} height={5} depth={5}/>}
+            material={poleMat}
+            position={new THREE.Vector3(0, -250 + (750 / 2), 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={gg}
+            material={poleMat}
+            position={new THREE.Vector3(125, -250, 0)}
+            castShadow
+            receiveShadow
+          />
+          <mesh
+            geometry={gg}
+            material={poleMat}
+            position={new THREE.Vector3(-125, -250, 0)}
+            castShadow
+            receiveShadow
+          />
+        </scene>
+      </webGLRenderer>
+    </React3>, container);
+
+    // controls
+    var controls = new THREE.OrbitControls(camera, container);
+    controls.maxPolarAngle = Math.PI * 0.5;
+    controls.minDistance = 1000;
+    controls.maxDistance = 5000;
+
+    // performance monitor
+    //
+    stats = new Stats();
+    container.appendChild(stats.dom);
+
+    sphere.visible = false;
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    var time = Date.now();
+
+    var windStrength = Math.cos(time / 7000) * 20 + 40;
+
+    windForce.set(Math.sin(time / 2000), Math.cos(time / 3000), Math.sin(time / 1000))
+    windForce.normalize()
+    windForce.multiplyScalar(windStrength);
+
+    simulate(time);
+    render();
+    stats.update();
+  }
+
+  function render() {
+    var p = cloth.particles;
+
+    for (var i = 0, il = p.length; i < il; i++) {
+
+      clothGeometry.vertices[i].copy(p[i].position);
+
+    }
+
+    clothGeometry.verticesNeedUpdate = true;
+
+    clothGeometry.computeFaceNormals();
+    clothGeometry.computeVertexNormals();
+
+    sphere.position.copy(ballPosition);
+
+    // ReactDOM.render(<ClothExample/>, container);
+
+    renderer.render(scene, camera);
+  }
+
+</script>
+</body>
+</html>

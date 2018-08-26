@@ -10,7 +10,7 @@ export default class ReactThreeRendererPropertyDescriptor<TProps, TInstance, TPr
   constructor(groupName: string | null,
               updateFunction: PropertyUpdater<TProps, TInstance, TProp> | null,
               updateInitial: boolean,
-              validatorAcceptor: ((validator: Validator<TProp>) => void) | null) {
+              validatorAcceptor: ((validator: Validator<TProp | undefined | null>) => void) | null) {
     super(groupName, updateFunction, updateInitial, validatorAcceptor);
   }
 

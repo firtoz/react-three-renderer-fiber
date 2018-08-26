@@ -12,8 +12,8 @@ document.body.appendChild(container);
 class Demo extends React.Component<any, {
   cubeRotation: Euler,
 }> {
-  constructor() {
-    super();
+  constructor(props: any, context: any) {
+    super(props, context);
 
     this.state = {
       cubeRotation: new Euler(),
@@ -34,7 +34,7 @@ class Demo extends React.Component<any, {
         scene={<scene>
           <mesh
             rotation={this.state.cubeRotation}
-            geometry={<boxGeometry width={1} height={1} depth={1} />}
+            geometry={<boxGeometry width={1} height={1} depth={1}/>}
             material={<meshBasicMaterial
               color={0x00ff00}
             />}
@@ -66,4 +66,4 @@ class Demo extends React.Component<any, {
   }
 }
 
-ReactThreeRenderer.render(<Demo />, container);
+ReactThreeRenderer.render(<Demo/>, container);

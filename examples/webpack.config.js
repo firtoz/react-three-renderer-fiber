@@ -8,16 +8,16 @@ module.exports = {
     path: path.join(__dirname, "dist")
   },
 
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: "cheap-module-source-map",
-
   devServer: {
     publicPath: "/dist/"
   },
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".js", ".json", ".d.ts"]
+    extensions: [".ts", ".tsx", ".js", ".json", ".d.ts"],
+    alias: {
+      three: path.resolve(__dirname, '../node_modules/three'),
+    }
   },
 
   module: {
@@ -30,14 +30,13 @@ module.exports = {
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+      {enforce: "pre", test: /\.js$/, loader: "source-map-loader"}
     ]
   },
 
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': process.env.NODE_ENV ? `"${process.env.NODE_ENV}"` : undefined,
         'ENABLE_REACT_ADDON_HOOKS': process.env.ENABLE_REACT_ADDON_HOOKS ? "true" : "false",
         'DISABLE_REACT_ADDON_HOOKS': process.env.DISABLE_REACT_ADDON_HOOKS ? "true" : "false",
       }
@@ -53,3 +52,10 @@ module.exports = {
     "react-dom": "ReactDOM"
   },
 };
+
+if (process.env.NODE_ENV === "production") {
+  module.exports.mode = "production";
+} else {
+  module.exports.mode = "development";
+  module.exports.devtool = "cheap-module-source-map-eval";
+}

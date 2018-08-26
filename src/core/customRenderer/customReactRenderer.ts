@@ -4,68 +4,11 @@ import {CustomReconcilerConfig} from "./createReconciler";
 import {hookDevtools} from "./utils/DevtoolsHelpers";
 import isNonProduction from "./utils/isNonProduction";
 
-export interface IHostContext {
-  triggerRender(): void;
+export default class CustomReactRenderer<TReconcilerConfig extends //
+  CustomReconcilerConfig<any> = CustomReconcilerConfig<any>> {
+  private readonly reconciler: IRenderer;
 
-  renderActionFound?(action: RenderAction): void;
-}
-
-function renderSubtreeIntoContainer(reconciler: IRenderer,
-                                    contextSymbol: symbol,
-                                    rootContainerSymbol: symbol,
-                                    parentComponent: React.Component<any, any> | null,
-                                    children: any,
-                                    container: any,
-                                    forceHydrate: boolean,
-                                    callback: () => void) {
-  if (forceHydrate) {
-    throw new Error("forceHydrate not implemented yet");
-  }
-
-  let root = container[rootContainerSymbol];
-
-  if (!root) {
-    const newRoot = reconciler.createContainer(container);
-
-    container[rootContainerSymbol] = newRoot;
-
-    const renderActionsForContainer: RenderAction[] = [];
-
-    if (container[contextSymbol] === undefined) {
-      // noinspection UnnecessaryLocalVariableJS
-      const rootContext: IHostContext = {
-        triggerRender() {
-          // console.log("render triggered for", renderActionsForContainer);
-
-          renderActionsForContainer.forEach((action: RenderAction) => {
-            action.triggerRender();
-          });
-        },
-        renderActionFound(action: RenderAction) {
-          // console.log("render action found", action);
-          renderActionsForContainer.push(action);
-        },
-      };
-
-      container[contextSymbol] = rootContext;
-    }
-
-    root = newRoot;
-
-    reconciler.unbatchedUpdates(() => {
-      reconciler.updateContainer(children, newRoot, parentComponent, callback);
-    });
-  } else {
-    reconciler.updateContainer(children, root, parentComponent, callback);
-  }
-
-  return reconciler.getPublicRootInstance(root);
-}
-
-export default class CustomReactRenderer {
-  private reconciler: IRenderer;
-
-  constructor(private reconcilerConfig: CustomReconcilerConfig<any>, wantsDevtools: boolean = true) {
+  constructor(reconcilerConfig: TReconcilerConfig, wantsDevtools: boolean = true) {
     if (wantsDevtools && isNonProduction) {
       hookDevtools(reconcilerConfig);
     }
@@ -87,9 +30,9 @@ export default class CustomReactRenderer {
                           | null,
                         container: any,
                         callback?: any): any | null {
-    return renderSubtreeIntoContainer(this.reconciler,
-      this.reconcilerConfig.getContextSymbol(),
-      this.reconcilerConfig.getRootContainerSymbol(),
+    return this.renderSubtreeIntoContainer(this.reconciler,
+      CustomReconcilerConfig.contextSymbol,
+      CustomReconcilerConfig.rootContainerSymbol,
       null,
       element,
       container,
@@ -98,7 +41,7 @@ export default class CustomReactRenderer {
   }
 
   public unmountComponentAtNode(container: any, callback?: () => void): any {
-    if (container[this.reconcilerConfig.getRootContainerSymbol()]) {
+    if (container[CustomReconcilerConfig.rootContainerSymbol]) {
       // if (__DEV__) {
       //   const rootEl = getReactRootElementInContainer(container);
       //   const renderedByDifferentReact =
@@ -112,15 +55,15 @@ export default class CustomReactRenderer {
 
       // Unmount should not be batched.
       this.reconciler.unbatchedUpdates(() => {
-        renderSubtreeIntoContainer(this.reconciler,
-          this.reconcilerConfig.getContextSymbol(),
-          this.reconcilerConfig.getRootContainerSymbol(),
+        this.renderSubtreeIntoContainer(this.reconciler,
+          CustomReconcilerConfig.contextSymbol,
+          CustomReconcilerConfig.rootContainerSymbol,
           null,
           null,
           container,
           false,
           () => {
-            delete container[this.reconcilerConfig.getRootContainerSymbol()];
+            delete container[CustomReconcilerConfig.rootContainerSymbol];
 
             if (callback != null) {
               callback();
@@ -166,7 +109,7 @@ export default class CustomReactRenderer {
       return null;
     }
 
-    if (componentOrElement[this.reconcilerConfig.getFiberSymbol()] !== undefined) {
+    if (componentOrElement[CustomReconcilerConfig.fiberSymbol] !== undefined) {
       // must be a host instance already then
       return componentOrElement;
     }
@@ -182,5 +125,46 @@ export default class CustomReactRenderer {
       throw new Error("Element appears to be" +
         " neither ReactComponent nor DOMNode. Keys: %s" + Object.keys(componentOrElement));
     }
+  }
+
+  protected renderSubtreeIntoContainer(reconciler: IRenderer,
+                                       contextSymbol: symbol,
+                                       rootContainerSymbol: symbol,
+                                       parentComponent: React.Component<any, any> | null,
+                                       children: any,
+                                       container: any,
+                                       forceHydrate: boolean,
+                                       callback: () => void): any {
+    if (forceHydrate) {
+      throw new Error("forceHydrate not implemented yet");
+    }
+
+    let root = container[rootContainerSymbol];
+
+    if (!root) {
+      const newRoot = reconciler.createContainer(container);
+
+      container[rootContainerSymbol] = newRoot;
+
+      const renderActionsForContainer: RenderAction[] = [];
+
+      if (container[contextSymbol] === undefined) {
+        container[contextSymbol] = this.createContext(renderActionsForContainer);
+      }
+
+      root = newRoot;
+
+      reconciler.unbatchedUpdates(() => {
+        reconciler.updateContainer(children, newRoot, parentComponent, callback);
+      });
+    } else {
+      reconciler.updateContainer(children, root, parentComponent, callback);
+    }
+
+    return reconciler.getPublicRootInstance(root);
+  }
+
+  protected createContext(renderActionsForContainer: RenderAction[]): any {
+    return undefined;
   }
 }

@@ -24,13 +24,15 @@ declare global {
 
 const defaultPointLightCamera = new PointLight().shadow.camera;
 
+// TODO bias/map/mapsize/matrix/radius props
 class PointLightShadowDescriptor extends ReactThreeRendererDescriptor<IPointLightShadowProps,
   LightShadow,
   PointLight> {
   constructor() {
     super();
 
-    new RefWrapper(["camera"], this).wrapProperty(new SimplePropertyWrapper("camera", [PerspectiveCamera]));
+    new RefWrapper(["camera"], this)
+      .wrapProperty(new SimplePropertyWrapper("camera", [PerspectiveCamera]));
   }
 
   public createInstance(props: IPointLightShadowProps) {

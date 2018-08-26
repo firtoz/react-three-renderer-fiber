@@ -1,8 +1,6 @@
-import * as THREE from "three";
-import {BoxGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {BoxBufferGeometry, BoxGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IBoxGeometryProps {
   width: number;
@@ -16,35 +14,22 @@ export interface IBoxGeometryProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      boxGeometry: IThreeElementPropsBase<THREE.BoxGeometry> & IBoxGeometryProps;
+      boxGeometry: IThreeElementPropsBase<BoxGeometry> & IBoxGeometryProps;
+      boxBufferGeometry: IThreeElementPropsBase<BoxBufferGeometry> & IBoxGeometryProps;
     }
   }
 }
 
-export class BoxGeometryWrapper extends GeometryWrapperBase<IBoxGeometryProps, BoxGeometry> {
-  protected constructGeometry(props: IBoxGeometryProps): BoxGeometry {
-    return new BoxGeometry(props.width,
-      props.height,
-      props.depth,
-      props.widthSegments,
-      props.heightSegments,
-      props.depthSegments);
-  }
-}
-
-class BoxGeometryDescriptor extends WrappedEntityDescriptor<BoxGeometryWrapper,
-  IBoxGeometryProps,
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<IBoxGeometryProps>()(
   BoxGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(BoxGeometryWrapper, BoxGeometry);
+  BoxBufferGeometry,
+  "width",
+  "height",
+  "depth",
+  "widthSegments",
+  "heightSegments",
+  "depthSegments",
+);
 
-    this.hasRemountProps("width",
-      "height",
-      "depth",
-      "widthSegments",
-      "heightSegments");
-  }
-}
-
-export default BoxGeometryDescriptor;
+export default geometryDescriptor;

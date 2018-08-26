@@ -2,12 +2,11 @@ import {
   IFiber,
   IReactFiberRendererConfig,
   IRenderer,
-  ReactDebugCurrentFiber,
   ReactDOMFrameScheduling,
   ReactFiberReconciler,
 } from "react-fiber-export";
 
-import * as PropTypes from "prop-types";
+import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
 import {IHostDescriptor} from "./descriptors/IHostDescriptor";
 import isNonProduction from "./utils/isNonProduction";
@@ -20,45 +19,29 @@ export interface IPropMap {
 
 export type TUpdatePayload = any[];
 
-const checkPropTypes: (typeSpecs: any,
-                       values: IPropMap,
-                       location: string,
-                       componentName: string,
-                       getStack?: () => (string | null)) => void = (PropTypes as any).checkPropTypes;
-
 @bindAcceptor
 export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   any,
   any,
   any,
-  any,
-  any>> implements IReactFiberRendererConfig {
+  any>, TContext = any> implements IReactFiberRendererConfig {
+  public static readonly fiberSymbol: unique symbol = Symbol("custom-renderer-fiber");
+  public static readonly contextSymbol: unique symbol = Symbol("custom-renderer-context");
+  public static readonly rootContainerSymbol: unique symbol = Symbol("custom-renderer-root-container-symbol");
+
+  private static precacheInstance(fiber: IFiber, customRendererElement: any) {
+    customRendererElement[CustomReconcilerConfig.fiberSymbol] = fiber;
+  }
+
   public scheduleDeferredCallback: any = ReactDOMFrameScheduling.rIC;
   public useSyncScheduling: boolean = true;
-
-  private fiberSymbol: symbol = Symbol("custom-renderer-fiber");
-  private contextSymbol: symbol = Symbol("custom-renderer-context");
-  private rootContainerSymbol: symbol = Symbol("custom-renderer-root-container-symbol");
-
-  private hostDescriptors: Map<string, TDescriptor> = new Map();
-
-  public getFiberSymbol() {
-    return this.fiberSymbol;
-  }
-
-  public getContextSymbol() {
-    return this.contextSymbol;
-  }
-
-  public getRootContainerSymbol() {
-    return this.rootContainerSymbol;
-  }
+  protected hostDescriptors: Map<string, TDescriptor> = new Map();
 
   @autoBind
   public getRootHostContext(rootContainerInstance: any) {
     // console.log("getRootHostContext", this);
-    if (rootContainerInstance && rootContainerInstance[this.contextSymbol] !== undefined) {
-      return rootContainerInstance[this.contextSymbol];
+    if (rootContainerInstance && rootContainerInstance[CustomReconcilerConfig.contextSymbol] !== undefined) {
+      return rootContainerInstance[CustomReconcilerConfig.contextSymbol];
     }
 
     return emptyObject;
@@ -82,17 +65,13 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   @autoBind
   public createInstance(type: string,
                         props: IPropMap,
-                        rootContainerInstance: any,
-                        hostContext: any,
+                        rootContainerInstance: CustomRendererElementInstance,
+                        hostContext: TContext,
                         fiber: IFiber) {
     const descriptor = this.getDescriptorForType(type);
 
     if (isNonProduction) {
-      checkPropTypes(descriptor.propTypes,
-        props,
-        "prop",
-        type,
-        ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+      descriptor.checkPropTypes(props, type);
     }
 
     if (descriptor === undefined) {
@@ -102,10 +81,10 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
     const createdInstance = descriptor.createInstance(props, rootContainerInstance);
 
     if (hostContext !== null) {
-      createdInstance[this.contextSymbol] = hostContext;
+      createdInstance[CustomReconcilerConfig.contextSymbol] = hostContext;
     }
 
-    this.precacheInstance(fiber, createdInstance);
+    CustomReconcilerConfig.precacheInstance(fiber, createdInstance);
 
     descriptor.applyInitialPropUpdates(createdInstance, props);
 
@@ -221,11 +200,15 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   }
 
   protected defineHostDescriptor(type: string, descriptor: TDescriptor): void {
+    if (this.hostDescriptors.get(type) !== undefined) {
+      throw new Error(`The descriptor for type '${type}' is already defined.`);
+    }
+
     this.hostDescriptors.set(type, descriptor);
   }
 
   protected getDescriptorForInstance(instance: any): TDescriptor {
-    const type = (instance[this.fiberSymbol] as IFiber).type;
+    const type = (instance[CustomReconcilerConfig.fiberSymbol] as IFiber).type;
 
     if (!this.hostDescriptors.has(type)) {
       throw new Error(`Cannot find descriptor for type "${type}"`);
@@ -234,11 +217,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
     return this.hostDescriptors.get(type) as TDescriptor;
   }
 
-  private precacheInstance(fiber: IFiber, customRendererElement: any) {
-    customRendererElement[this.fiberSymbol] = fiber;
-  }
-
-  private getDescriptorForType(type: string): TDescriptor {
+  protected getDescriptorForType(type: string): TDescriptor {
     if (!this.hostDescriptors.has(type)) {
       throw new Error(`Cannot find descriptor for type "${type}"`);
     }
@@ -248,11 +227,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
 
   private diffProperties(type: string, lastProps: IPropMap, nextProps: IPropMap): TUpdatePayload | null {
     if (isNonProduction) {
-      checkPropTypes(this.getDescriptorForType(type).propTypes,
-        nextProps,
-        "prop",
-        type,
-        ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+      this.getDescriptorForType(type).checkPropTypes(nextProps, type);
     }
 
     let updatePayload: TUpdatePayload | null = null;
@@ -309,7 +284,6 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
 }
 
 export default function createReconciler<TDescriptor extends IHostDescriptor<any,
-  any,
   any,
   any,
   any,

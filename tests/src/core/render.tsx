@@ -3,8 +3,7 @@ import * as React from "react";
 import * as Sinon from "sinon";
 import {
   BoxGeometry,
-  Camera, Group,
-  Mesh,
+  Camera, Mesh,
   MeshLambertMaterial, Object3D,
   PerspectiveCamera,
   Scene, Vector3,
@@ -15,8 +14,8 @@ import ReactThreeRenderer from "../../../src/core/renderer/reactThreeRenderer";
 import object3D from "../../../src/core/renderer/hostDescriptors/descriptors/objects/object3D";
 import {RenderAction} from "../../../src/core/renderer/hostDescriptors/descriptors/render";
 import webGLRenderer from "../../../src/core/renderer/hostDescriptors/descriptors/webGLRenderer";
-import wrRenderer from "../../../src/core/WR/wrRenderer";
 import {mockConsole, testContainers} from "../index";
+import Done = Mocha.Done;
 
 const {div: testDiv} = testContainers;
 
@@ -42,21 +41,21 @@ describe("render", () => {
   }
 
   it("should be able to be rendered into a renderer", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
-    mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
+    mockConsole.expectLog("THREE.WebGLRenderer", "95");
+    // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
     const renderer = new WebGLRenderer();
 
     const renderCallSpy = Sinon.spy(renderer, "render");
 
     ReactThreeRenderer.render(<render
-      camera={<perspectiveCamera />}
+      camera={<perspectiveCamera/>}
       scene={<scene>
         <mesh>
-          <boxGeometry width={5} height={5} depth={5} />
-          <meshLambertMaterial />
+          <boxGeometry width={5} height={5} depth={5}/>
+          <meshLambertMaterial/>
         </mesh>
-      </scene>} />, renderer);
+      </scene>}/>, renderer);
 
     requestAnimationFrame(() => {
       verifyRenderCall(renderCallSpy);
@@ -96,13 +95,13 @@ describe("render", () => {
       ref={rendererSpy}
     >
       <render
-        camera={<perspectiveCamera />}
+        camera={<perspectiveCamera/>}
         scene={<scene>
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />
+        </scene>}/>
     </webGLRenderer>, testCanvas);
 
     requestAnimationFrame(() => {
@@ -112,8 +111,8 @@ describe("render", () => {
     });
   });
 
-  it("should not render if scene or camera are null", (done: () => {}) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+  it("should not render if scene or camera are null", (done: Done) => {
+    mockConsole.expectLog("THREE.WebGLRenderer", "95");
 
     const renderer = new WebGLRenderer();
 
@@ -131,31 +130,31 @@ describe("render", () => {
         camera={null}
         scene={<scene>
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />, renderer);
+        </scene>}/>, renderer);
 
       requestAnimationFrame(() => {
         expect(renderCallSpy.callCount).to.equal(0);
 
         ReactThreeRenderer.render(<render
-          camera={<perspectiveCamera />}
-          scene={null} />, renderer);
+          camera={<perspectiveCamera/>}
+          scene={null}/>, renderer);
 
         requestAnimationFrame(() => {
           expect(renderCallSpy.callCount).to.equal(0);
 
-          mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
+          // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
           ReactThreeRenderer.render(<render
-            camera={<perspectiveCamera />}
+            camera={<perspectiveCamera/>}
             scene={<scene>
               <mesh>
-                <boxGeometry width={5} height={5} depth={5} />
-                <meshLambertMaterial />
+                <boxGeometry width={5} height={5} depth={5}/>
+                <meshLambertMaterial/>
               </mesh>
-            </scene>} />, renderer);
+            </scene>}/>, renderer);
 
           requestAnimationFrame(() => {
             expect(renderCallSpy.callCount).to.equal(1);
@@ -178,13 +177,13 @@ describe("render", () => {
       height={600}
     >
       <render
-        camera={<perspectiveCamera ref={perspectiveCameraRef} name="some camera" />}
+        camera={<perspectiveCamera ref={perspectiveCameraRef} name="some camera"/>}
         scene={<scene ref={sceneRef} name="some scene">
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />
+        </scene>}/>
     </webGLRenderer>, testCanvas);
 
     expect(perspectiveCameraRef.callCount).to.equal(1);
@@ -197,9 +196,14 @@ describe("render", () => {
     expect(firstScene.name).to.equal("some scene");
 
     // they should have mounted into the same group
-    const renderActionGroup: Group = firstScene.parent;
+    const renderActionGroup = firstScene.parent;
 
     expect(renderActionGroup).to.not.equal(null);
+
+    if (renderActionGroup == null) {
+      throw new Error();
+    }
+
     expect(renderActionGroup).to.equal(firstCamera.parent);
 
     ReactThreeRenderer.render(<webGLRenderer
@@ -207,13 +211,13 @@ describe("render", () => {
       height={600}
     >
       <render
-        camera={<perspectiveCamera ref={perspectiveCameraRef} name="same camera different name" />}
+        camera={<perspectiveCamera ref={perspectiveCameraRef} name="same camera different name"/>}
         scene={<scene ref={sceneRef} name="same scene different name">
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />
+        </scene>}/>
     </webGLRenderer>, testCanvas);
 
     // the refs should not be called again
@@ -231,13 +235,13 @@ describe("render", () => {
       height={600}
     >
       <render
-        camera={<perspectiveCamera ref={perspectiveCameraRef} name="another camera" key={"3"} />}
+        camera={<perspectiveCamera ref={perspectiveCameraRef} name="another camera" key={"3"}/>}
         scene={<scene ref={sceneRef} name="another scene" key={"4"}>
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />
+        </scene>}/>
     </webGLRenderer>, testCanvas);
 
     // but for different keys, they should be!
@@ -269,13 +273,13 @@ describe("render", () => {
       height={600}
     >
       <render
-        camera={<perspectiveCamera name="second camera but without ref this time" key={"3"} />}
+        camera={<perspectiveCamera name="second camera but without ref this time" key={"3"}/>}
         scene={<scene name="second scene but without ref this time" key={"4"}>
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />
+        </scene>}/>
     </webGLRenderer>, testCanvas);
 
     expect(perspectiveCameraRef.callCount).to.equal(4);
@@ -300,13 +304,13 @@ describe("render", () => {
       height={600}
     >
       <render
-        camera={<perspectiveCamera name="third camera" key={"10"} />}
+        camera={<perspectiveCamera name="third camera" key={"10"}/>}
         scene={<scene name="third scene" key={"20"}>
           <mesh>
-            <boxGeometry width={5} height={5} depth={5} />
-            <meshLambertMaterial />
+            <boxGeometry width={5} height={5} depth={5}/>
+            <meshLambertMaterial/>
           </mesh>
-        </scene>} />
+        </scene>}/>
     </webGLRenderer>, testCanvas);
 
     expect(perspectiveCameraRef.callCount).to.equal(4);
@@ -335,7 +339,7 @@ describe("render", () => {
   });
 
   it("should accept a scene as a parameter", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "95");
 
     const renderer = new WebGLRenderer();
 
@@ -345,7 +349,7 @@ describe("render", () => {
     const scene = new Scene();
 
     ReactThreeRenderer.render(<render
-      camera={<perspectiveCamera ref={perspectiveCameraSpy} />}
+      camera={<perspectiveCamera ref={perspectiveCameraSpy}/>}
       scene={scene}
     />, renderer);
 
@@ -362,7 +366,7 @@ describe("render", () => {
   });
 
   it("should accept a camera as a parameter", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "95");
 
     const renderer = new WebGLRenderer();
 
@@ -373,7 +377,7 @@ describe("render", () => {
 
     ReactThreeRenderer.render(<render
       camera={camera}
-      scene={<scene ref={sceneRef} />}
+      scene={<scene ref={sceneRef}/>}
     />, renderer);
 
     requestAnimationFrame(() => {
@@ -389,7 +393,7 @@ describe("render", () => {
   });
 
   it("should trigger a render when a visible element is added or removed", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "95");
 
     const renderer = new WebGLRenderer();
 
@@ -398,8 +402,8 @@ describe("render", () => {
     let setChildren: ((childCount: number, callback: () => void) => void) | null = null;
 
     class TestContainer extends React.Component<any, { childCount: number }> {
-      constructor() {
-        super();
+      constructor(props: any, context: any) {
+        super(props, context);
 
         this.state = {
           childCount: 0,
@@ -418,7 +422,7 @@ describe("render", () => {
         const children = [];
 
         for (let i = 0; i < this.state.childCount; ++i) {
-          children.push(<object3D key={`${i}`} />);
+          children.push(<object3D key={`${i}`}/>);
         }
 
         return <object3D>
@@ -428,9 +432,9 @@ describe("render", () => {
     }
 
     ReactThreeRenderer.render(<render
-      camera={<perspectiveCamera />}
+      camera={<perspectiveCamera/>}
       scene={<scene>
-        <TestContainer />
+        <TestContainer/>
       </scene>}
     />, renderer);
 
@@ -438,7 +442,7 @@ describe("render", () => {
       return;
     }
 
-    const updateChildren = setChildren;
+    const updateChildren: ((childCount: number, callback: () => void) => void) = setChildren;
 
     requestAnimationFrame(() => {
       expect(renderCallSpy.callCount).to.equal(1);
@@ -476,14 +480,8 @@ describe("render", () => {
     });
   });
 
-  it("should allow custom renderers", (done) => {
-    wrRenderer.render(<test />, testDiv);
-
-    done();
-  });
-
   it("should trigger a render only when a visible property is updated", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "87");
+    mockConsole.expectLog("THREE.WebGLRenderer", "95");
 
     const renderer = new WebGLRenderer();
 
@@ -494,8 +492,8 @@ describe("render", () => {
       name: string,
       position: Vector3,
     }> {
-      constructor() {
-        super();
+      constructor(props: any, context: any) {
+        super(props, context);
 
         this.state = {
           name: "test",
@@ -531,10 +529,10 @@ describe("render", () => {
 
     ReactThreeRenderer.render(<render
       ref={renderRef}
-      camera={<perspectiveCamera />}
+      camera={<perspectiveCamera/>}
       scene={<scene>
-        <ObjectStateChanger ref={changerSpy} />
-      </scene>} />, renderer);
+        <ObjectStateChanger ref={changerSpy}/>
+      </scene>}/>, renderer);
 
     const render: RenderAction = renderRef.lastCall.args[0];
 

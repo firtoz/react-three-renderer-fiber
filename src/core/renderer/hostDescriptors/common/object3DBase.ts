@@ -1,7 +1,9 @@
 import * as PropTypes from "prop-types";
-import {Euler, Object3D, Quaternion, Vector3} from "three";
+import {IFiber} from "react-fiber-export";
+import {Euler, Matrix4, MeshDepthMaterial, Object3D, Quaternion, Vector3} from "three";
+import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
 import isNonProduction from "../../../customRenderer/utils/isNonProduction";
-import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
+import {IHostContext} from "../../reactThreeRenderer";
 import {IPropsWithChildren} from "./IPropsWithChildren";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
 
@@ -12,6 +14,26 @@ export interface IObject3DProps extends IPropsWithChildren {
   quaternion?: Quaternion;
   lookAt?: Vector3;
   visible?: boolean;
+  castShadow?: boolean;
+  receiveShadow?: boolean;
+  renderOrder?: number;
+  scale?: Vector3;
+  // TODO add prop setting for customDepthMaterial
+  customDepthMaterial?: MeshDepthMaterial;
+}
+
+export class CustomRendererElementInstance {
+  public static wrapContext<T, TContext>(object: T, context: TContext): T & CustomRendererElementInstance {
+    const wrapped = object as any;
+
+    wrapped[CustomReconcilerConfig.contextSymbol] = context;
+
+    return wrapped;
+  }
+
+  public readonly [CustomReconcilerConfig.fiberSymbol]: IFiber;
+  public readonly [CustomReconcilerConfig.rootContainerSymbol]: any;
+  public readonly [CustomReconcilerConfig.contextSymbol]: IHostContext;
 }
 
 abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
@@ -24,7 +46,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     TParent,
     TChild> {
 
-  public constructor() {
+  protected constructor() {
     super();
 
     this.hasSimpleProp("name", true, false)
@@ -33,8 +55,27 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("visible", true, true)
       .withDefault(true);
 
+    // TODO find default for castShadow
+    this.hasSimpleProp("castShadow", true, true);
+    // TODO find default for receiveShadow
+    this.hasSimpleProp("receiveShadow", true, true);
+    this.hasSimpleProp("renderOrder", true, true);
+
+    this.hasProp<Vector3>("scale",
+      (instance, newValue) => { instance.scale.copy(newValue); },
+      true,
+      true);
+
+    this.hasProp<Matrix4>("matrix",
+      (instance, newValue) => {
+        instance.matrix = newValue;
+        instance.matrix.decompose(instance.position, instance.quaternion, instance.scale);
+      },
+      true,
+      true);
+
     // this.hasSimpleProp("name", true, true);
-    this.hasProp("position", (instance: Object3D,
+    this.hasProp("position", (instance: T,
                               newValue: Vector3 | null,
                               oldProps: IObject3DProps,
                               newProps: IObject3DProps): void => {
@@ -90,41 +131,41 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.appendChild(instance, child);
   }
 
-  public appendChild(instance: T, child: TChild): void {
+  public appendChild(instance: T | (T & CustomRendererElementInstance), child: any): void {
     if (child instanceof Object3D) {
       // instance.add(child);
     } else {
       throw new Error("cannot add " +
-        (child as any)[r3rReconcilerConfig.getFiberSymbol()].type +
+        child[CustomReconcilerConfig.fiberSymbol].type +
         " as a childInstance to " +
-        (instance as any)[r3rReconcilerConfig.getFiberSymbol()].type);
+        (instance as CustomRendererElementInstance)[CustomReconcilerConfig.fiberSymbol].type);
     }
   }
 
-  public insertBefore(instance: T, child: TChild, before: any): void {
+  public insertBefore(instance: T | (T & CustomRendererElementInstance), child: any, before: any): void {
     if (child instanceof Object3D) {
       // instance.add(child);
     } else {
       throw new Error("cannot insert " +
-        (child as any)[r3rReconcilerConfig.getFiberSymbol()].type +
+        child[CustomReconcilerConfig.fiberSymbol].type +
         " as a childInstance to " +
-        (instance as any)[r3rReconcilerConfig.getFiberSymbol()].type);
+        (instance as CustomRendererElementInstance)[CustomReconcilerConfig.fiberSymbol].type);
     }
   }
 
-  public removeChild(instance: T, child: TChild): void {
+  public removeChild(instance: T | T & CustomRendererElementInstance, child: any): void {
     super.removeChild(instance, child);
     if (child instanceof Object3D) {
       instance.remove(child);
     } else {
       throw new Error("cannot remove " +
-        (child as any)[r3rReconcilerConfig.getFiberSymbol()].type +
+        child[CustomReconcilerConfig.fiberSymbol].type +
         " as a childInstance from " +
-        (instance as any)[r3rReconcilerConfig.getFiberSymbol()].type);
+        (instance as CustomRendererElementInstance)[CustomReconcilerConfig.fiberSymbol].type);
     }
   }
 
-  public willBeAddedToParent(instance: T, parentInstance: TParent): void {
+  public willBeAddedToParent(instance: T, parentInstance: any): void {
     if (parentInstance instanceof Object3D) {
       const indexInParent = parentInstance.children.indexOf(instance);
       if (indexInParent !== -1) {
@@ -140,7 +181,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public willBeAddedToParentBefore(instance: T, parentInstance: TParent, before: any): void {
+  public willBeAddedToParentBefore(instance: T, parentInstance: any, before: any): void {
     if (parentInstance instanceof Object3D) {
       let instanceIndex = parentInstance.children.indexOf(instance);
 
@@ -160,7 +201,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     }
   }
 
-  public willBeRemovedFromParent(instance: T, parent: TParent): void {
+  public willBeRemovedFromParent(instance: T, parent: any): void {
     if (parent instanceof Object3D) {
       parent.remove(instance);
     } else {

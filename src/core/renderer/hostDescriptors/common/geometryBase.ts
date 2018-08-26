@@ -4,7 +4,7 @@ import {WrapperDetails} from "./ObjectWrapper";
 
 export type GeometryContainerType = Mesh | Line | Points;
 
-export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry>
+export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry | BufferGeometry>
   extends WrapperDetails<TProps, TInstance> {
   protected container: GeometryContainerType | null = null;
 
@@ -14,7 +14,6 @@ export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry>
     this.wrapObject(this.constructGeometry(props));
   }
 
-  @final()
   public willBeAddedToParent(instance: TInstance, container: GeometryContainerType): boolean {
     if (this.container === container) {
       return false;
@@ -27,7 +26,6 @@ export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry>
     return true;
   }
 
-  @final()
   public willBeRemovedFromParent(instance: TInstance, container: GeometryContainerType): void {
     if (this.container === container) {
       this.container = null;
@@ -36,7 +34,10 @@ export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry>
         container.geometry = new BufferGeometry();
       }
     }
-    /* */
+
+    // TODO check if dispose should happen here
+    // TODO test this
+    instance.dispose();
   }
 
   @final()
@@ -49,6 +50,9 @@ export abstract class GeometryWrapperBase<TProps, TInstance extends Geometry>
       if (this.container !== null) {
         this.container.geometry = newGeometry;
       }
+
+      geometry.dispose();
+      // TODO test disposal of old geometry!
 
       return newGeometry;
     }

@@ -25,6 +25,7 @@ class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLi
   constructor() {
     super();
 
+    // TODO test pointLightShadow gets applied
     new RefWrapper(["shadow"], this)
       .wrapProperty(new SimplePropertyWrapper("shadow", [PointLightShadow]));
 

@@ -13,9 +13,18 @@ declare global {
 
 class MeshLambertMaterialDescriptor extends MaterialDescriptorBase<THREE.MeshLambertMaterialParameters,
   MeshLambertMaterial> {
+  constructor() {
+    super();
+
+    this.hasMap();
+  }
 
   public createInstance(props: THREE.MeshLambertMaterialParameters) {
-    return new THREE.MeshLambertMaterial(props);
+    const propsClone = Object.assign({}, props);
+
+    delete (propsClone as any).children;
+
+    return new THREE.MeshLambertMaterial(propsClone);
   }
 }
 

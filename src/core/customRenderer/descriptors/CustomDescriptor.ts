@@ -1,11 +1,13 @@
 import {Validator} from "prop-types";
-import {TUpdatePayload} from "../createReconciler";
+import * as PropTypes from "prop-types";
+import {ReactDebugCurrentFiber} from "react-fiber-export";
+import {IPropMap, TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
 import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
-import {PropertyUpdater} from "./properties/PropertyUpdater";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
+import {PropertyUpdater} from "./properties/PropertyUpdater";
 
 export interface IPropertyUpdaterMap<TProps,
   TInstance,
@@ -37,6 +39,12 @@ export type TPropertyGroupDescriptorConstructor<TProps,
         updateInitial: boolean,
         validatorAcceptor: ((validator: IPropTypeMap) => void) | null) => TPropertyGroupDescriptor;
 
+const checkPropTypes: (typeSpecs: any,
+                       values: IPropMap,
+                       location: string,
+                       componentName: string,
+                       getStack?: () => (string | null)) => void = (PropTypes as any).checkPropTypes;
+
 export abstract class CustomDescriptor< //
   /**
    * @typedef {any} CustomDescriptor.TProps
@@ -64,19 +72,16 @@ export abstract class CustomDescriptor< //
   TChild = any,
   TPropertyDescriptor extends CustomPropertyDescriptor<TProps, TInstance, any> = any,
   TPropertyGroupDescriptor extends CustomPropertyGroupDescriptor<TProps, TInstance, any> = any,
-  TRoot = any,
-  TRenderer = any>
+  TRoot = any>
   implements IHostDescriptor<TProps,
     TInstance,
     TParent,
     TChild,
-    TRoot,
-    TRenderer> {
-
-  public propTypes: IPropTypeMap;
-
+    TRoot> {
   protected propertyDescriptors: IPropertyUpdaterMap<TProps, TInstance, TPropertyDescriptor>;
   protected propertyGroups: IPropertyGroupMap<TProps, TInstance, TPropertyGroupDescriptor>;
+
+  private readonly propTypes: IPropTypeMap;
 
   constructor(private propertyDescriptorConstructor: TPropertyDescriptorConstructor<TProps,
                 TInstance,
@@ -87,6 +92,14 @@ export abstract class CustomDescriptor< //
     this.propertyDescriptors = {};
     this.propertyGroups = {};
     this.propTypes = {};
+  }
+
+  public checkPropTypes(props: TProps, type: string): any {
+    checkPropTypes(this.propTypes,
+      props,
+      "prop",
+      type,
+      ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
   }
 
   /**
@@ -100,7 +113,7 @@ export abstract class CustomDescriptor< //
   public commitUpdate(instance: TInstance,
                       updatePayload: TUpdatePayload,
                       oldProps: TProps,
-                      newProps: TProps): void {
+                      newProps: TProps): boolean {
     const groupedUpdates: {
       [groupName: string]: {
         [propertyName: string]: any;
@@ -121,6 +134,8 @@ export abstract class CustomDescriptor< //
       const propertyGroup = this.propertyGroups[groupName];
       propertyGroup.updateFunction(instance, newData, oldProps, newProps);
     }
+
+    return false;
   }
 
   /**
@@ -141,21 +156,21 @@ export abstract class CustomDescriptor< //
   @final()
   public willBeRemovedFromContainer(instance: TInstance, container: TParent): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
+      throw new Error("Containers are treated as parents for " + (this as any).__proto__.constructor.name);
     }
   }
 
   @final()
   public insertInContainerBefore(instance: TInstance, container: TParent, before: any): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
+      throw new Error("Containers are treated as parents for " + (this as any).__proto__.constructor.name);
     }
   }
 
   @final()
   public appendToContainer(instance: TInstance, container: TParent): void {
     if (isNonProduction) {
-      throw new Error("Containers are treated as parents for" + (this as any).__proto__.constructor.name);
+      throw new Error("Containers are treated as parents for " + (this as any).__proto__.constructor.name);
     }
   }
 
@@ -221,7 +236,7 @@ export abstract class CustomDescriptor< //
       .filter((key: string) => {
         const groupDescriptor = (this.propertyGroups[key] as any);
 
-        return updatedGroupsMap[key] !== true &&
+        return !updatedGroupsMap[key] &&
           groupDescriptor.updateInitial &&
           groupDescriptor.defaultValue !== undefined;
       });
@@ -323,7 +338,7 @@ export abstract class CustomDescriptor< //
         const errors: string[] = [];
 
         Object.keys(validatorMap).forEach((propName: string) => {
-          if (missingKeys[propName] === true) {
+          if (missingKeys[propName]) {
             missingKeys[propName] = false;
           } else {
             errors.push(
@@ -433,7 +448,7 @@ export abstract class CustomDescriptor< //
 
       groupedUpdates[groupName][propName] = value;
     } else {
-      if (isInitialUpdate && propertyDescriptor.updateInitial !== true) {
+      if (isInitialUpdate && !propertyDescriptor.updateInitial) {
         return;
       }
 

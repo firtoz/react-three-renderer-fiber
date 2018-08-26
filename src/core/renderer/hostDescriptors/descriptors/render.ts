@@ -1,13 +1,13 @@
 import * as React from "react";
 import {Camera, Group, Scene, WebGLRenderer, WebGLRendererParameters} from "three";
-import {IHostContext} from "../../../customRenderer/customReactRenderer";
-import {default as ReactThreeRenderer} from "../../reactThreeRenderer";
-import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
+import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
+import {default as ReactThreeRenderer, IHostContext} from "../../reactThreeRenderer";
 import Viewport from "../../utils/viewport";
 import {CameraElementProps} from "../common/cameraBase";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
+import {CustomRendererElementInstance} from "../common/object3DBase";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
-import {IRenderableProp, RefWrapper} from "../common/RefWrapper";
+import {IRenderableProp, RefWrapper, RefWrapperBase} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
 import {ViewportElementProps} from "./viewport";
 
@@ -29,10 +29,10 @@ declare global {
   }
 }
 
-export class RenderAction extends RefWrapper implements IHostContext {
+export class RenderAction extends RefWrapperBase implements IHostContext {
   private renderer: WebGLRenderer | null;
 
-  private group: Group;
+  private readonly group: Group & CustomRendererElementInstance;
 
   private animationFrameRequest: number;
   private autoRender: boolean = false;
@@ -58,9 +58,7 @@ export class RenderAction extends RefWrapper implements IHostContext {
 
     this.onAnimationFrame = null;
     this.autoRender = false;
-
-    this.group = new Group();
-    (this.group as any)[r3rReconcilerConfig.getContextSymbol()] = this;
+    this.group = CustomRendererElementInstance.wrapContext(new Group(), this);
 
     this.renderer = null;
 
@@ -73,7 +71,7 @@ export class RenderAction extends RefWrapper implements IHostContext {
     }
   }
 
-  public mountedIntoRenderer(renderer: WebGLRenderer) {
+  public mountedIntoRenderer(renderer: any) {
     if (this.renderer === renderer) {
       return;
     }
@@ -219,8 +217,8 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
       });
   }
 
-  public createInstance(props: IRenderProps, rootContainerInstance: HTMLCanvasElement): RenderAction {
-    const rootContext: IHostContext = (rootContainerInstance as any)[r3rReconcilerConfig.getContextSymbol()];
+  public createInstance(props: IRenderProps, rootContainerInstance: CustomRendererElementInstance): RenderAction {
+    const rootContext = rootContainerInstance[CustomReconcilerConfig.contextSymbol];
     const renderAction = new RenderAction();
 
     if (rootContext.renderActionFound === undefined) {

@@ -1,4 +1,12 @@
-import {Geometry, Material, MaterialParameters, Mesh} from "three";
+import {
+  BufferGeometry,
+  Geometry,
+  Material,
+  MaterialParameters,
+  Mesh,
+  MeshDepthMaterial,
+  MeshMaterialType,
+} from "three";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
 import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapper";
@@ -13,7 +21,7 @@ export interface IGeometryElementProps extends ITestProps<Geometry> {
 
 export interface IMeshProps extends IObject3DProps {
   geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
-  material?: IRenderableProp<Material, MaterialParameters>;
+  material?: IRenderableProp<MeshMaterialType, MaterialParameters>;
 }
 
 declare global {
@@ -24,25 +32,26 @@ declare global {
   }
 }
 
-export type MeshChildType = Geometry | Material;
+export type MeshChildType = Geometry | BufferGeometry | MeshMaterialType;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   constructor() {
     super();
 
-    new RefWrapper(["material", "geometry"], this)
+    new RefWrapper(["material", "customDepthMaterial", "geometry"], this)
       .wrapProperties([
           new SimplePropertyWrapper("material", [Material]),
-          new SimplePropertyWrapper("geometry", [Geometry]),
+          new SimplePropertyWrapper("customDepthMaterial", [MeshDepthMaterial]),
+          new SimplePropertyWrapper("geometry", [Geometry, BufferGeometry]),
         ],
       );
   }
 
   public createInstance(props: IMeshProps) {
-    let geometry: Geometry | undefined;
-    let material: Material | undefined;
+    let geometry: Geometry | BufferGeometry | undefined;
+    let material: MeshMaterialType | undefined;
 
-    if (props.geometry instanceof Geometry) {
+    if (props.geometry instanceof Geometry || props.geometry instanceof BufferGeometry) {
       geometry = props.geometry;
     }
 
@@ -54,20 +63,20 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public appendInitialChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
-      instance.material = child;
+    } else if ((child as any) instanceof Material) {
+      // Materials can take care of themselves
     } else {
       super.appendInitialChild(instance, child);
     }
   }
 
   public appendChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
-      instance.material = child;
+    } else if ((child as any) instanceof Material) {
+      // Materials can take care of themselves
     } else {
       super.appendChild(instance, child);
     }
@@ -75,20 +84,20 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
 
   public insertBefore(instance: Mesh, child: MeshChildType, before: any): void {
 
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = child;
-    } else if (child instanceof Material) {
-      instance.material = child;
+    } else if ((child as any) instanceof Material) {
+      // Materials can take care of themselves
     } else {
       super.insertBefore(instance, child, before);
     }
   }
 
   public removeChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry) {
+    if (child instanceof Geometry || child instanceof BufferGeometry) {
       instance.geometry = null as any;
-    } else if (child instanceof Material) {
-      instance.material = null as any;
+    } else if ((child as any) instanceof Material) {
+      // Materials can take care of themselves
     } else {
       super.removeChild(instance, child);
       // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');

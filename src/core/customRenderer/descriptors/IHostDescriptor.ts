@@ -1,16 +1,14 @@
 import {Validator} from "prop-types";
 import {IPropMap} from "../createReconciler";
 
-export type ICustomReactRenderer<TRootContainer> = any;
-
 export interface IPropTypeMap {
   [propName: string]: Validator<any>;
 }
 
-export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot, TRenderer extends ICustomReactRenderer<any>> {
-  propTypes: IPropTypeMap;
-
+export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot> {
   createInstance(props: TProps, rootContainerInstance: TRoot): THost;
+
+  checkPropTypes(props: TProps, type: string): any;
 
   applyInitialPropUpdates(instance: THost, props: TProps): void;
 
@@ -37,5 +35,5 @@ export interface IHostDescriptor<TProps, THost, TParent, TChild, TRoot, TRendere
   commitUpdate(instance: any,
                updatePayload: any[],
                oldProps: IPropMap,
-               newProps: IPropMap): void;
+               newProps: IPropMap): boolean;
 }

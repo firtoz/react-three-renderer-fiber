@@ -1,43 +1,27 @@
-import * as THREE from "three";
-import {DodecahedronGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {DodecahedronBufferGeometry, DodecahedronGeometry} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
 
 export interface IDodecahedronGeometryProps {
-  radius: number;
-  detail: number;
+  radius?: number;
+  detail?: number;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      dodecahedronGeometry: IThreeElementPropsBase<THREE.DodecahedronGeometry> & IDodecahedronGeometryProps;
+      dodecahedronGeometry: IThreeElementPropsBase<DodecahedronGeometry> & IDodecahedronGeometryProps;
+      dodecahedronBufferGeometry: IThreeElementPropsBase<DodecahedronBufferGeometry> & IDodecahedronGeometryProps;
     }
   }
 }
 
-export class DodecahedronGeometryWrapper extends GeometryWrapperBase<IDodecahedronGeometryProps, DodecahedronGeometry> {
-  protected constructGeometry(props: IDodecahedronGeometryProps): DodecahedronGeometry {
-    return new DodecahedronGeometry(
-      props.radius,
-      props.detail
-    );
-  }
-}
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<IDodecahedronGeometryProps>()(
+    DodecahedronGeometry,
+    DodecahedronBufferGeometry,
+    "radius",
+    "detail",
+  );
 
-class DodecahedronGeometryDescriptor extends WrappedEntityDescriptor<DodecahedronGeometryWrapper,
-  IDodecahedronGeometryProps,
-  DodecahedronGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(DodecahedronGeometryWrapper, DodecahedronGeometry);
-
-    this.hasRemountProps(
-      "radius",
-      "detail"
-    );
-  }
-}
-
-export default DodecahedronGeometryDescriptor;
+export default geometryDescriptor;

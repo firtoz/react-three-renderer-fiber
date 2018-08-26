@@ -1,5 +1,5 @@
+import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
 import final from "../../../customRenderer/decorators/final";
-import r3rReconcilerConfig from "../../reconciler/r3rReconcilerConfig";
 import PropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 import ReactThreeRendererDescriptor from "./ReactThreeRendererDescriptor";
@@ -118,6 +118,9 @@ export abstract class WrapperDetails<TProps, TWrapped> {
           }
 
           const property = Object.getOwnPropertyDescriptor(current, propertyName);
+          if (property === undefined) {
+            return;
+          }
           const attributes = getWrappedAttributes(property, objectToWrap, propertyName);
 
           Object.defineProperty(this.wrapper, propertyName, attributes);
@@ -131,9 +134,9 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   public remount(newProps: any) {
     this.wrapObject(this.recreateInstance(newProps));
 
-    if (this.wrapper[r3rReconcilerConfig.getContextSymbol()] !== undefined) {
-      // console.log("triggering a render for context", this.wrapper[r3rReconcilerConfig.getContextSymbol()]);
-      this.wrapper[r3rReconcilerConfig.getContextSymbol()].triggerRender();
+    if (this.wrapper[CustomReconcilerConfig.contextSymbol] !== undefined) {
+      // console.log("triggering a render for context", this.wrapper[CustomReconcilerConfig.contextSymbol]);
+      this.wrapper[CustomReconcilerConfig.contextSymbol].triggerRender();
     }
   }
 
@@ -205,7 +208,6 @@ export class WrappedEntityDescriptor<TWrapper extends WrapperDetails<TProps, TIn
     }
   }
 
-  @final()
   public willBeAddedToParent(instance: TInstance, parentInstance: any): void {
     const wrapperDetails = this.wrapperType.get(instance);
 

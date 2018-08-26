@@ -1,11 +1,14 @@
-import {OrthographicCamera, PerspectiveCamera} from "three";
+import {EventEmitter} from "events";
+import {DirectionalLightShadow, Object3D, OrthographicCamera} from "three";
 import {
-  CameraElementProps, cameraEventProjectionMatrixUpdated, cameraEventsSymbol,
-  ICameraProps
+  CameraElementProps,
+  cameraEventProjectionMatrixUpdated,
+  cameraEventsSymbol,
+  ICameraProps,
 } from "../../common/cameraBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase} from "../../common/object3DBase";
-import {EventEmitter} from "events";
+import {defaultDirectionalLightCamera} from "./lights/shadows/directionalLightShadow";
 
 export interface IOrthographicCameraProps extends ICameraProps {
   zoom?: number;
@@ -23,6 +26,8 @@ export type OrthographicCameraElement =
   CameraElementProps
   & IThreeElementPropsBase<OrthographicCamera>
   & IOrthographicCameraProps;
+
+export type OrthographicCameraParents = Object3D | DirectionalLightShadow;
 
 declare global {
   namespace JSX {
@@ -83,6 +88,8 @@ class OrthographicCameraDescriptor extends Object3DDescriptorBase<IOrthographicC
       const cameraEvents: EventEmitter = instance.userData[cameraEventsSymbol];
 
       cameraEvents.emit(cameraEventProjectionMatrixUpdated);
+
+      // TODO this needs to be reflected within the shadow too...
     }, false, true).withDefault({
       bottom: defaultCamera.bottom,
       far: defaultCamera.far,
@@ -104,11 +111,34 @@ class OrthographicCameraDescriptor extends Object3DDescriptorBase<IOrthographicC
       far,
     } = props;
 
+    console.log("new camera!");
+
     const camera = new OrthographicCamera(left, right, top, bottom, near, far);
 
     camera.userData[cameraEventsSymbol] = new EventEmitter();
 
     return camera;
+  }
+
+  public willBeAddedToParent(instance: OrthographicCamera, parentInstance: OrthographicCameraParents): void {
+    if (parentInstance instanceof DirectionalLightShadow) {
+      // TODO check if we can assign camera, this will help with the properties
+      parentInstance.camera.copy(instance);
+      console.log("camera being added to parent!");
+      // no-op
+    } else {
+      super.willBeAddedToParent(instance, parentInstance);
+    }
+  }
+
+  public willBeRemovedFromParent(instance: OrthographicCamera, parentInstance: OrthographicCameraParents): void {
+    if (parentInstance instanceof DirectionalLightShadow) {
+      parentInstance.camera.copy(defaultDirectionalLightCamera);
+      console.log("camera being removed from parent!");
+      // no-op
+    } else {
+      super.willBeRemovedFromParent(instance, parentInstance);
+    }
   }
 }
 

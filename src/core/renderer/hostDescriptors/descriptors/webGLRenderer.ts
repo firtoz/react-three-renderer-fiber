@@ -4,12 +4,22 @@ import {
   RenderTarget,
   Scene,
   WebGLRenderer,
-  WebGLRendererParameters,
+  WebGLRendererParameters, WebGLShadowMap,
 } from "three";
+
+let shadowMapType = WebGLShadowMap;
+
+if (shadowMapType == null) {
+// tslint:disable-next-line
+  shadowMapType = require("three/src/renderers/webgl/WebGLShadowMap").WebGLShadowMap;
+}
+
 import * as THREE from "three";
 import ReactThreeRenderer from "../../reactThreeRenderer";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import {getWrappedAttributes, WrappedEntityDescriptor, WrapperDetails} from "../common/ObjectWrapper";
+import {PropertyWrapper, RefWrapper} from "../common/RefWrapper";
+import {WebGLShadowMapWrapper} from "./webGLShadowMap";
 
 function createRendererWithoutLogging(parameters: IWebGLRendererProps): WebGLRenderer {
   const oldLog = window.console.log;
@@ -106,6 +116,10 @@ export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, 
 
     const property = Object.getOwnPropertyDescriptor(rendererInstance, "render");
 
+    if (property === undefined) {
+      return;
+    }
+
     const renderFunction = (scene: Scene, camera: Camera, renderTarget?: RenderTarget, forceClear?: boolean) => {
       const oldWarn = window.console.warn;
 
@@ -184,6 +198,8 @@ export interface IWebGLRendererProps extends WebGLRendererParameters {
   height: number;
 
   autoClear?: boolean;
+  gammaInput?: boolean;
+  gammaOutput?: boolean;
 }
 
 export type WebGLRendererElementProps = IThreeElementPropsBase<WebGLRenderer> & IWebGLRendererProps;
@@ -203,6 +219,17 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<RendererWrapperDet
   Scene> {
   constructor() {
     super(RendererWrapperDetails, WebGLRenderer, true);
+
+    new RefWrapper(["shadowMap"], this)
+      .wrapProperty(new PropertyWrapper<any, any>("shadowMap", [shadowMapType],
+        (instance: WebGLRenderer, newValue: WebGLShadowMap) => {
+          instance.shadowMap.enabled = newValue.enabled;
+          instance.shadowMap.autoUpdate = newValue.autoUpdate;
+          instance.shadowMap.needsUpdate = newValue.needsUpdate;
+          instance.shadowMap.type = newValue.type;
+        }).OnRender((instance, wrapper: WebGLShadowMapWrapper) => {
+        // sorted out by parent setting?
+      }));
 
     this.hasPropGroup(["width", "height"], (instance: WebGLRenderer,
                                             newSize: {
@@ -249,6 +276,12 @@ class WebGLRendererDescriptor extends WrappedEntityDescriptor<RendererWrapperDet
 
     this.hasSimpleProp("autoClear", false, false)
       .withDefault(true);
+
+    this.hasSimpleProp("gammaInput", true, true)
+      .withDefault(false);
+
+    this.hasSimpleProp("gammaOutput", true, true)
+      .withDefault(false);
   }
 }
 

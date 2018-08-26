@@ -1,19 +1,13 @@
 import {TUpdatePayload} from "../../../customRenderer/createReconciler";
 import {CustomDescriptor} from "../../../customRenderer/descriptors/CustomDescriptor";
+import {IHostDescriptor} from "../../../customRenderer/descriptors/IHostDescriptor";
 import {PropertyUpdater} from "../../../customRenderer/descriptors/properties/PropertyUpdater";
-import {ReactThreeRenderer} from "../../reactThreeRenderer";
 import R3RPropertyGroupDescriptor from "./properties/R3RPropertyGroupDescriptor";
 import ReactThreeRendererPropertyDescriptor from "./properties/ReactThreeRendererPropertyDescriptor";
 
-const emptyObject: any = {};
-
-function final(instanceParameterIndex: number = 0): any {
-  return (target: any,
-          propertyKey: string,
-          descriptor: PropertyDescriptor): void => {
-    descriptor.writable = false;
-    descriptor.configurable = false;
-  };
+export interface IReactThreeRendererDescriptor<TProps = any, TInstance = any> extends //
+  IHostDescriptor<TProps, TInstance, any, any, any> {
+  wantsRepaint: boolean;
 }
 
 /**
@@ -50,14 +44,17 @@ export default abstract class ReactThreeRendererDescriptor< //
     TChild,
     ReactThreeRendererPropertyDescriptor<TProps, TInstance, any>,
     R3RPropertyGroupDescriptor<TProps, TInstance, any>,
-    HTMLCanvasElement,
-    ReactThreeRenderer> {
-  constructor(public wantsRepaint: boolean = true) {
+    HTMLCanvasElement> implements IReactThreeRendererDescriptor<TProps, TInstance> {
+  public wantsRepaint: boolean;
+
+  constructor(wantsRepaint: boolean = true) {
     super(ReactThreeRendererPropertyDescriptor, R3RPropertyGroupDescriptor);
 
     // TODO define all mounting/unmounting properties as nonconfigurable
     // TODO and they should trigger render if necessary
     // TODO and also test
+
+    this.wantsRepaint = wantsRepaint;
   }
 
   /**
@@ -84,6 +81,10 @@ export default abstract class ReactThreeRendererDescriptor< //
 
     for (let keyIndex = 0; keyIndex < updatePayload.length; keyIndex += 2) {
       const key: string = updatePayload[keyIndex];
+      if (key === "children") {
+        continue;
+      }
+
       const value: any = updatePayload[keyIndex + 1];
       if (this.updateProperty(key, groupedUpdates, groupNamesToUpdate, value, instance, oldProps, newProps, false)) {
         wantsRepaint = true;
