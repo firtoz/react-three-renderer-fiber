@@ -4,7 +4,6 @@ Porting R3R to use [React Fiber](https://github.com/acdlite/react-fiber-architec
 This is even more WIP than `react-three-renderer` itself! Literally unusable. The point of this repository is to play around with react fiber and ask questions to React team and others.
 
 ## Notes:
-- Wow, it was much easier than I thought.
 - Motivation was [this tweet by Dan](https://twitter.com/dan_abramov/status/852150540985401345) :)
 - [Lin Clark's talk on fiber](https://www.youtube.com/watch?v=ZCuYPiUIONs) helped a lot!
 - Still needed some reverse engineering but not even close to the amount necessary for `react-three-renderer`.
