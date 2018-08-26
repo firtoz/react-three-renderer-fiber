@@ -15,6 +15,7 @@ export class WebGLShadowMapWrapper {
   private needsUpdate: boolean;
   private type: ShadowMapType;
 
+  // TODO can we make this generic? e.g. for shadow camera
   private wrappedInstance: WebGLShadowMap | null = null;
 
   public setEnabled(value: boolean) {

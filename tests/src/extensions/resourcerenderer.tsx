@@ -3,7 +3,7 @@ import * as React from "react";
 import * as sinon from "sinon";
 import {BoxGeometry} from "three";
 import {IPropsWithChildren} from "../../../src/core/renderer/hostDescriptors/common/IPropsWithChildren";
-import ResourceContainer from "../../../src/extensions/resources/ResourcesContainer";
+import ResourceContainer from "../../../src/extensions/resources/ResourceContainer";
 import ResourceRenderer from "../../../src/extensions/resources/ResourcesRenderer";
 import {mockConsole} from "../index";
 import "../utils/dirty-chai-wrapper";

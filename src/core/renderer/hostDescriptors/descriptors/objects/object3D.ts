@@ -3,6 +3,7 @@ import {Object3D} from "three";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import Object3DDescriptorBase, {IObject3DProps} from "../../common/object3DBase";
 
+// TODO extract
 export interface IResourceProps {
   source: any;
   name: string;

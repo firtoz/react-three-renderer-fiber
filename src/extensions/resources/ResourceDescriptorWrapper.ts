@@ -1,5 +1,5 @@
 import ReactThreeRendererDescriptor from "../../core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
-import ResourceContainer from "./ResourcesContainer";
+import ResourceContainer from "./ResourceContainer";
 
 export type TReactThreeRendererDescriptorInstance = ReactThreeRendererDescriptor & {
   createInstance(props: any, rootContainerInstance: any): any,
@@ -53,7 +53,6 @@ export default function ResourceDescriptorWrapper(classType: IReactThreeRenderer
     }
 
     public willBeRemovedFromParent(instance: any, parent: any): void {
-      // console.log("BAAAAAH - willBeRemovedFromParent");
       if (parent instanceof ResourceContainer) {
         ResourceContainer.UnmountResourceFromContainer(instance);
 
@@ -69,7 +68,7 @@ export default function ResourceDescriptorWrapper(classType: IReactThreeRenderer
       if (parentInstance instanceof ResourceContainer) {
         parentInstance.MountResourceToContainer(childInstance);
 
-        console.log("BAAAAAH - insertBefore");
+        console.log("RDW - insertBefore");
 
         return;
       }
@@ -83,7 +82,6 @@ export default function ResourceDescriptorWrapper(classType: IReactThreeRenderer
       // also complain if the parent already has this resource
 
       if (parentInstance instanceof ResourceContainer) {
-        // console.log("BAAAAAH - willBeAddedToParentBefore");
         parentInstance.MountResourceToContainer(instance);
 
         return;
@@ -94,7 +92,6 @@ export default function ResourceDescriptorWrapper(classType: IReactThreeRenderer
 
     public willBeAddedToParent(instance: any, parent: any): void {
       if (parent instanceof ResourceContainer) {
-        // console.log("BAAAAAH - willBeAddedToParent");
         parent.MountResourceToContainer(instance);
 
         return;
