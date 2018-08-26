@@ -24,7 +24,6 @@ This is even more WIP than `react-three-renderer` itself! Literally unusable. Th
 - `> yarn`
 - `> cd examples && yarn && cd ..`
 - `> yarn start`
-- Open http://localhost:8080/webgl_animation_cloth.html
-- reduce window height to a ridiculous amount
+- Open http://localhost:8080/
 - Look at react devtools
 - Tweak code and break things!
