@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/dat.gui@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@types/dat.gui/-/dat.gui-0.7.1.tgz#30949dbb6694fed67af0e1fb36c854e329fec188"
+
 asap@~2.0.3:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
@@ -13,6 +17,10 @@ babel-standalone@^6.26.0:
 core-js@^1.0.0:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
+
+dat.gui@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/dat.gui/-/dat.gui-0.7.2.tgz#57056f286d0f989e83f5adec196f24fd69c01ae3"
 
 encoding@^0.1.11:
   version "0.1.12"
@@ -67,6 +75,10 @@ node-fetch@^1.0.1:
 object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
+
+prettier@^1.14.2:
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.2.tgz#0ac1c6e1a90baa22a62925f41963c841983282f9"
 
 promise@^7.1.1:
   version "7.3.1"
