@@ -130,7 +130,7 @@ describe("with default values", () => {
       }
     }
 
-    mockConsole.expectWarnDev("TestDescriptorWithBadDefaults is" +
+    mockConsole.expectWarnDev("t is" +
       " declaring a property group with properties [" +
       "\"groupedOne\", \"groupedTwo\"" +
       "] with default values, but is missing" +

@@ -55,7 +55,7 @@ module.exports = {
               require.resolve('./utils/babel-test-plugin.js')
             ]
           },
-          "babelCore": require.resolve("babel-core")
+          "babelCore": require.resolve("@babel/core")
         }
       },
       tslintLoaderRule,
