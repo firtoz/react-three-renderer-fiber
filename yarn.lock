@@ -1029,6 +1029,13 @@ babel-loader@^8.0.2:
     mkdirp "^0.5.1"
     util.promisify "^1.0.0"
 
+babel-runtime@^6.0.0:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.11.0"
+
 backo2@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
@@ -1588,7 +1595,7 @@ core-js@^1.0.0:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
-core-js@^2.2.0:
+core-js@^2.2.0, core-js@^2.4.0:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
 
@@ -3045,15 +3052,16 @@ karma-sourcemap-loader@^0.3.7:
   dependencies:
     graceful-fs "^4.1.2"
 
-karma-webpack@^4.0.0-rc.2:
-  version "4.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/karma-webpack/-/karma-webpack-4.0.0-rc.2.tgz#4c194e94789842af7f0ffa0de77ee7715739c7c1"
+karma-webpack@3.0.0:
+  version "3.0.0"
+  resolved "http://registry.npmjs.org/karma-webpack/-/karma-webpack-3.0.0.tgz#bf009c5b73c667c11c015717e9e520f581317c44"
   dependencies:
     async "^2.0.0"
-    loader-utils "^1.1.0"
-    lodash "^4.17.10"
+    babel-runtime "^6.0.0"
+    loader-utils "^1.0.0"
+    lodash "^4.0.0"
     source-map "^0.5.6"
-    webpack-dev-middleware "^3.2.0"
+    webpack-dev-middleware "^2.0.6"
 
 karma@^3.0.0:
   version "3.0.0"
@@ -3127,7 +3135,7 @@ loader-runner@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-2.3.0.tgz#f482aea82d543e07921700d5a46ef26fdac6b8a2"
 
-loader-utils@^1.0.2, loader-utils@^1.1.0:
+loader-utils@^1.0.0, loader-utils@^1.0.2, loader-utils@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.1.0.tgz#c98aef488bcceda2ffb5e2de646d6a754429f5cd"
   dependencies:
@@ -3157,7 +3165,7 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
-lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.5.0:
+lodash@^4.0.0, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.5.0:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
@@ -3319,7 +3327,7 @@ mime@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.4.1.tgz#121f9ebc49e3766f311a76e1fa1c8003c4b03aa6"
 
-mime@^2.0.3, mime@^2.3.1:
+mime@^2.0.3, mime@^2.1.0, mime@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/mime/-/mime-2.3.1.tgz#b1621c54d63b97c47d3cfe7f7215f7d64517c369"
 
@@ -4153,6 +4161,10 @@ regenerate-unicode-properties@^7.0.0:
 regenerate@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
+
+regenerator-runtime@^0.11.0:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
 
 regenerator-transform@^0.13.3:
   version "0.13.3"
@@ -4988,6 +5000,10 @@ urix@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
 
+url-join@^2.0.2:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/url-join/-/url-join-2.0.5.tgz#5af22f18c052a000a48d7b82c5e9c2e2feeda728"
+
 url-join@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/url-join/-/url-join-4.0.0.tgz#4d3340e807d3773bda9991f8305acdcc2a665d2a"
@@ -5108,16 +5124,17 @@ webpack-dev-middleware@3.2.0:
     url-join "^4.0.0"
     webpack-log "^2.0.0"
 
-webpack-dev-middleware@^3.2.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/webpack-dev-middleware/-/webpack-dev-middleware-3.3.0.tgz#8104daf4d4f65defe06ee2eaaeea612a7c541462"
+webpack-dev-middleware@^2.0.6:
+  version "2.0.6"
+  resolved "http://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-2.0.6.tgz#a51692801e8310844ef3e3790e1eacfe52326fd4"
   dependencies:
     loud-rejection "^1.6.0"
     memory-fs "~0.4.1"
-    mime "^2.3.1"
+    mime "^2.1.0"
+    path-is-absolute "^1.0.0"
     range-parser "^1.0.3"
-    url-join "^4.0.0"
-    webpack-log "^2.0.0"
+    url-join "^2.0.2"
+    webpack-log "^1.0.1"
 
 webpack-dev-server@^3.1.8:
   version "3.1.8"
@@ -5152,7 +5169,7 @@ webpack-dev-server@^3.1.8:
     webpack-log "^2.0.0"
     yargs "12.0.2"
 
-webpack-log@^1.2.0:
+webpack-log@^1.0.1, webpack-log@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/webpack-log/-/webpack-log-1.2.0.tgz#a4b34cda6b22b518dbb0ab32e567962d5c72a43d"
   dependencies:
