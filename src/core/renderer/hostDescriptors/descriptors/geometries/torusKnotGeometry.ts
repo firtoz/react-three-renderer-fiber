@@ -5,11 +5,10 @@ import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 export interface ITorusKnotGeometryProps {
   radius?: number;
   tube?: number;
-  radialSegments?: number;
   tubularSegments?: number;
+  radialSegments?: number;
   p?: number;
   q?: number;
-  heightScale?: number;
 }
 
 declare global {
@@ -31,7 +30,6 @@ export const { bufferGeometryDescriptor, geometryDescriptor } =
     "tubularSegments",
     "p",
     "q",
-    "heightScale",
   );
 
 export default geometryDescriptor;

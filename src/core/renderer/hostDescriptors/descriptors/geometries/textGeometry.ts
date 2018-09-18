@@ -4,7 +4,7 @@ import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface ITextGeometryProps {
   text: string;
-  parameters: TextGeometryParameters;
+  parameters?: TextGeometryParameters;
 }
 
 declare global {
