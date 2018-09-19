@@ -19,11 +19,8 @@ export interface IPropMap {
 export type TUpdatePayload = any[];
 
 @bindAcceptor
-export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
-  any,
-  any,
-  any,
-  any>, TContext = any> implements HostConfig<any,
+export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any, any, any, any>, TContext = any>
+  implements HostConfig<any,
   any,
   any,
   any,
@@ -49,7 +46,6 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
 
   public useSyncScheduling: boolean = true;
 
-  // TODO: react-reonciler
   public setTimeout = setTimeout;
   public clearTimeout = clearTimeout;
   public noTimeout = -1;
