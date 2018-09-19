@@ -1,12 +1,10 @@
-import {ReactFiberDevToolsHook} from "react-fiber-export";
 import {DevToolsConfig, Fiber, HostConfig} from "react-reconciler";
 
+import {injectInternals} from "../../../react-reconciler/ReactFiberDevToolsHook";
 import {CustomRendererElementInstance} from "../../renderer/hostDescriptors/common/object3DBase";
 import {CustomReconcilerConfig} from "../createReconciler";
 import {ReactDevtools} from "./dependencies-shim";
 import isNonProduction from "./isNonProduction";
-
-const {injectInternals} = ReactFiberDevToolsHook;
 
 declare const process: {
   env: {
@@ -90,9 +88,6 @@ export function hookDevtools(reconcilerConfig: CustomReconcilerConfig<any>) {
           console.log("getClosestInstanceFromNode", hostInstance);
 
           return hostInstance[CustomReconcilerConfig.fiberSymbol];
-        },
-        findHostInstanceByFiber(/* fiber: ReactFiber.Fiber */): INativeType {
-          return highlightElement;
         },
         bundleType: BundleType.DEV,
         // yep, react-dom-style

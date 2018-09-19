@@ -8,6 +8,7 @@
   "dependencies": {
     "react": "16.4.2",
     "react-dom": "16.4.2",
+    "schedule": "^0.5.0",
     "three": "0.95.0"
   },
   "scripts": {

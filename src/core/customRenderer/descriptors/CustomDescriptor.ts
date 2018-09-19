@@ -1,6 +1,5 @@
 import {Validator} from "prop-types";
 import * as PropTypes from "prop-types";
-import {ReactDebugCurrentFiber} from "react-fiber-export";
 import {IPropMap, TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
@@ -98,8 +97,7 @@ export abstract class CustomDescriptor< //
     checkPropTypes(this.propTypes,
       props,
       "prop",
-      type,
-      ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+      type);
   }
 
   /**

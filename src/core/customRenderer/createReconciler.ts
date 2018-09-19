@@ -1,12 +1,9 @@
-import {
-  ReactDOMFrameScheduling,
-} from "react-fiber-export";
-
 import ReactFiberReconciler, {
   Fiber,
   HostConfig,
   Reconciler,
 } from "react-reconciler";
+import {unstable_cancelScheduledWork, unstable_now, unstable_scheduleWork} from "schedule";
 
 import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
@@ -46,7 +43,10 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
     customRendererElement[CustomReconcilerConfig.fiberSymbol] = fiber;
   }
 
-  public scheduleDeferredCallback: any = ReactDOMFrameScheduling.rIC;
+  public scheduleDeferredCallback = unstable_scheduleWork;
+  public cancelDeferredCallback = unstable_cancelScheduledWork;
+  public now = unstable_now;
+
   public useSyncScheduling: boolean = true;
 
   // TODO: react-reonciler
@@ -221,13 +221,6 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any,
   public removeChildFromContainer(container: any, child: any): void {
     this.getDescriptorForInstance(child).willBeRemovedFromContainer(child, container);
   }
-
-  public cancelDeferredCallback(timeoutID: number): void {
-    // TODO: react-reonciler
-  }
-
-  // TODO: react-reonciler
-  public now = () => 0;
 
   protected defineHostDescriptor(type: string, descriptor: TDescriptor): void {
     if (this.hostDescriptors.get(type) !== undefined) {
