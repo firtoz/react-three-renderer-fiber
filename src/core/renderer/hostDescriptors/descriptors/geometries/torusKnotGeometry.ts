@@ -26,8 +26,8 @@ export const { bufferGeometryDescriptor, geometryDescriptor } =
     TorusKnotBufferGeometry,
     "radius",
     "tube",
-    "radialSegments",
     "tubularSegments",
+    "radialSegments",
     "p",
     "q",
   );
