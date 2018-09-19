@@ -53,6 +53,10 @@
   dependencies:
     csstype "^2.2.0"
 
+"@types/schedule@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@types/schedule/-/schedule-0.5.0.tgz#a27c4574f13df5eac85e130f1e0c9f1d44118def"
+
 "@types/sinon@^5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-5.0.1.tgz#a15b36ec42f1f53166617491feabd1734cb03e21"
