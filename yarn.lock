@@ -51,9 +51,9 @@
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-5.0.1.tgz#a15b36ec42f1f53166617491feabd1734cb03e21"
 
-"@types/three@0.92.15":
-  version "0.92.15"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.92.15.tgz#88c1de7d74f96c73984e8a529c1a3ee2a02029e0"
+"@types/three@^0.92.22":
+  version "0.92.22"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.92.22.tgz#330440774a7c32e3139d7784be95db64b110489e"
   dependencies:
     "@types/webvr-api" "*"
 
