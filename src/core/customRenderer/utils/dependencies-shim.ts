@@ -1,4 +1,4 @@
-import {IHookConfig} from "react-fiber-export";
+import {DevToolsConfig} from "react-reconciler";
 
 export declare namespace ReactDevtools {
   enum BundleType {
@@ -7,7 +7,7 @@ export declare namespace ReactDevtools {
   }
 
   interface IRendererInfo {
-    renderer: IHookConfig;
+    renderer: DevToolsConfig<any, any>;
     id: number;
   }
 

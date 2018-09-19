@@ -1,4 +1,4 @@
-import {IRenderer} from "react-fiber-export";
+import {Reconciler} from "react-reconciler/ReactFiberReconciler";
 import {IReactThreeRendererDescriptorClass} from "../../extensions/resources/ResourceDescriptorWrapper";
 import CustomReactRenderer from "../customRenderer/customReactRenderer";
 import {RenderAction} from "./hostDescriptors/descriptors/render";
@@ -10,7 +10,7 @@ export interface IHostContext {
   renderActionFound?(action: RenderAction): void;
 }
 
-function renderSubtreeIntoContainer(reconciler: IRenderer,
+function renderSubtreeIntoContainer(reconciler: Reconciler<any, any, any, any>,
                                     contextSymbol: symbol,
                                     rootContainerSymbol: symbol,
                                     parentComponent: React.Component<any, any> | null,
@@ -25,7 +25,7 @@ function renderSubtreeIntoContainer(reconciler: IRenderer,
   let root = container[rootContainerSymbol];
 
   if (!root) {
-    const newRoot = reconciler.createContainer(container);
+    const newRoot = reconciler.createContainer(container, false, false);
 
     container[rootContainerSymbol] = newRoot;
 

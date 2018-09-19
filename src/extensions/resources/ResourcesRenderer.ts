@@ -1,5 +1,5 @@
 import * as React from "react";
-import {IRenderer} from "react-fiber-export";
+import {Reconciler} from "react-reconciler";
 import ContainerUnawareReconcilerConfig from "../../core/customRenderer/ContainerUnawareReconcilerConfig";
 import CustomReactRenderer from "../../core/customRenderer/customReactRenderer";
 import ReactThreeRendererDescriptor from "../../core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
@@ -37,7 +37,7 @@ export default class ResourceRenderer extends CustomReactRenderer {
     super(new ResourceReconcilerConfig(), wantsDevtools);
   }
 
-  protected renderSubtreeIntoContainer(reconciler: IRenderer,
+  protected renderSubtreeIntoContainer(reconciler: Reconciler<any, any, any, any>,
                                        contextSymbol: symbol,
                                        rootContainerSymbol: symbol,
                                        parentComponent: React.Component<any, any> | null,
@@ -52,7 +52,7 @@ export default class ResourceRenderer extends CustomReactRenderer {
     let root = container[rootContainerSymbol];
 
     if (!root) {
-      const newRoot = reconciler.createContainer(container);
+      const newRoot = reconciler.createContainer(container, false, false);
 
       container[rootContainerSymbol] = newRoot;
 
