@@ -1,4 +1,4 @@
-import {Fiber, FiberRoot} from "react-reconciler";
+import * as ReactReconciler from "react-reconciler";
 import warningWithoutStack from "./warningWithoutStack";
 
 declare var __REACT_DEVTOOLS_GLOBAL_HOOK__: object | void;
@@ -7,8 +7,8 @@ let onCommitFiberRoot = null;
 let onCommitFiberUnmount = null;
 let hasLoggedError = false;
 
-function catchErrors(fn: (arg: Fiber | FiberRoot) => any) {
-  return (arg: Fiber | FiberRoot) => {
+function catchErrors(fn: (arg: ReactReconciler.Fiber | ReactReconciler.FiberRoot) => any) {
+  return (arg: ReactReconciler.Fiber | ReactReconciler.FiberRoot) => {
     try {
       return fn(arg);
     } catch (err) {
@@ -48,10 +48,10 @@ export function injectInternals(internals: object): boolean {
   try {
     const rendererID = hook.inject(internals);
     // We have successfully injected, so now it is safe to set up hooks.
-    onCommitFiberRoot = catchErrors((root: FiberRoot) =>
+    onCommitFiberRoot = catchErrors((root: ReactReconciler.FiberRoot) =>
       hook.onCommitFiberRoot(rendererID, root),
     );
-    onCommitFiberUnmount = catchErrors((fiber: Fiber) =>
+    onCommitFiberUnmount = catchErrors((fiber: ReactReconciler.Fiber) =>
       hook.onCommitFiberUnmount(rendererID, fiber),
     );
   } catch (err) {

@@ -1,4 +1,4 @@
-import {Reconciler} from "react-reconciler/ReactFiberReconciler";
+import * as ReactReconciler from "react-reconciler";
 import {IReactThreeRendererDescriptorClass} from "../../extensions/resources/ResourceDescriptorWrapper";
 import CustomReactRenderer from "../customRenderer/customReactRenderer";
 import {RenderAction} from "./hostDescriptors/descriptors/render";
@@ -10,7 +10,7 @@ export interface IHostContext {
   renderActionFound?(action: RenderAction): void;
 }
 
-function renderSubtreeIntoContainer(reconciler: Reconciler<any, any, any, any>,
+function renderSubtreeIntoContainer(reconciler: ReactReconciler.Reconciler<any, any, any, any>,
                                     contextSymbol: symbol,
                                     rootContainerSymbol: symbol,
                                     parentComponent: React.Component<any, any> | null,

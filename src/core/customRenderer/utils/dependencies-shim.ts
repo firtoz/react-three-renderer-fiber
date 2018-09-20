@@ -1,4 +1,4 @@
-import {DevToolsConfig} from "react-reconciler";
+import * as ReactReconciler from "react-reconciler";
 
 export declare namespace ReactDevtools {
   enum BundleType {
@@ -7,7 +7,7 @@ export declare namespace ReactDevtools {
   }
 
   interface IRendererInfo {
-    renderer: DevToolsConfig<any, any>;
+    renderer: ReactReconciler.DevToolsConfig<any, any>;
     id: number;
   }
 

@@ -54,7 +54,7 @@ describe("validation", () => {
     mockConsole.expectErrorDev(
       "Warning: Failed prop type:" +
       " Invalid prop `numberValue` of" +
-      " type `string` supplied to `test`, expected `number`.\n    in test");
+      " type `string` supplied to `test`, expected `number`.");
 
     ReactThreeRenderer.render(<test
       numberValue={"string-value"}
@@ -70,7 +70,7 @@ describe("validation", () => {
       "Warning: Failed prop type:" +
       " The prop `requiredNumberValue`" +
       " is marked as required in `test`," +
-      " but its value is `undefined`.\n    in test");
+      " but its value is `undefined`.");
 
     ReactThreeRenderer.render(<test
       requiredGroupStringValue="a"
@@ -83,7 +83,7 @@ describe("validation", () => {
     mockConsole.expectErrorDev(
       "Warning: Failed prop type:" +
       " Invalid prop `groupNumberValue` of" +
-      " type `string` supplied to `test`, expected `number`.\n    in test");
+      " type `string` supplied to `test`, expected `number`.");
 
     ReactThreeRenderer.render(<test
       requiredNumberValue={5}
@@ -99,7 +99,7 @@ describe("validation", () => {
       "Warning: Failed prop type:" +
       " The prop `requiredGroupStringValue`" +
       " is marked as required in `test`," +
-      " but its value is `undefined`.\n    in test");
+      " but its value is `undefined`.");
 
     ReactThreeRenderer.render(<test
       requiredNumberValue={5}

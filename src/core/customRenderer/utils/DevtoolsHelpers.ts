@@ -1,4 +1,4 @@
-import {DevToolsConfig, Fiber, HostConfig} from "react-reconciler";
+import * as ReactReconciler from "react-reconciler";
 
 import {injectInternals} from "../../../react-reconciler/ReactFiberDevToolsHook";
 import {CustomRendererElementInstance} from "../../renderer/hostDescriptors/common/object3DBase";
@@ -81,9 +81,9 @@ export function hookDevtools(reconcilerConfig: CustomReconcilerConfig<any>) {
 
       // import interface Fiber from 'R'
 
-      const hookConfig: DevToolsConfig<any, any> & { reconciler: HostConfig<any, any, any, any, any, any, any, any, any,
-          any, any, any> } = {
-        findFiberByHostInstance(hostInstance: CustomRendererElementInstance): Fiber {
+      const hookConfig: ReactReconciler.DevToolsConfig<any, any> & { reconciler: ReactReconciler.HostConfig<
+          any, any, any, any, any, any, any, any, any, any, any, any> } = {
+        findFiberByHostInstance(hostInstance: CustomRendererElementInstance): ReactReconciler.Fiber {
           // debugger;
           console.log("getClosestInstanceFromNode", hostInstance);
 

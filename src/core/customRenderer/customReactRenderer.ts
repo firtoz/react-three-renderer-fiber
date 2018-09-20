@@ -1,7 +1,4 @@
-import ReactFiberReconciler, {
-  Fiber,
-  Reconciler,
-} from "react-reconciler";
+import * as ReactReconciler from "react-reconciler";
 import {RenderAction} from "../renderer/hostDescriptors/descriptors/render";
 import {CustomReconcilerConfig} from "./createReconciler";
 import {hookDevtools} from "./utils/DevtoolsHelpers";
@@ -9,14 +6,14 @@ import isNonProduction from "./utils/isNonProduction";
 
 export default class CustomReactRenderer<TReconcilerConfig extends //
   CustomReconcilerConfig<any> = CustomReconcilerConfig<any>> {
-  private readonly reconciler: Reconciler<any, any, any, any>;
+  private readonly reconciler: ReactReconciler.Reconciler<any, any, any, any>;
 
   constructor(reconcilerConfig: TReconcilerConfig, wantsDevtools: boolean = true) {
     if (wantsDevtools && isNonProduction) {
       hookDevtools(reconcilerConfig);
     }
 
-    this.reconciler = ReactFiberReconciler(reconcilerConfig);
+    this.reconciler = ReactReconciler(reconcilerConfig);
   }
 
   public render<TProps>(element: React.ReactElement<TProps> | null,
@@ -117,7 +114,7 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
       return componentOrElement;
     }
 
-    const fiber: Fiber = componentOrElement._reactInternalFiber;
+    const fiber: ReactReconciler.Fiber = componentOrElement._reactInternalFiber;
     if ((fiber != null)) {
       return this.reconciler.findHostInstance(fiber);
     }
@@ -130,7 +127,7 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
     }
   }
 
-  protected renderSubtreeIntoContainer(reconciler: Reconciler<any, any, any, any>,
+  protected renderSubtreeIntoContainer(reconciler: ReactReconciler.Reconciler<any, any, any, any>,
                                        contextSymbol: symbol,
                                        rootContainerSymbol: symbol,
                                        parentComponent: React.Component<any, any> | null,

@@ -1,8 +1,4 @@
-import ReactFiberReconciler, {
-  Fiber,
-  HostConfig,
-  Reconciler,
-} from "react-reconciler";
+import * as ReactReconciler from "react-reconciler";
 import {unstable_cancelScheduledWork, unstable_now, unstable_scheduleWork} from "schedule";
 
 import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
@@ -20,7 +16,7 @@ export type TUpdatePayload = any[];
 
 @bindAcceptor
 export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any, any, any, any>, TContext = any>
-  implements HostConfig<any,
+  implements ReactReconciler.HostConfig<any,
   any,
   any,
   any,
@@ -36,7 +32,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any
   public static readonly contextSymbol: unique symbol = Symbol("custom-renderer-context");
   public static readonly rootContainerSymbol: unique symbol = Symbol("custom-renderer-root-container-symbol");
 
-  private static precacheInstance(fiber: Fiber, customRendererElement: any) {
+  private static precacheInstance(fiber: ReactReconciler.Fiber, customRendererElement: any) {
     customRendererElement[CustomReconcilerConfig.fiberSymbol] = fiber;
   }
 
@@ -86,7 +82,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any
                         props: IPropMap,
                         rootContainerInstance: CustomRendererElementInstance,
                         hostContext: TContext,
-                        fiber: Fiber) {
+                        fiber: ReactReconciler.Fiber) {
     const descriptor = this.getDescriptorForType(type);
 
     if (isNonProduction) {
@@ -169,7 +165,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any
                       type: string,
                       oldProps: IPropMap,
                       newProps: IPropMap,
-                      fiber: Fiber): void {
+                      fiber: ReactReconciler.Fiber): void {
     this.getDescriptorForInstance(instance).commitUpdate(instance, updatePayload, oldProps, newProps);
   }
 
@@ -227,7 +223,7 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any
   }
 
   protected getDescriptorForInstance(instance: any): TDescriptor {
-    const type = (instance[CustomReconcilerConfig.fiberSymbol] as Fiber).type;
+    const type = (instance[CustomReconcilerConfig.fiberSymbol] as ReactReconciler.Fiber).type;
 
     if (!this.hostDescriptors.has(type)) {
       throw new Error(`Cannot find descriptor for type "${type}"`);
@@ -306,6 +302,6 @@ export default function createReconciler<TDescriptor extends IHostDescriptor<any
   any,
   any,
   any,
-  any>>(config: CustomReconcilerConfig<TDescriptor>): Reconciler<any, any, any, any> {
-  return ReactFiberReconciler(config);
+  any>>(config: CustomReconcilerConfig<TDescriptor>): ReactReconciler.Reconciler<any, any, any, any> {
+  return ReactReconciler(config);
 }
