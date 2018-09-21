@@ -42,7 +42,7 @@ describe("render", () => {
 
   it("should be able to be rendered into a renderer", (done) => {
     mockConsole.expectLog("THREE.WebGLRenderer", "95");
-    mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
+    // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
     const renderer = new WebGLRenderer();
 
