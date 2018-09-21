@@ -37,15 +37,26 @@ module.exports = function(config) {
       stats: 'errors-only'
     },
 
+    customLaunchers: {
+      ChromeNoSandbox: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    },
+
     detectBrowsers: {
       enabled: true,
       usePhantomJS: false,
       postDetection: function(availableBrowsers) {
+        if (availableBrowsers.indexOf('Chrome') >= 0) {
+          console.log(`Testing with Chrome`);
+          return['ChromeNoSandbox'];
+        }
         // check installed browsers, run tests using the most
         // preferred one defined in browserPreferences array
         for (const browser of browserPreferences) {
           if (availableBrowsers.indexOf(browser) >= 0) {
-            console.log(`Testing with ${browser}`)
+            console.log(`Testing with ${browser}`);
             return [browser]
           }
         }
