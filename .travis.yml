@@ -3,4 +3,3 @@ node_js:
   - "node"
 addons:
   chrome: stable
-script: xvfb-run make test

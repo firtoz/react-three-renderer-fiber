@@ -5,11 +5,11 @@ process.env.CHROME_BIN = require('puppeteer').executablePath()
 // ordered from most to least preferred option
 const browserPreferences = [
   'Chrome', // will usually stop here (puppeteer)
-  'FirefoxNightly',
   'Firefox',
-  'SafariTechPreview',
   'Safari',
-  'Edge'
+  'Edge',
+  'FirefoxNightly',
+  'SafariTechPreview',
 ]
 
 module.exports = function(config) {
