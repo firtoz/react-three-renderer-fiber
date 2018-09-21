@@ -1,5 +1,6 @@
 import {Validator} from "prop-types";
 import * as PropTypes from "prop-types";
+import * as React from "react";
 import {IPropMap, TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
@@ -97,7 +98,8 @@ export abstract class CustomDescriptor< //
     checkPropTypes(this.propTypes,
       props,
       "prop",
-      type);
+      type,
+      (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactDebugCurrentFrame.getStackAddendum);
   }
 
   /**
