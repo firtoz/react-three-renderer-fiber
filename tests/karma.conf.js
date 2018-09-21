@@ -4,12 +4,12 @@ process.env.CHROME_BIN = require('puppeteer').executablePath()
 // list of all browsers that can run the tests,
 // ordered from most to least preferred option
 const browserPreferences = [
-    'FirefoxNightly',
-    'Firefox',
-    'Chrome', // will usually stop here (puppeteer)
-    'SafariTechPreview',
-    'Safari',
-    'Edge'
+  'FirefoxNightly',
+  'Firefox',
+  'Chrome', // will usually stop here (puppeteer)
+  'SafariTechPreview',
+  'Safari',
+  'Edge'
 ]
 
 module.exports = function(config) {
