@@ -51,7 +51,7 @@ module.exports = function(config) {
         // check installed browsers, run tests using the most
         // preferred one defined in browserPreferences array
         for (let browser of browserPreferences) {
-          if (availableBrowsers.indexOf(browserPreference) >= 0) {
+          if (availableBrowsers.indexOf(browser) >= 0) {
             if (browser === 'Chrome') browser = 'ChromeNoSandbox';
             console.log(`Testing with ${browser}`)
             return [browser]
