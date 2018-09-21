@@ -9,9 +9,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@babel/standalone": "^7.0.0",
-    "react": "^16.5.1",
-    "react-dom": "^16.5.1",
+    "@babel/standalone": "^7.1.0",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
     "three": "^0.96.0"
   }
 }
