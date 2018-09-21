@@ -4,12 +4,12 @@ process.env.CHROME_BIN = require('puppeteer').executablePath()
 // list of all browsers that can run the tests,
 // ordered from most to least preferred option
 const browserPreferences = [
-  'Chrome', // will usually stop here (puppeteer)
-  'Firefox',
-  'Safari',
-  'Edge',
-  'FirefoxNightly',
-  'SafariTechPreview',
+    'FirefoxNightly',
+    'Firefox',
+    'Chrome', // will usually stop here (puppeteer)
+    'SafariTechPreview',
+    'Safari',
+    'Edge'
 ]
 
 module.exports = function(config) {
@@ -48,11 +48,11 @@ module.exports = function(config) {
       enabled: true,
       usePhantomJS: false,
       postDetection: function(availableBrowsers) {
+        if (config.browsers.length > 0) return config.browsers;
         // check installed browsers, run tests using the most
         // preferred one defined in browserPreferences array
-        for (let browser of browserPreferences) {
+        for (const browser of browserPreferences) {
           if (availableBrowsers.indexOf(browser) >= 0) {
-            if (browser === 'Chrome') browser = 'ChromeNoSandbox';
             console.log(`Testing with ${browser}`)
             return [browser]
           }
