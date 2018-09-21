@@ -56,7 +56,7 @@ module.exports = function(config) {
         // preferred one defined in browserPreferences array
         for (const browser of browserPreferences) {
           if (availableBrowsers.indexOf(browser) >= 0) {
-            console.log(`Testing with ${browser}`);
+            console.log(`Testing with ${browser}`)
             return [browser]
           }
         }
