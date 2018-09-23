@@ -1,10 +1,10 @@
-import {ExtrudeBufferGeometry, ExtrudeGeometry, Shape} from "three";
+import {ExtrudeBufferGeometry, ExtrudeGeometry, ExtrudeGeometryOptions, Shape} from "three";
 import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IExtrudeGeometryProps {
-  shapes: Shape[];
-  options: any;
+  shapes: Shape | Shape[];
+  options?: ExtrudeGeometryOptions;
 }
 
 declare global {

@@ -4,7 +4,7 @@ import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IEdgesGeometryProps {
   geometry: BufferGeometry | Geometry;
-  thresholdAngle: number;
+  thresholdAngle?: number;
 }
 
 declare global {
