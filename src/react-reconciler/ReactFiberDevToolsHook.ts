@@ -12,7 +12,7 @@ function catchErrors(fn: (arg: ReactReconciler.Fiber | ReactReconciler.FiberRoot
     try {
       return fn(arg);
     } catch (err) {
-      if (!hasLoggedError) {
+      if (process.env.NODE_ENV !== "production" && !hasLoggedError) {
         hasLoggedError = true;
         warningWithoutStack(
           false,
@@ -36,12 +36,14 @@ export function injectInternals(internals: object): boolean {
     return true;
   }
   if (!hook.supportsFiber) {
-    warningWithoutStack(
-      false,
-      "The installed version of React DevTools is too old and will not work " +
+    if (process.env.NODE_ENV !== "production") {
+      warningWithoutStack(
+        false,
+        "The installed version of React DevTools is too old and will not work " +
         "with the current version of React. Please update React DevTools. " +
         "https://fb.me/react-devtools",
-    );
+      );
+    }
     // DevTools exists, even though it doesn't support Fiber.
     return true;
   }
@@ -56,11 +58,13 @@ export function injectInternals(internals: object): boolean {
     );
   } catch (err) {
     // Catch all errors because it is unsafe to throw during initialization.
-    warningWithoutStack(
-      false,
-      "React DevTools encountered an error: %s.",
-      err,
-    );
+    if (process.env.NODE_ENV !== "production") {
+      warningWithoutStack(
+        false,
+        "React DevTools encountered an error: %s.",
+        err,
+      );
+    }
   }
   // DevTools exists
   return true;
