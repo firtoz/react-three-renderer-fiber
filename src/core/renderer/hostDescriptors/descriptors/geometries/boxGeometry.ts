@@ -3,9 +3,9 @@ import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeo
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IBoxGeometryProps {
-  width: number;
-  height: number;
-  depth: number;
+  width?: number;
+  height?: number;
+  depth?: number;
   widthSegments?: number;
   heightSegments?: number;
   depthSegments?: number;

@@ -3,8 +3,8 @@ import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeo
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IPlaneGeometryProps {
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   widthSegments?: number;
   heightSegments?: number;
 }

@@ -9,14 +9,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@babel/standalone": "^7.1.0",
     "@types/dat.gui": "^0.7.1",
-    "babel-standalone": "^6.26.0",
     "dat.gui": "^0.7.2",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "three": "^0.95.0"
-  },
-  "devDependencies": {
-    "prettier": "^1.14.2"
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "three": "^0.96.0"
   }
 }
