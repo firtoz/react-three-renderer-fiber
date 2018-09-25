@@ -115,7 +115,7 @@ describe("for mesh", () => {
     ReactThreeRenderer.render(<mesh
       ref={meshRef}
 
-      geometry={<boxGeometry ref={geometryRef} width={50} height={50} depth={50} />}
+      geometry={<boxGeometry ref={geometryRef} width={50} height={50} depth={50}/>}
       material={<meshBasicMaterial ref={materialRef} color={0xff0000}/>}
     />, propsTarget);
 
