@@ -20,13 +20,13 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
                         container: any,
                         callback?: any): any | null;
 
-  public render(elements: Array<React.ReactElement<any> | null>,
+  public render(elements: ReadonlyArray<React.ReactElement<any> | null>,
                 container: any,
                 callback?: any): any[] | null ;
 
   public render<TProps>(element: //
                           React.ReactElement<TProps>
-                          | Array<React.ReactElement<any> | null>
+                          | ReadonlyArray<React.ReactElement<any> | null>
                           | null,
                         container: any,
                         callback?: any): any | null {
