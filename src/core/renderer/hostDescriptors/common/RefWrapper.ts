@@ -55,7 +55,7 @@ export class RefWrapperBase {
     [index: string]: PropertyWrapper<any, any>;
   };
 
-  public readonly elementsCache: any[];
+  public elementsCache: any[];
 
   private readonly refWrappers: {
     [index: string]: (instance: any) => void;
@@ -198,6 +198,7 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
         }
       });
 
+      wrapperBase.elementsCache = wrapperBase.elementsCache.slice();
       wrappers.forEach((wrapper, i) => {
         const propertyName = wrapper.propertyName;
         const value = newProps[propertyName];
@@ -234,6 +235,7 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
 
       const wrapperBase = (instance as any)[this.refWrapperSymbol] as RefWrapperBase;
 
+      wrapperBase.elementsCache = wrapperBase.elementsCache.slice();
       wrapperBase.elementsCache[elementIndex] = null;
 
       if ((value != null)) {
