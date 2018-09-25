@@ -33,8 +33,8 @@ class ResourceReconcilerConfig extends ContainerUnawareReconcilerConfig<ReactThr
 }
 
 export default class ResourceRenderer extends CustomReactRenderer {
-  constructor(wantsDevtools: boolean = true) {
-    super(new ResourceReconcilerConfig(), wantsDevtools);
+  constructor() {
+    super(new ResourceReconcilerConfig());
   }
 
   protected renderSubtreeIntoContainer(reconciler: ReactReconciler.Reconciler<any, any, any, any>,

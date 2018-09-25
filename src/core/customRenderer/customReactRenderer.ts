@@ -1,19 +1,32 @@
+import * as React from "react";
 import * as ReactReconciler from "react-reconciler";
+import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
 import {RenderAction} from "../renderer/hostDescriptors/descriptors/render";
 import {CustomReconcilerConfig} from "./createReconciler";
-import {hookDevtools} from "./utils/DevtoolsHelpers";
 import isNonProduction from "./utils/isNonProduction";
+
+declare function require(filename: string): any;
 
 export default class CustomReactRenderer<TReconcilerConfig extends //
   CustomReconcilerConfig<any> = CustomReconcilerConfig<any>> {
   private readonly reconciler: ReactReconciler.Reconciler<any, any, any, any>;
 
-  constructor(reconcilerConfig: TReconcilerConfig, wantsDevtools: boolean = true) {
-    if (wantsDevtools && isNonProduction) {
-      hookDevtools(reconcilerConfig);
-    }
-
+  constructor(reconcilerConfig: TReconcilerConfig) {
     this.reconciler = ReactReconciler(reconcilerConfig);
+    this.reconciler.injectIntoDevTools({
+      bundleType: isNonProduction ? 1 : 0,
+      findFiberByHostInstance: (hostInstance: CustomRendererElementInstance): ReactReconciler.Fiber => {
+        // debugger;
+        console.log("getClosestInstanceFromNode", hostInstance);
+
+        return hostInstance[CustomReconcilerConfig.fiberSymbol];
+      },
+      rendererPackageName: "react-dom",
+      // This needs to be the React version in order for DevTools to work:
+      // tslint:disable-next-line:max-line-length
+      // https://github.com/facebook/react-devtools/blob/c2db8dd5c13edd29444c72714b49cdb1073a1a44/backend/attachRendererFiber.js#L25
+      version: React.version,
+    });
   }
 
   public render<TProps>(element: React.ReactElement<TProps> | null,

@@ -55,6 +55,7 @@ export class RefWrapperBase {
     [index: string]: PropertyWrapper<any, any>;
   };
 
+  // This needs to be a ReadonlyArray in order for the elements to be re-rendered correctly when the array is updated
   public elementsCache: ReadonlyArray<any>;
 
   private readonly refWrappers: {
