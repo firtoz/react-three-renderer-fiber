@@ -1,6 +1,6 @@
 import { GUI } from "dat.gui";
 import * as React from "react";
-import {DoubleSide, Euler, Vector3} from "three";
+import {Euler, Vector3} from "three";
 import {ReactThreeRenderer} from "../../src";
 import {TorusGeometry} from "./geometries/TorusGeometry";
 
@@ -23,8 +23,6 @@ class GeometryBrowser extends React.Component<{}, IState> {
   };
 
   public render() {
-    const torusGeometry = <TorusGeometry />;
-
     return (
       <webGLRenderer
         antialias={true}
@@ -61,30 +59,7 @@ class GeometryBrowser extends React.Component<{}, IState> {
               distance={0}
               position={new Vector3(-100, -200, -100)}
             />
-            <group
-              rotation={this.state.rotation}
-            >
-              // TODO: Fix wireframeGeometry
-              {/*<lineSegments*/}
-                {/*geometry={<wireframeGeometry>*/}
-                  {/*{torusGeometry}*/}
-                {/*</wireframeGeometry>}*/}
-                {/*material={<lineBasicMaterial*/}
-                  {/*color={0xffffff}*/}
-                  {/*opacity={0.5}*/}
-                  {/*transparent={true}*/}
-                {/*/>}*/}
-              {/*/>*/}
-              <mesh>
-                {torusGeometry}
-                <meshPhongMaterial
-                  color={0x156289}
-                  emissive={0x072534}
-                  flatShading={true}
-                  side={DoubleSide}
-                />
-              </mesh>
-            </group>
+            <TorusGeometry rotation={this.state.rotation} />
           </scene>}
           onAnimationFrame={this.onAnimationFrame}
           autoRender={true}

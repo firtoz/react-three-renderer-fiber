@@ -1,7 +1,12 @@
 import {GUI} from "dat.gui";
 import * as React from "react";
+import {DoubleSide, Euler} from "three";
 import {gui} from "../geometry-browser";
 import {twoPi} from "./twoPi";
+
+interface IProps {
+  rotation: Euler;
+}
 
 interface IState {
   radius: number;
@@ -11,7 +16,7 @@ interface IState {
   arc: number;
 }
 
-export class TorusGeometry extends React.Component<{}, IState> {
+export class TorusGeometry extends React.Component<IProps, IState> {
   public state = {
     arc: twoPi,
     radialSegments: 16,
@@ -49,7 +54,7 @@ export class TorusGeometry extends React.Component<{}, IState> {
     gui.removeFolder(this.folder);
   }
 
-  public render() {
+  public renderGeometry() {
     return (
       <torusGeometry
         radius={this.state.radius}
@@ -58,6 +63,36 @@ export class TorusGeometry extends React.Component<{}, IState> {
         tubularSegments={this.state.tubularSegments}
         arc={this.state.arc}
       />
+    );
+  }
+
+  public render() {
+    const torusGeometry = this.renderGeometry();
+
+    return (
+      <group
+        rotation={this.props.rotation}
+      >
+        <lineSegments
+          geometry={<wireframeGeometry>
+            {torusGeometry}
+          </wireframeGeometry>}
+          material={<lineBasicMaterial
+            color={0xffffff}
+            opacity={0.5}
+            transparent={true}
+          />}
+        />
+        <mesh>
+          {torusGeometry}
+          <meshPhongMaterial
+            color={0x156289}
+            emissive={0x072534}
+            flatShading={true}
+            side={DoubleSide}
+          />
+        </mesh>
+      </group>
     );
   }
 }
