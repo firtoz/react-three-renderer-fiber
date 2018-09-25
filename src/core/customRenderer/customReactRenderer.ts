@@ -5,8 +5,6 @@ import {RenderAction} from "../renderer/hostDescriptors/descriptors/render";
 import {CustomReconcilerConfig} from "./createReconciler";
 import isNonProduction from "./utils/isNonProduction";
 
-declare function require(filename: string): any;
-
 export default class CustomReactRenderer<TReconcilerConfig extends //
   CustomReconcilerConfig<any> = CustomReconcilerConfig<any>> {
   private readonly reconciler: ReactReconciler.Reconciler<any, any, any, any>;
@@ -21,7 +19,7 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
 
         return hostInstance[CustomReconcilerConfig.fiberSymbol];
       },
-      rendererPackageName: "react-dom",
+      rendererPackageName: "react-three-renderer-fiber",
       // This needs to be the React version in order for DevTools to work:
       // tslint:disable-next-line:max-line-length
       // https://github.com/facebook/react-devtools/blob/c2db8dd5c13edd29444c72714b49cdb1073a1a44/backend/attachRendererFiber.js#L25
