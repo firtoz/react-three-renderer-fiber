@@ -197,7 +197,7 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
         }
       });
 
-      const updatedElementCache = wrapperBase.elementsCache.slice();
+      const updatedElementCache = [...wrapperBase.elementsCache];
       wrappers.forEach((wrapper, i) => {
         const propertyName = wrapper.propertyName;
         const value = newProps[propertyName];
@@ -235,7 +235,7 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
 
       const wrapperBase = (instance as any)[this.refWrapperSymbol] as RefWrapperBase;
 
-      const updatedElementCache = wrapperBase.elementsCache.slice();
+      const updatedElementCache = [...wrapperBase.elementsCache];
       updatedElementCache[elementIndex] = null;
 
       if ((value != null)) {
