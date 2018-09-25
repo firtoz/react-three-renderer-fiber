@@ -114,17 +114,7 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
       return componentOrElement;
     }
 
-    const fiber: ReactReconciler.Fiber = componentOrElement._reactInternalFiber;
-    if ((fiber != null)) {
-      return this.reconciler.findHostInstance(fiber);
-    }
-
-    if (typeof componentOrElement.render === "function") {
-      throw new Error("Unable to find node on an unmounted component.");
-    } else {
-      throw new Error("Element appears to be" +
-        " neither ReactComponent nor DOMNode. Keys: %s" + Object.keys(componentOrElement));
-    }
+    return this.reconciler.findHostInstance(componentOrElement);
   }
 
   protected renderSubtreeIntoContainer(reconciler: ReactReconciler.Reconciler<any, any, any, any>,
