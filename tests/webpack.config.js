@@ -20,6 +20,8 @@ module.exports = {
     path: path.join(__dirname, "dist")
   },
 
+  mode: "development",
+
   // Enable sourcemaps for debugging webpack's output.
   devtool: "eval-cheap-module-source-map",
 
