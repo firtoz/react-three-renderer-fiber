@@ -1,9 +1,10 @@
 import {Validator} from "prop-types";
 import * as PropTypes from "prop-types";
-import {ReactDebugCurrentFiber} from "react-fiber-export";
+import * as React from "react";
 import {IPropMap, TUpdatePayload} from "../createReconciler";
 import final from "../decorators/final";
 import isNonProduction from "../utils/isNonProduction";
+import "../utils/ReactSharedInternals";
 import {IHostDescriptor, IPropTypeMap} from "./IHostDescriptor";
 import CustomPropertyDescriptor from "./properties/CustomPropertyDescriptor";
 import CustomPropertyGroupDescriptor from "./properties/CustomPropertyGroupDescriptor";
@@ -95,11 +96,13 @@ export abstract class CustomDescriptor< //
   }
 
   public checkPropTypes(props: TProps, type: string): any {
-    checkPropTypes(this.propTypes,
-      props,
-      "prop",
-      type,
-      ReactDebugCurrentFiber.getCurrentFiberStackAddendum);
+    if (isNonProduction) {
+      checkPropTypes(this.propTypes,
+        props,
+        "prop",
+        type,
+        React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactDebugCurrentFrame!.getStackAddendum);
+    }
   }
 
   /**

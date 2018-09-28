@@ -1,5 +1,5 @@
 import * as PropTypes from "prop-types";
-import {IFiber} from "react-fiber-export";
+import * as ReactReconciler from "react-reconciler";
 import {Euler, Matrix4, MeshDepthMaterial, Object3D, Quaternion, Vector3} from "three";
 import {CustomReconcilerConfig} from "../../../customRenderer/createReconciler";
 import isNonProduction from "../../../customRenderer/utils/isNonProduction";
@@ -31,7 +31,7 @@ export class CustomRendererElementInstance {
     return wrapped;
   }
 
-  public readonly [CustomReconcilerConfig.fiberSymbol]: IFiber;
+  public readonly [CustomReconcilerConfig.fiberSymbol]: ReactReconciler.Fiber;
   public readonly [CustomReconcilerConfig.rootContainerSymbol]: any;
   public readonly [CustomReconcilerConfig.contextSymbol]: IHostContext;
 }
