@@ -1,32 +1,43 @@
-import {IFiber, IRenderer, ReactFiberReconciler} from "react-fiber-export";
+import * as React from "react";
+import * as ReactReconciler from "react-reconciler";
+import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
 import {RenderAction} from "../renderer/hostDescriptors/descriptors/render";
 import {CustomReconcilerConfig} from "./createReconciler";
-import {hookDevtools} from "./utils/DevtoolsHelpers";
 import isNonProduction from "./utils/isNonProduction";
 
 export default class CustomReactRenderer<TReconcilerConfig extends //
   CustomReconcilerConfig<any> = CustomReconcilerConfig<any>> {
-  private readonly reconciler: IRenderer;
+  private readonly reconciler: ReactReconciler.Reconciler<any, any, any, any>;
 
-  constructor(reconcilerConfig: TReconcilerConfig, wantsDevtools: boolean = true) {
-    if (wantsDevtools && isNonProduction) {
-      hookDevtools(reconcilerConfig);
-    }
+  constructor(reconcilerConfig: TReconcilerConfig) {
+    this.reconciler = ReactReconciler(reconcilerConfig);
+    this.reconciler.injectIntoDevTools({
+      bundleType: isNonProduction ? 1 : 0,
+      findFiberByHostInstance: (hostInstance: CustomRendererElementInstance): ReactReconciler.Fiber => {
+        // debugger;
+        console.log("getClosestInstanceFromNode", hostInstance);
 
-    this.reconciler = ReactFiberReconciler(reconcilerConfig);
+        return hostInstance[CustomReconcilerConfig.fiberSymbol];
+      },
+      rendererPackageName: "react-three-renderer-fiber",
+      // This needs to be the React version in order for DevTools to work:
+      // tslint:disable-next-line:max-line-length
+      // https://github.com/facebook/react-devtools/blob/c2db8dd5c13edd29444c72714b49cdb1073a1a44/backend/attachRendererFiber.js#L25
+      version: React.version,
+    });
   }
 
   public render<TProps>(element: React.ReactElement<TProps> | null,
                         container: any,
                         callback?: any): any | null;
 
-  public render(elements: Array<React.ReactElement<any> | null>,
+  public render(elements: ReadonlyArray<React.ReactElement<any> | null>,
                 container: any,
                 callback?: any): any[] | null ;
 
   public render<TProps>(element: //
                           React.ReactElement<TProps>
-                          | Array<React.ReactElement<any> | null>
+                          | ReadonlyArray<React.ReactElement<any> | null>
                           | null,
                         container: any,
                         callback?: any): any | null {
@@ -114,20 +125,10 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
       return componentOrElement;
     }
 
-    const fiber: IFiber = componentOrElement._reactInternalFiber;
-    if ((fiber != null)) {
-      return this.reconciler.findHostInstance(fiber);
-    }
-
-    if (typeof componentOrElement.render === "function") {
-      throw new Error("Unable to find node on an unmounted component.");
-    } else {
-      throw new Error("Element appears to be" +
-        " neither ReactComponent nor DOMNode. Keys: %s" + Object.keys(componentOrElement));
-    }
+    return this.reconciler.findHostInstance(componentOrElement);
   }
 
-  protected renderSubtreeIntoContainer(reconciler: IRenderer,
+  protected renderSubtreeIntoContainer(reconciler: ReactReconciler.Reconciler<any, any, any, any>,
                                        contextSymbol: symbol,
                                        rootContainerSymbol: symbol,
                                        parentComponent: React.Component<any, any> | null,
@@ -142,7 +143,7 @@ export default class CustomReactRenderer<TReconcilerConfig extends //
     let root = container[rootContainerSymbol];
 
     if (!root) {
-      const newRoot = reconciler.createContainer(container);
+      const newRoot = reconciler.createContainer(container, false, false);
 
       container[rootContainerSymbol] = newRoot;
 

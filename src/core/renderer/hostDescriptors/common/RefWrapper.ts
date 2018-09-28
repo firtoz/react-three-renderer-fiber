@@ -55,7 +55,8 @@ export class RefWrapperBase {
     [index: string]: PropertyWrapper<any, any>;
   };
 
-  public readonly elementsCache: any[];
+  // This needs to be a ReadonlyArray in order for the elements to be re-rendered correctly when the array is updated
+  public elementsCache: ReadonlyArray<any>;
 
   private readonly refWrappers: {
     [index: string]: (instance: any) => void;
@@ -70,12 +71,11 @@ export class RefWrapperBase {
     this.refWrappers = {};
     this.internalInstances = {};
     this.propertyWrappers = {};
-    this.elementsCache = [];
+    this.elementsCache = identifiers.map(() => null);
 
-    identifiers.forEach((identifier, i) => {
+    identifiers.forEach((identifier) => {
       this.internalInstances[identifier] = null;
       this.wrappedRefs[identifier] = null;
-      this.elementsCache[i] = null;
 
       this.regenerateRef(identifier, null);
     });
@@ -198,18 +198,20 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
         }
       });
 
+      const updatedElementCache = [...wrapperBase.elementsCache];
       wrappers.forEach((wrapper, i) => {
         const propertyName = wrapper.propertyName;
         const value = newProps[propertyName];
 
-        wrapperBase.elementsCache[startIndex + i] = null;
+        updatedElementCache[startIndex + i] = null;
 
         if ((value != null)) {
           if (!wrapperContainsRawType(wrapper, value)) {
-            wrapperBase.elementsCache[startIndex + i] = wrapperBase.wrapElementAndReturn(propertyName, value);
+            updatedElementCache[startIndex + i] = wrapperBase.wrapElementAndReturn(propertyName, value);
           }
         }
       });
+      wrapperBase.elementsCache = updatedElementCache;
 
       ReactThreeRenderer.render(wrapperBase.elementsCache, container, () => {
         wrappers.forEach((wrapper) => {
@@ -234,16 +236,17 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
 
       const wrapperBase = (instance as any)[this.refWrapperSymbol] as RefWrapperBase;
 
-      wrapperBase.elementsCache[elementIndex] = null;
+      const updatedElementCache = [...wrapperBase.elementsCache];
+      updatedElementCache[elementIndex] = null;
 
       if ((value != null)) {
         if ((wrapperContainsRawType(wrapper, value))) {
           wrapper.rawTypeUpdateFunction(instance, value);
         } else {
-          wrapperBase.elementsCache[elementIndex]
-            = wrapperBase.wrapElementAndReturn(wrapper.propertyName, value as any);
+          updatedElementCache[elementIndex] = wrapperBase.wrapElementAndReturn(wrapper.propertyName, value as any);
         }
       }
+      wrapperBase.elementsCache = updatedElementCache;
 
       ReactThreeRenderer.render(wrapperBase.elementsCache, containerFunction(instance), () => {
         // TODO check how can value has changed?
