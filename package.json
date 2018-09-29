@@ -10,7 +10,7 @@
     "react-dom": "^16.5.2",
     "react-reconciler": "^0.15.0",
     "schedule": "^0.5.0",
-    "three": "^0.96.0"
+    "three": "^0.97.0"
   },
   "scripts": {
     "build": "tsc",
@@ -26,23 +26,23 @@
     "tdd-prod": "cross-env NODE_ENV=production karma start tests/karma.conf.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.0",
+    "@babel/core": "^7.1.1",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "@types/chai": "^4.1.5",
     "@types/events": "^1.2.0",
     "@types/mocha": "^5.2.5",
-    "@types/prop-types": "^15.5.5",
+    "@types/prop-types": "^15.5.6",
     "@types/react": "^16.4.14",
-    "@types/react-dom": "^16.0.7",
+    "@types/react-dom": "^16.0.8",
     "@types/react-reconciler": "^0.15.1",
     "@types/schedule": "^0.5.0",
     "@types/sinon": "^5.0.2",
     "@types/three": "^0.92.22",
     "awesome-typescript-loader": "^5.2.1",
-    "babel-loader": "^8.0.2",
-    "chai": "^4.1.2",
+    "babel-loader": "^8.0.4",
+    "chai": "^4.2.0",
     "console-expect": "^2.1.0",
     "cross-env": "^5.2.0",
     "dirty-chai": "^2.0.1",
@@ -56,19 +56,19 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-safaritechpreview-launcher": "^0.0.6",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "3.0.0",
+    "karma-webpack": "^4.0.0-rc.2",
     "mocha": "^5.2.0",
     "prop-types": "^15.6.2",
     "puppeteer": "^1.8.0",
     "sinon": "^6.3.4",
-    "source-map": "^0.6.1",
+    "source-map": "0.6.1",
     "source-map-loader": "^0.2.4",
     "source-map-support": "^0.5.9",
     "tslint": "^5.11.0",
     "tslint-loader": "^3.6.0",
-    "typescript": "^3.0.3",
-    "webpack": "^4.19.1",
+    "typescript": "^3.1.1",
+    "webpack": "^4.20.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.8"
+    "webpack-dev-server": "^3.1.9"
   }
 }
