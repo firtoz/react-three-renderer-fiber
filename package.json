@@ -21,6 +21,7 @@
     "lint": "tslint --project examples/tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
     "lint-fix": "tslint --fix --project examples/tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
     "pretest": "npm run lint",
+    "prepublishOnly": "npm run build",
     "test": "karma start tests/karma.conf.js --single-run",
     "test-ci": "karma start tests/karma.conf.js --browsers ChromeNoSandbox --single-run",
     "tdd": "karma start tests/karma.conf.js",
