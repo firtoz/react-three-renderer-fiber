@@ -7,7 +7,7 @@ import {CameraElementProps} from "../common/cameraBase";
 import {IThreeElementPropsBase} from "../common/IReactThreeRendererElement";
 import {CustomRendererElementInstance} from "../common/object3DBase";
 import ReactThreeRendererDescriptor from "../common/ReactThreeRendererDescriptor";
-import {IRenderableProp, RefWrapper, RefWrapperBase} from "../common/RefWrapper";
+import {IRenderableProp, RefWrapperBase} from "../common/RefWrapper";
 import {SceneElementProps} from "./objects/scene";
 import {ViewportElementProps} from "./viewport";
 
@@ -15,11 +15,9 @@ export interface IRenderProps extends WebGLRendererParameters {
   camera: IRenderableProp<Camera, CameraElementProps>;
   scene: IRenderableProp<Scene, SceneElementProps>;
   viewport?: IRenderableProp<Viewport, ViewportElementProps>;
-  onAnimationFrame?: () => void;
+  onBeforeRender?: () => void;
   autoRender?: boolean;
 }
-
-export const wrappedRefSymbol = Symbol("r3r-wrapped-ref");
 
 declare global {
   namespace JSX {
@@ -41,7 +39,7 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
   private internalCamera: Camera | null;
   private internalViewport: Viewport | null;
 
-  private onAnimationFrame: (() => void) | null;
+  private onBeforeRender: (() => void) | null;
 
   constructor() {
     super([
@@ -56,7 +54,7 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
     this.internalCamera = null;
     this.internalViewport = null;
 
-    this.onAnimationFrame = null;
+    this.onBeforeRender = null;
     this.autoRender = false;
     this.group = CustomRendererElementInstance.wrapContext(new Group(), this);
 
@@ -78,7 +76,7 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
 
     if (!(renderer instanceof WebGLRenderer)) {
       console.error(renderer);
-      throw new Error("You are trying to add a <render/> into an object that is not a THREEJS renderer.");
+      throw new Error("You are trying to add a <render/> into an object that is not a THREE.JS renderer.");
     }
 
     this.renderer = renderer;
@@ -168,14 +166,14 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
       viewportElementToRender], this.group);
   }
 
-  public setOnAnimationFrame(newValue: (() => void) | null) {
-    this.onAnimationFrame = newValue;
+  public setOnBeforeRender(newValue: (() => void) | null) {
+    this.onBeforeRender = newValue;
   }
 
   public setAutoRender(newValue: boolean) {
     this.autoRender = newValue;
 
-    if (newValue === true) {
+    if (newValue) {
       if (this.animationFrameRequest === 0) {
         this.triggerRender();
       }
@@ -183,8 +181,8 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
   }
 
   private rafCallback = () => {
-    if (this.onAnimationFrame !== null) {
-      this.onAnimationFrame();
+    if (this.onBeforeRender !== null) {
+      this.onBeforeRender();
     }
 
     this.render();
@@ -206,9 +204,9 @@ class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, Render
         instance.updateProps(newValue);
       });
 
-    this.hasProp("onAnimationFrame",
+    this.hasProp("onBeforeRender",
       (instance: RenderAction, newValue: (() => void) | null) => {
-        instance.setOnAnimationFrame(newValue);
+        instance.setOnBeforeRender(newValue);
       });
 
     this.hasProp("autoRender",
