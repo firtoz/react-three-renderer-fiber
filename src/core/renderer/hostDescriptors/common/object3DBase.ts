@@ -62,7 +62,9 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     this.hasSimpleProp("renderOrder", true, true);
 
     this.hasProp<Vector3>("scale",
-      (instance, newValue) => { instance.scale.copy(newValue); },
+      (instance, newValue) => {
+        instance.scale.copy(newValue);
+      },
       true,
       true);
 
@@ -70,6 +72,8 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
       (instance, newValue) => {
         instance.matrix = newValue;
         instance.matrix.decompose(instance.position, instance.quaternion, instance.scale);
+
+        // TODO GH-70
       },
       true,
       true);
@@ -79,6 +83,8 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
                               newValue: Vector3 | null,
                               oldProps: IObject3DProps,
                               newProps: IObject3DProps): void => {
+      // TODO GH-70
+
       if (newValue === null) {
         instance.position.set(0, 0, 0);
       } else {
@@ -100,6 +106,8 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
           quaternion?: Quaternion,
           lookAt?: Vector3,
         }) => {
+      // TODO GH-70
+
       if (lookAt != null) {
         if (isNonProduction) {
           if (quaternion != null) {
