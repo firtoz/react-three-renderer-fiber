@@ -46,7 +46,7 @@ abstract class Object3DDescriptorBase<TProps extends IObject3DProps,
     TParent,
     TChild> {
 
-  protected constructor() {
+  public constructor() {
     super();
 
     this.hasSimpleProp("name", true, false)

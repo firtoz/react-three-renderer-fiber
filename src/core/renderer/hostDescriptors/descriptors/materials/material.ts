@@ -66,7 +66,7 @@ export abstract class MaterialDescriptorBase<TProps extends IMaterialProps = IMa
     }
   }
 
-  protected constructor() {
+  public constructor() {
     super();
 
     this.hasProp<MaterialSlotType>("slot", (instance: TEnhancedMaterial, newValue) => {
