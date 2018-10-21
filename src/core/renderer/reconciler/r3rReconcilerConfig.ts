@@ -3,8 +3,8 @@ import ContainerUnawareReconcilerConfig from "../../customRenderer/ContainerUnaw
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
 import {CustomRendererElementInstance} from "../hostDescriptors/common/object3DBase";
 import {IReactThreeRendererDescriptor} from "../hostDescriptors/common/ReactThreeRendererDescriptor";
-import {IHostContext} from "../reactThreeRenderer";
 import descriptorMap from "../hostDescriptors/generated-descriptor-map";
+import {IHostContext} from "../reactThreeRenderer";
 
 export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<IReactThreeRendererDescriptor,
   IHostContext> {
