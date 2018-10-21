@@ -1,4 +1,6 @@
 language: node_js
 node_js:
   - "node"
+addons:
+  firefox: latest
 script: xvfb-run yarn test-ci
