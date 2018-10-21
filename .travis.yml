@@ -1,4 +1,4 @@
 language: node_js
 node_js:
   - "node"
-script: xvfb-run --server-args="-screen 0 1024x768x24" yarn test-ci
+script: xvfb-run yarn test-ci
