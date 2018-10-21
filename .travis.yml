@@ -1,6 +1,4 @@
 language: node_js
 node_js:
   - "node"
-addons:
-  firefox: latest
 script: xvfb-run --server-args="-screen 0 1024x768x24" yarn test-ci
