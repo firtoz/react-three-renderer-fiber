@@ -116,7 +116,20 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
       this.renderer.setViewport(0, 0, this.renderer.getSize().width, this.renderer.getSize().height);
     }
 
+    const oldWarn = window.console.warn;
+
+    // get rid of useless message but warn about everything else
+    window.console.warn = (...args: string[]) => {
+      if (args[0] === "THREE.WebGLShader: gl.getShaderInfoLog()") {
+        return;
+      }
+
+      oldWarn.call(window.console, ...args);
+    };
+
     this.renderer.render(sceneToUse, cameraToUse);
+
+    window.console.warn = oldWarn;
   }
 
   public updateProps(newValue: IRenderProps) {

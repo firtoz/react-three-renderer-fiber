@@ -125,9 +125,7 @@ export class RendererWrapperDetails extends WrapperDetails<IWebGLRendererProps, 
 
       // get rid of useless message but warn about everything else
       window.console.warn = (...args: string[]) => {
-        if (args.length === 2
-          && args[0] === "THREE.WebGLProgram: gl.getProgramInfoLog()"
-          && args[1].match(/^\s*$/) !== null) {
+        if (args[0] === "THREE.WebGLShader: gl.getShaderInfoLog()") {
           return;
         }
 
