@@ -41,7 +41,7 @@ describe("render", () => {
   }
 
   it("should be able to be rendered into a renderer", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "96");
+    mockConsole.expectLog("THREE.WebGLRenderer", "97");
     // mockConsole.expectWarn("THREE.WebGLProgram: gl.getProgramInfoLog()", "\n\n\n");
 
     const renderer = new WebGLRenderer();
@@ -112,7 +112,7 @@ describe("render", () => {
   });
 
   it("should not render if scene or camera are null", (done: Done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "96");
+    mockConsole.expectLog("THREE.WebGLRenderer", "97");
 
     const renderer = new WebGLRenderer();
 
@@ -339,7 +339,7 @@ describe("render", () => {
   });
 
   it("should accept a scene as a parameter", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "96");
+    mockConsole.expectLog("THREE.WebGLRenderer", "97");
 
     const renderer = new WebGLRenderer();
 
@@ -366,7 +366,7 @@ describe("render", () => {
   });
 
   it("should accept a camera as a parameter", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "96");
+    mockConsole.expectLog("THREE.WebGLRenderer", "97");
 
     const renderer = new WebGLRenderer();
 
@@ -393,7 +393,7 @@ describe("render", () => {
   });
 
   it("should trigger a render when a visible element is added or removed", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "96");
+    mockConsole.expectLog("THREE.WebGLRenderer", "97");
 
     const renderer = new WebGLRenderer();
 
@@ -481,7 +481,7 @@ describe("render", () => {
   });
 
   it("should trigger a render only when a visible property is updated", (done) => {
-    mockConsole.expectLog("THREE.WebGLRenderer", "96");
+    mockConsole.expectLog("THREE.WebGLRenderer", "97");
 
     const renderer = new WebGLRenderer();
 

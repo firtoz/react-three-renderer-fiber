@@ -3,37 +3,19 @@ import ContainerUnawareReconcilerConfig from "../../customRenderer/ContainerUnaw
 import {CustomReconcilerConfig, IPropMap} from "../../customRenderer/createReconciler";
 import {CustomRendererElementInstance} from "../hostDescriptors/common/object3DBase";
 import {IReactThreeRendererDescriptor} from "../hostDescriptors/common/ReactThreeRendererDescriptor";
+import descriptorMap from "../hostDescriptors/generated-descriptor-map";
 import {IHostContext} from "../reactThreeRenderer";
-
-declare function require(filename: string): any;
-
-const descriptorsRequireContext = (require as any).context("../hostDescriptors/descriptors/", true, /\.ts$/);
 
 export class ReactThreeReconcilerConfig extends ContainerUnawareReconcilerConfig<IReactThreeRendererDescriptor,
   IHostContext> {
   public static getHostDescriptorClass(key: string): IReactThreeRendererDescriptorClass | undefined {
-    return ReactThreeReconcilerConfig.descriptorMap.get(key);
+    return descriptorMap.get(key);
   }
-
-  private static descriptorMap: Map<string, IReactThreeRendererDescriptorClass> = (() => {
-    const map = new Map<string, IReactThreeRendererDescriptorClass>();
-
-    descriptorsRequireContext
-      .keys()
-      .forEach((key: string) => {
-        const name = key.match(/(\w+)\.ts$/);
-        if (name !== null) {
-          map.set(name[1], descriptorsRequireContext(key).default);
-        }
-      });
-
-    return map;
-  })();
 
   constructor() {
     super();
 
-    ReactThreeReconcilerConfig.descriptorMap.forEach((value, key) => {
+    descriptorMap.forEach((value, key) => {
       if (name !== null) {
         this.defineHostDescriptor(key, new (value)());
       }

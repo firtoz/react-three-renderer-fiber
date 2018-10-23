@@ -2,3 +2,6 @@ examples/
 .idea/
 tests/
 tslint.json
+utils/
+.travis.yml
+yarn.lock

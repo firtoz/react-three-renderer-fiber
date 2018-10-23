@@ -20,6 +20,9 @@ module.exports = {
     path: path.join(__dirname, "dist")
   },
 
+  // So that the code isn't minified in tests in order to preserve class names.
+  mode: "development",
+
   // Enable sourcemaps for debugging webpack's output.
   devtool: "eval-cheap-module-source-map",
 
