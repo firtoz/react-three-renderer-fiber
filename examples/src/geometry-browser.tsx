@@ -61,7 +61,7 @@ class GeometryBrowser extends React.Component<{}, IState> {
             />
             <TorusGeometry rotation={this.state.rotation} />
           </scene>}
-          onAnimationFrame={this.onAnimationFrame}
+          onBeforeRender={this.onAnimationFrame}
           autoRender={true}
         />
       </webGLRenderer>

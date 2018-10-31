@@ -73,16 +73,6 @@ export class TorusGeometry extends React.Component<IProps, IState> {
       <group
         rotation={this.props.rotation}
       >
-        <lineSegments
-          geometry={<wireframeGeometry
-            geometry={torusGeometry}
-          />}
-          material={<lineBasicMaterial
-            color={0xffffff}
-            opacity={0.5}
-            transparent={true}
-          />}
-        />
         <mesh>
           {torusGeometry}
           <meshPhongMaterial
