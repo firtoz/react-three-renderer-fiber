@@ -1,4 +1,7 @@
 # react-three-renderer-fiber
+
+[![Build Status](https://travis-ci.org/toxicFork/react-three-renderer-fiber.svg?branch=master)](https://travis-ci.org/toxicFork/react-three-renderer-fiber)
+
 Porting R3R to use [React Fiber](https://github.com/acdlite/react-fiber-architecture).
 
 This is even more WIP than `react-three-renderer` itself! Literally unusable. The point of this repository is to play around with react fiber and ask questions to React team and others.

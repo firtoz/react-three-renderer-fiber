@@ -30,7 +30,7 @@ class Demo extends React.Component<any, {
     >
       <render
         autoRender
-        onAnimationFrame={this.onAnimationFrame}
+        onBeforeRender={this.onAnimationFrame}
         scene={<scene>
           <mesh
             rotation={this.state.cubeRotation}
