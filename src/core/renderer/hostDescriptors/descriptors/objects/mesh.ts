@@ -5,7 +5,6 @@ import {
   MaterialParameters,
   Mesh,
   MeshDepthMaterial,
-  MeshMaterialType,
 } from "three";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {default as Object3DDescriptorBase, IObject3DProps} from "../../common/object3DBase";
@@ -21,7 +20,7 @@ export interface IGeometryElementProps extends ITestProps<Geometry> {
 
 export interface IMeshProps extends IObject3DProps {
   geometry?: IRenderableProp<Geometry, IGeometryElementProps>;
-  material?: IRenderableProp<MeshMaterialType, MaterialParameters>;
+  material?: IRenderableProp<Material, MaterialParameters>;
 }
 
 declare global {
@@ -32,7 +31,7 @@ declare global {
   }
 }
 
-export type MeshChildType = Geometry | BufferGeometry | MeshMaterialType;
+export type MeshChildType = Geometry | BufferGeometry | Material;
 
 class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildType> {
   constructor() {
@@ -49,7 +48,7 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
 
   public createInstance(props: IMeshProps) {
     let geometry: Geometry | BufferGeometry | undefined;
-    let material: MeshMaterialType | undefined;
+    let material: Material | undefined;
 
     if (props.geometry instanceof Geometry || props.geometry instanceof BufferGeometry) {
       geometry = props.geometry;

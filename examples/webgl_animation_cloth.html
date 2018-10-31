@@ -48,7 +48,7 @@
 
 <script src="./dist/bundle.js"></script>
 
-<script src="node_modules/three/examples/js/Detector.js"></script>
+<script src="node_modules/three/examples/js/WebGL.js"></script>
 <script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
 <script src="node_modules/three/examples/js/libs/stats.min.js"></script>
 <script src="node_modules/three/examples/js/Cloth.js"></script>
@@ -100,7 +100,9 @@
 
   }
 
-  if (!Detector.webgl) Detector.addGetWebGLMessage();
+  if (WEBGL.isWebGLAvailable() === false) {
+      document.body.appendChild(WEBGL.getWebGLErrorMessage());
+  }
 
   var container, stats;
   var camera, scene, renderer;
