@@ -1,12 +1,9 @@
 import {BufferGeometry, Geometry, WireframeGeometry} from "three";
-import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
+import {createGeometryDescriptor} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
-import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
-import {IRenderableProp, RefWrapper, SimplePropertyWrapper} from "../../common/RefWrapperTest";
-import {IGeometryElementProps} from "../objects/mesh";
 
 export interface IWireframeGeometryProps {
-  geometry: IRenderableProp<BufferGeometry | Geometry, IGeometryElementProps>;
+  geometry: BufferGeometry | Geometry;
 }
 
 declare global {
@@ -17,19 +14,10 @@ declare global {
   }
 }
 
-class WireframeGeometryWrapper extends GeometryWrapperBase<IWireframeGeometryProps, WireframeGeometry> {
-  protected constructGeometry(props: IWireframeGeometryProps): WireframeGeometry {
-    return new WireframeGeometry(new BufferGeometry());
-  }
-}
+export const bufferGeometryDescriptor =
+  createGeometryDescriptor<IWireframeGeometryProps>()(
+    WireframeGeometry,
+    "geometry",
+  );
 
-export default class WireframeGeometryDescriptor extends WrappedEntityDescriptor<WireframeGeometryWrapper,
-  IWireframeGeometryProps,
-  WireframeGeometry,
-  GeometryContainerType> {
-  constructor() {
-    super(WireframeGeometryWrapper, WireframeGeometry);
-    new RefWrapper(["geometry"], this)
-      .wrapProperty(new SimplePropertyWrapper("geometry", [Geometry, BufferGeometry]));
-  }
-}
+export default bufferGeometryDescriptor;
