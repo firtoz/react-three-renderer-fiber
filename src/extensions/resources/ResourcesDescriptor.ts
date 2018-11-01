@@ -1,7 +1,12 @@
-import {IResourcesProps} from "../../../tests/src/extensions/resourcerenderer";
+import {IPropsWithChildren} from "../../core/renderer/hostDescriptors/common/IPropsWithChildren";
 import {IThreeElementPropsBase} from "../../core/renderer/hostDescriptors/common/IReactThreeRendererElement";
 import ReactThreeRendererDescriptor from "../../core/renderer/hostDescriptors/common/ReactThreeRendererDescriptor";
 import ResourceContainer from "./ResourceContainer";
+
+// tslint:disable-next-line no-empty-interface
+export interface IResourcesProps extends IPropsWithChildren {
+
+}
 
 declare global {
   namespace JSX {

@@ -20,6 +20,7 @@
   "exclude": [
   ],
   "include": [
-    "src/index.ts"
+    "src/index.ts",
+    "src/extensions/resources/ResourcesRenderer.ts"
   ]
 }
