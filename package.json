@@ -1,6 +1,6 @@
 {
   "name": "react-three-renderer-fiber",
-  "version": "0.0.3-0",
+  "version": "0.0.4-0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "author": "Firtina `toxicFork` Ozbalikci (http://toxicfork.com)",
