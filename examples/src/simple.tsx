@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 import {Euler, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from "three";
 
@@ -150,4 +151,7 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
   }
 }
 
-export default Simple;
+ReactDOM.render(<Simple
+  width={800}
+  height={600}
+/>, document.getElementById("example"));
