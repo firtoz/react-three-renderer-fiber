@@ -34,6 +34,7 @@ import mesh from "./descriptors/objects/mesh";
 import meshBasicMaterial from "./descriptors/materials/meshBasicMaterial";
 import meshDepthMaterial from "./descriptors/materials/meshDepthMaterial";
 import meshLambertMaterial from "./descriptors/materials/meshLambertMaterial";
+import meshPhongMaterial from "./descriptors/materials/meshPhongMaterial";
 import object3D from "./descriptors/objects/object3D";
 import octahedronBufferGeometry from "./descriptors/geometries/octahedronBufferGeometry";
 import octahedronGeometry from "./descriptors/geometries/octahedronGeometry";
@@ -134,6 +135,7 @@ descriptorMap.set("material", material);
 descriptorMap.set("meshBasicMaterial", meshBasicMaterial);
 descriptorMap.set("meshDepthMaterial", meshDepthMaterial);
 descriptorMap.set("meshLambertMaterial", meshLambertMaterial);
+descriptorMap.set("meshPhongMaterial", meshPhongMaterial);
 descriptorMap.set("pointsMaterial", pointsMaterial);
 descriptorMap.set("spriteMaterial", spriteMaterial);
 
