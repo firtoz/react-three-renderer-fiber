@@ -13,11 +13,6 @@ const resourceRenderer = new ResourceRenderer();
 
 chai.use(dirtyChai);
 
-// tslint:disable-next-line no-empty-interface
-export interface IResourcesProps extends IPropsWithChildren {
-
-}
-
 describe("ResourceRenderer", () => {
   it("returns a ResourceContainer", (done) => {
     const container = {};

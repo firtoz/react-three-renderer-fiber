@@ -67,6 +67,10 @@ export class ReactThreeRenderer extends CustomReactRenderer<ReactThreeReconciler
     return ReactThreeReconcilerConfig.getHostDescriptorClass(descriptorName);
   }
 
+  public constructor() {
+    super(r3rReconcilerConfig, "react-three-renderer-fiber");
+  }
+
   public findTHREEObject(componentOrElement: any): any {
     return super.findHostObject(componentOrElement);
   }
@@ -88,4 +92,4 @@ export class ReactThreeRenderer extends CustomReactRenderer<ReactThreeReconciler
   }
 }
 
-export default new ReactThreeRenderer(r3rReconcilerConfig);
+export default new ReactThreeRenderer();

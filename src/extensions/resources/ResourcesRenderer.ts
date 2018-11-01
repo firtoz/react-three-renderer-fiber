@@ -34,7 +34,7 @@ class ResourceReconcilerConfig extends ContainerUnawareReconcilerConfig<ReactThr
 
 export default class ResourceRenderer extends CustomReactRenderer {
   constructor() {
-    super(new ResourceReconcilerConfig());
+    super(new ResourceReconcilerConfig(), "react-three-renderer-fiber-resources");
   }
 
   protected renderSubtreeIntoContainer(reconciler: ReactReconciler.Reconciler<any, any, any, any>,

@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Component} from "react";
+import * as ReactDOM from "react-dom";
 import * as THREE from "three";
 import React3 from "../../../src";
 
@@ -167,4 +168,4 @@ class Experiment extends Component {
   }
 }
 
-export default Experiment;
+ReactDOM.render(<Experiment />, document.getElementById("example"));
