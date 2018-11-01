@@ -2,9 +2,15 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: require.resolve("./src/index.tsx"),
+  entry: {
+    experiment: require.resolve("./src/app/Experiment.tsx"),
+    simple: require.resolve("./src/simple.tsx"),
+    gettingStarted: require.resolve("./src/getting-started.tsx"),
+    camera: require.resolve("./src/Camera.tsx"),
+    webglAnimationCloth: require.resolve("./src/index.tsx")
+  },
   output: {
-    filename: "bundle.js",
+    filename: "[name].js",
     path: path.join(__dirname, "dist")
   },
 
