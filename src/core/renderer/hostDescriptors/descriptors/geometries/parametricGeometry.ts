@@ -1,5 +1,5 @@
-import {ParametricGeometry, Vector3} from "three";
-import {createGeometryDescriptor} from "../../common/createGeometryDescriptor";
+import {ParametricBufferGeometry, ParametricGeometry, Vector3} from "three";
+import {createGeometryAndBufferGeometryDescriptors} from "../../common/createGeometryDescriptor";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 
 export interface IParametricGeometryProps {
@@ -12,13 +12,15 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       parametricGeometry: IThreeElementPropsBase<ParametricGeometry> & IParametricGeometryProps;
+      parametricBufferGeometry: IThreeElementPropsBase<ParametricBufferGeometry> & IParametricGeometryProps;
     }
   }
 }
 
-export const geometryDescriptor =
-  createGeometryDescriptor<IParametricGeometryProps>()(
+export const { bufferGeometryDescriptor, geometryDescriptor } =
+  createGeometryAndBufferGeometryDescriptors<IParametricGeometryProps>()(
     ParametricGeometry,
+    ParametricBufferGeometry,
     "func",
     "slices",
     "stacks",

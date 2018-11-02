@@ -11,7 +11,7 @@ interface IState {
   arc: number;
 }
 
-export class TorusGeometry extends React.Component<{}, IState> {
+export class TorusBufferGeometry extends React.Component<{}, IState> {
   public state = {
     arc: twoPi,
     radialSegments: 16,
@@ -22,7 +22,7 @@ export class TorusGeometry extends React.Component<{}, IState> {
   public folder: GUI;
 
   public componentDidMount() {
-    this.folder = gui.addFolder("THREE.TorusGeometry");
+    this.folder = gui.addFolder("THREE.TorusBufferGeometry");
 
     const data = {
       arc: this.state.arc,
@@ -51,7 +51,7 @@ export class TorusGeometry extends React.Component<{}, IState> {
 
   public render() {
     return (
-      <torusGeometry
+      <torusBufferGeometry
         radius={this.state.radius}
         tube={this.state.tube}
         radialSegments={this.state.radialSegments}
