@@ -109,7 +109,7 @@ export class TextBufferGeometry extends React.Component<{}, IState> {
 
   public render() {
     // TODO: Add center prop to geometry to center the text
-    if (!this.state.loadedFont) {
+    if (this.state.loadedFont === undefined) {
       return <geometry />;
     }
     return (

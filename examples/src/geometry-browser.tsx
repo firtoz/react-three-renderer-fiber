@@ -55,7 +55,7 @@ interface IState {
 }
 
 const getSelectedGeometry = () => {
-  return window.location.hash.substring(1) || "TorusGeometry";
+  return window.location.hash.substring(1);
 };
 
 const getGeometryComponent = (selectedGeometry: string) => {
