@@ -7,7 +7,8 @@ module.exports = {
     simple: require.resolve("./src/simple.tsx"),
     gettingStarted: require.resolve("./src/getting-started.tsx"),
     camera: require.resolve("./src/Camera.tsx"),
-    webglAnimationCloth: require.resolve("./src/index.tsx")
+    index: require.resolve("./src/index.tsx"),
+    geometryBrowser: require.resolve("./src/geometry-browser.tsx")
   },
   output: {
     filename: "[name].js",

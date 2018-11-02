@@ -1,7 +1,8 @@
 import { GUI } from "dat.gui";
 import * as React from "react";
-import {Euler, Vector3} from "three";
+import {DoubleSide, Euler, Vector3} from "three";
 import {ReactThreeRenderer} from "../../src";
+import {BoxBufferGeometry} from "./geometries/BoxBufferGeometry";
 import {TorusGeometry} from "./geometries/TorusGeometry";
 
 (document.getElementById("newWindow") as HTMLAnchorElement).href +=
@@ -17,9 +18,21 @@ interface IState {
   rotation: Euler;
 }
 
+const getSelectedGeometry = () => {
+  return window.location.hash.substring(1) || "TorusGeometry";
+};
+
+const getGeometryComponent = (selectedGeometry: string) => {
+  switch (selectedGeometry) {
+    case "BoxBufferGeometry": return <BoxBufferGeometry />;
+    default: return <TorusGeometry />;
+  }
+};
+
 class GeometryBrowser extends React.Component<{}, IState> {
   public state = {
     rotation: new Euler(),
+    selectedGeometry: getSelectedGeometry(),
   };
 
   public render() {
@@ -59,7 +72,19 @@ class GeometryBrowser extends React.Component<{}, IState> {
               distance={0}
               position={new Vector3(-100, -200, -100)}
             />
-            <TorusGeometry rotation={this.state.rotation} />
+            <group
+              rotation={this.state.rotation}
+            >
+              <mesh>
+                {getGeometryComponent(this.state.selectedGeometry)}
+                <meshPhongMaterial
+                  color={0x156289}
+                  emissive={0x072534}
+                  flatShading={true}
+                  side={DoubleSide}
+                />
+              </mesh>
+            </group>
           </scene>}
           onBeforeRender={this.onAnimationFrame}
           autoRender={true}
@@ -69,6 +94,9 @@ class GeometryBrowser extends React.Component<{}, IState> {
   }
 
   public onAnimationFrame = () => {
+    if (this.state.selectedGeometry === "TextGeometry" || this.state.selectedGeometry === "TextBufferGeometry") {
+      return;
+    }
     this.setState((prevState) => {
       const newRotation = prevState.rotation.clone();
       newRotation.x += 0.005;
