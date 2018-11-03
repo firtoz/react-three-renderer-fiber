@@ -63,7 +63,7 @@ class Demo extends React.Component<any, {
         this.state.cubeRotation.z,
       ),
     });
-  }
+  };
 }
 
 ReactThreeRenderer.render(<Demo/>, container);

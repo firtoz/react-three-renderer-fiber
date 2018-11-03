@@ -130,7 +130,7 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
     this.renderer.render(sceneToUse, cameraToUse);
 
     window.console.warn = oldWarn;
-  }
+  };
 
   public updateProps(newValue: IRenderProps) {
     const {
@@ -205,7 +205,7 @@ export class RenderAction extends RefWrapperBase implements IHostContext {
     if (this.autoRender) {
       this.triggerRender();
     }
-  }
+  };
 }
 
 class RenderDescriptor extends ReactThreeRendererDescriptor<IRenderProps, RenderAction, WebGLRenderer, never> {

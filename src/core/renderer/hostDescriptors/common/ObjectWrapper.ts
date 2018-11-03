@@ -45,6 +45,7 @@ function createSetter(instance: any, propertyName: string): SetterFunction {
 
 const wrapperDetailsSymbol = Symbol("react-three-renderer-details");
 const wrapperSymbol = Symbol("react-three-renderer-wrapper");
+const contextSymbol = CustomReconcilerConfig.contextSymbol;
 
 export function getWrappedAttributes(property: PropertyDescriptor,
                                      objectToWrap: any,
@@ -134,9 +135,9 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   public remount(newProps: any) {
     this.wrapObject(this.recreateInstance(newProps));
 
-    if (this.wrapper[CustomReconcilerConfig.contextSymbol] !== undefined) {
+    if (this.wrapper[contextSymbol] !== undefined) {
       // console.log("triggering a render for context", this.wrapper[CustomReconcilerConfig.contextSymbol]);
-      this.wrapper[CustomReconcilerConfig.contextSymbol].triggerRender();
+      this.wrapper[contextSymbol].triggerRender();
     }
   }
 

@@ -84,7 +84,7 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
         this.animationRequest = requestAnimationFrame(this.onAnimate);
       });
     }
-  }
+  };
 
   public componentWillUnmount() {
     cancelAnimationFrame(this.animationRequest);
@@ -140,15 +140,15 @@ class Simple extends React.Component<ISimpleProps, ISimpleState> {
 
   private rendererRef = (renderer: WebGLRenderer) => {
     this.renderer = renderer;
-  }
+  };
 
   private cameraRef = (camera: PerspectiveCamera) => {
     this.camera = camera;
-  }
+  };
 
   private sceneRef = (scene: Scene) => {
     this.scene = scene;
-  }
+  };
 }
 
 ReactDOM.render(<Simple

@@ -12,8 +12,11 @@
     "no-console": [
       false
     ],
-    "max-classes-per-file": [
-      false
+    "max-classes-per-file": false,
+    "semicolon": [
+      true,
+      "always",
+      "strict-bound-class-methods"
     ],
     "strict-boolean-expressions": true
   },

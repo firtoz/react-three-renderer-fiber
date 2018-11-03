@@ -63,7 +63,7 @@ class PointLightDescriptor extends LightDescriptorBase<IPointLightProps, PointLi
         instance.intensity = 1;
       }
     }
-  }
+  };
 }
 
 export default PointLightDescriptor;

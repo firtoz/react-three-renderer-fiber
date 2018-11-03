@@ -19,7 +19,7 @@
     "build-examples": "cross-env NODE_ENV=production webpack --config ./examples/webpack.config.js",
     "start": "webpack-dev-server --config ./examples/webpack.config.js --content-base examples/",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server",
-    "lint": "tslint --project examples/tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
     "lint-fix": "tslint --fix --project examples/tsconfig.json -c tslint.json 'src/**/*.{ts,tsx,d.ts}' 'examples/src/**/*.{ts,tsx,d.ts}'",
     "pretest": "npm run lint",
     "prepublishOnly": "npm test && npm run clean && npm run build",

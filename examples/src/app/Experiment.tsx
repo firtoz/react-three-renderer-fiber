@@ -13,12 +13,12 @@ class Experiment extends Component {
     wantsResult: boolean,
   };
 
+  private readonly cameraPosition: any;
+  private readonly onAnimate: (callback: any) => any;
+  private rafRequest: number;
   private renderer: any;
   private scene: any;
   private camera: any;
-  private cameraPosition: any;
-  private onAnimate: (callback: any) => any;
-  private rafRequest: number;
   private animateInterval: number;
 
   constructor(props: any, context: any) {
@@ -81,7 +81,7 @@ class Experiment extends Component {
     let testResult = null;
     let react3 = null;
 
-    const cube: any = <ColorCube rotation={this.state.cubeRotation} />;
+    const cube: any = <ColorCube rotation={this.state.cubeRotation}/>;
 
     if (this.state.wantsResult) {
       testResult = <div key="result">Yay</div>;
@@ -126,15 +126,15 @@ class Experiment extends Component {
   private rendererRef = (renderer: any) => {
     console.log("got renderer", renderer);
     this.renderer = renderer;
-  }
+  };
 
   private sceneRef = (scene: any) => {
     this.scene = scene;
-  }
+  };
 
   private cameraRef = (camera: any) => {
     this.camera = camera;
-  }
+  };
 
   private onClick = () => {
     if (!this.state.wantsResult) {
@@ -165,7 +165,7 @@ class Experiment extends Component {
     this.setState({
       wantsResult: !this.state.wantsResult,
     });
-  }
+  };
 }
 
-ReactDOM.render(<Experiment />, document.getElementById("example"));
+ReactDOM.render(<Experiment/>, document.getElementById("example"));

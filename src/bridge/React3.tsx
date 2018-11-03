@@ -37,7 +37,7 @@ class ContextReceiver extends React.Component<IContextWrapperProps, any> {
   }
 
   public render() {
-    return <react-three-renderer-proxy testProps={this.props.testProps} />;
+    return <react-three-renderer-proxy testProps={this.props.testProps}/>;
   }
 }
 
@@ -64,7 +64,7 @@ export interface IReact3Properties {
 class React3 extends PureComponent<IReact3Properties, any> {
   private renderCount: number;
   private div: any;
-  private fakeDOMContainerInfo: any;
+  private readonly fakeDOMContainerInfo: any;
   private passThroughContext: any;
 
   constructor(props: IReact3Properties, context: any) {
@@ -111,7 +111,7 @@ class React3 extends PureComponent<IReact3Properties, any> {
 
   public divRef = (div: any) => {
     this.div = div;
-  }
+  };
 
   public componentDidMount() {
     if (this.props.contextPassThrough) {
@@ -132,7 +132,7 @@ class React3 extends PureComponent<IReact3Properties, any> {
 
   public onContextUpdate = (newContext: any) => {
     this.passThroughContext = newContext;
-  }
+  };
 
   public render() {
     this.renderCount++;
@@ -150,7 +150,7 @@ class React3 extends PureComponent<IReact3Properties, any> {
       return (<div ref={this.divRef}>{
         (ReactDOM as any).createPortal(
           <ContextReceiver testProps={this.renderCount}
-                           onContextUpdate={this.onContextUpdate} />,
+                           onContextUpdate={this.onContextUpdate}/>,
           this.fakeDOMContainerInfo,
           implementation,
         )
@@ -158,7 +158,7 @@ class React3 extends PureComponent<IReact3Properties, any> {
     } else {
       return (<div ref={this.divRef}>{
         (ReactDOM as any).createPortal(
-          <react-three-renderer-proxy testProps={this.renderCount} />,
+          <react-three-renderer-proxy testProps={this.renderCount}/>,
           this.fakeDOMContainerInfo,
           implementation,
         )

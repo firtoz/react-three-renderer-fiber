@@ -214,7 +214,7 @@ class CameraExample extends React.Component<{}, { r: number }> {
         this.activeHelper = this.cameraPerspectiveHelper;
         break;
     }
-  }
+  };
 
   private onAnimationFrame = () => {
     this.setState({
@@ -241,11 +241,11 @@ class CameraExample extends React.Component<{}, { r: number }> {
 
       requestAnimationFrame(this.onAnimationFrame);
     });
-  }
+  };
 
   private cameraRef = (camera: PerspectiveCamera) => {
     this.camera = camera;
-  }
+  };
 
   private perspectiveCameraRef = (camera: PerspectiveCamera) => {
     this.cameraPerspective = camera;
@@ -253,7 +253,7 @@ class CameraExample extends React.Component<{}, { r: number }> {
     if (this.chosenCamera === CameraType.Perspective) {
       this.activeCamera = camera;
     }
-  }
+  };
 
   private perspectiveCameraHelperRef = (perspectiveCameraHelper: CameraHelper) => {
     this.cameraPerspectiveHelper = perspectiveCameraHelper;
@@ -261,7 +261,7 @@ class CameraExample extends React.Component<{}, { r: number }> {
     if (this.chosenCamera === CameraType.Perspective) {
       this.activeHelper = perspectiveCameraHelper;
     }
-  }
+  };
 
   private orthographicCameraRef = (camera: OrthographicCamera) => {
     this.cameraOrtho = camera;
@@ -269,7 +269,7 @@ class CameraExample extends React.Component<{}, { r: number }> {
     if (this.chosenCamera === CameraType.Orthographic) {
       this.activeCamera = camera;
     }
-  }
+  };
 
   private orthographicCameraHelperRef = (orthographicCameraHelper: CameraHelper) => {
     this.cameraOrthoHelper = orthographicCameraHelper;
@@ -277,15 +277,15 @@ class CameraExample extends React.Component<{}, { r: number }> {
     if (this.chosenCamera === CameraType.Orthographic) {
       this.activeHelper = orthographicCameraHelper;
     }
-  }
+  };
 
   private sceneRef = (scene: Scene) => {
     this.scene = scene;
-  }
+  };
 
   private rendererRef = (renderer: WebGLRenderer) => {
     this.renderer = renderer;
-  }
+  };
 }
 
 ReactThreeRenderer.render(<CameraExample/>, container);
