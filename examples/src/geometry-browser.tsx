@@ -177,7 +177,7 @@ class GeometryBrowser extends React.Component<{}, IState> {
       newRotation.y += 0.005;
       return { rotation: newRotation };
     });
-  }
+  };
 }
 
 ReactThreeRenderer.render(<GeometryBrowser />, container);
