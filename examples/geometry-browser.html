@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Three.js Geometry Browser</title>
+    <style>
+        @font-face {
+            font-family: 'inconsolata';
+            src: url('files/inconsolata.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin:0;
+            font-family: 'inconsolata';
+            font-size: 15px;
+            line-height: 18px;
+            overflow: hidden;
+        }
+
+        canvas { width: 100%; height: 100% }
+
+        #newWindow {
+            display: block;
+            position: absolute;
+            bottom: 0.3em;
+            left: 0.5em;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<a id='newWindow' href='./geometry-browser.html' target='_blank'>Open in New Window</a>
+
+<script src="node_modules/react/umd/react.development.js"></script>
+<script src="node_modules/react-dom/umd/react-dom.development.js"></script>
+
+<script src="./dist/geometryBrowser.js"></script>
+
+</body>
+</html>

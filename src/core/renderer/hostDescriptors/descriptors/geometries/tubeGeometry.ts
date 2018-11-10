@@ -6,7 +6,7 @@ export interface ITubeGeometryProps {
   path: Curve<Vector3>;
   tubularSegments?: number;
   radius?: number;
-  radiusSegments?: number;
+  radialSegments?: number;
   closed?: boolean;
 }
 
@@ -26,7 +26,7 @@ export const { bufferGeometryDescriptor, geometryDescriptor } =
     "path",
     "tubularSegments",
     "radius",
-    "radiusSegments",
+    "radialSegments",
     "closed",
   );
 
