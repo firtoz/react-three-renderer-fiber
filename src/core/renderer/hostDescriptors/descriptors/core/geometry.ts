@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {Face3, Geometry, Vector3} from "three";
+import {Face3, Geometry, Vector2, Vector3} from "three";
 import {GeometryContainerType, GeometryWrapperBase} from "../../common/geometryBase";
 import {IThreeElementPropsBase} from "../../common/IReactThreeRendererElement";
 import {WrappedEntityDescriptor} from "../../common/ObjectWrapper";
@@ -58,6 +58,16 @@ class GeometryDescriptor extends WrappedEntityDescriptor<GeometryWrapper,
 
       instance.faces = newValue;
       instance.elementsNeedUpdate = true;
+    }, false, true);
+
+    this.hasProp<Vector2[][][]>("faceVertexUvs", (instance, newValue, oldProps, newProps) => {
+      if (instance.faceVertexUvs.length !== newValue.length) {
+        this.remountTrigger(instance, newValue, oldProps, newProps);
+        return;
+      }
+
+      instance.faceVertexUvs = newValue;
+      instance.uvsNeedUpdate = true;
     }, false, true);
   }
 }
