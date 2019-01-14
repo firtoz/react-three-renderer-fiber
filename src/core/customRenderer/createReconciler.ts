@@ -1,5 +1,5 @@
 import * as ReactReconciler from "react-reconciler";
-import {unstable_cancelScheduledWork, unstable_now, unstable_scheduleWork} from "schedule";
+import {unstable_cancelCallback, unstable_now, unstable_scheduleCallback} from "scheduler";
 
 import {CustomRendererElementInstance} from "../renderer/hostDescriptors/common/object3DBase";
 import {autoBind, bindAcceptor} from "./decorators/autoBind";
@@ -36,8 +36,8 @@ export class CustomReconcilerConfig<TDescriptor extends IHostDescriptor<any, any
     customRendererElement[CustomReconcilerConfig.fiberSymbol] = fiber;
   }
 
-  public scheduleDeferredCallback = unstable_scheduleWork;
-  public cancelDeferredCallback = unstable_cancelScheduledWork;
+  public scheduleDeferredCallback = unstable_scheduleCallback;
+  public cancelDeferredCallback = unstable_cancelCallback;
   public now = unstable_now;
 
   public useSyncScheduling: boolean = true;

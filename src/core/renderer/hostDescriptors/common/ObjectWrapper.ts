@@ -72,14 +72,14 @@ export function getWrappedAttributes(property: PropertyDescriptor,
 export abstract class WrapperDetails<TProps, TWrapped> {
   public static get<TProps,
     TWrapped,
-    TWrapperDetails extends WrapperDetails<TProps, TWrapped>>(this: { new(...args: any[]): TWrapperDetails },
+    TWrapperDetails extends WrapperDetails<TProps, TWrapped>>(this: new(...args: any[]) => TWrapperDetails,
                                                               wrapper: TWrapped): TWrapperDetails {
     return (wrapper as any)[wrapperDetailsSymbol];
   }
 
   public static set<TProps,
     TWrapped,
-    TWrapperDetails extends WrapperDetails<TProps, TWrapped>>(this: { new(...args: any[]): TWrapperDetails },
+    TWrapperDetails extends WrapperDetails<TProps, TWrapped>>(this: new(...args: any[]) => TWrapperDetails,
                                                               wrapper: TWrapped,
                                                               details: TWrapperDetails): void {
     details.wrapper = wrapper;
@@ -89,7 +89,7 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   public static getWrappedType<TProps,
     TWrapped,
     TWrapperDetails extends WrapperDetails<TProps,
-      TWrapped>>(this: { new(...args: any[]): TWrapperDetails }): new () => any {
+      TWrapped>>(this: new(...args: any[]) => TWrapperDetails): new () => any {
     if (typeof (this as any)[wrapperSymbol] === "undefined") {
       (this as any)[wrapperSymbol] = class {
       };

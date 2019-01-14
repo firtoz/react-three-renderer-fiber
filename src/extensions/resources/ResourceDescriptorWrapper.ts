@@ -5,9 +5,7 @@ export type TReactThreeRendererDescriptorInstance = ReactThreeRendererDescriptor
   createInstance(props: any, rootContainerInstance: any): any,
 };
 
-export interface IReactThreeRendererDescriptorClass {
-  new(): TReactThreeRendererDescriptorInstance;
-}
+export type IReactThreeRendererDescriptorClass = new() => TReactThreeRendererDescriptorInstance;
 
 export function GetResourceID(instance: any): string {
   return instance[ResourceIDSymbol];
