@@ -146,7 +146,7 @@
     let clothTexture;
 
     const resources = resourceRenderer.render(<resources>
-      <parametricGeometry
+      <parametricBufferGeometry
         func={clothFunction}
         slices={cloth.w}
         stacks={cloth.h}
@@ -353,23 +353,14 @@
 
   function render() {
     var p = cloth.particles;
-
-    for (var i = 0, il = p.length; i < il; i++) {
-
-      clothGeometry.vertices[i].copy(p[i].position);
-
+    for ( var i = 0, il = p.length; i < il; i ++ ) {
+      var v = p[ i ].position;
+      clothGeometry.attributes.position.setXYZ( i, v.x, v.y, v.z );
     }
-
-    clothGeometry.verticesNeedUpdate = true;
-
-    clothGeometry.computeFaceNormals();
+    clothGeometry.attributes.position.needsUpdate = true;
     clothGeometry.computeVertexNormals();
-
-    sphere.position.copy(ballPosition);
-
-    // ReactDOM.render(<ClothExample/>, container);
-
-    renderer.render(scene, camera);
+    sphere.position.copy( ballPosition );
+    renderer.render( scene, camera );
   }
 
 </script>
