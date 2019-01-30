@@ -74,6 +74,7 @@ describe("React Three Renderer", () => {
     });
 
   require("./core");
+  require("./descriptors");
   require("./examples");
   require("./extensions");
 

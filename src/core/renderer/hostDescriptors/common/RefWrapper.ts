@@ -191,8 +191,16 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
       wrappers.forEach((wrapper) => {
         const value = newMap[wrapper.propertyName];
 
-        if ((value != null)) {
+        if (value != null) {
           if (wrapperContainsRawType(wrapper, value)) {
+            const oldProp = oldProps[wrapper.propertyName];
+            if (oldProp !== value) {
+              wrapper.rawTypeUpdateFunction(instance, value);
+            }
+          }
+        } else {
+          const oldProp = oldProps[wrapper.propertyName];
+          if (oldProp !== null && wrapperContainsRawType(wrapper, oldProp)) {
             wrapper.rawTypeUpdateFunction(instance, value);
           }
         }
@@ -205,8 +213,10 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
 
         updatedElementCache[startIndex + i] = null;
 
-        if ((value != null)) {
+        if (value != null) {
           if (!wrapperContainsRawType(wrapper, value)) {
+            // If it's not a null and it's not a raw type, it must be an element
+            // TODO check if we can test for an element type?
             updatedElementCache[startIndex + i] = wrapperBase.wrapElementAndReturn(propertyName, value);
           }
         }
@@ -217,8 +227,27 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
         wrappers.forEach((wrapper) => {
           const value = newMap[wrapper.propertyName];
 
-          if ((value != null) && (wrapperContainsRawType(wrapper, value))) {
-            wrapper.rawTypeUpdateFunction(instance, value);
+          if (value != null) {
+            if (wrapperContainsRawType(wrapper, value)) {
+              const oldProp = oldProps[wrapper.propertyName];
+              if (oldProp !== value) {
+                wrapper.rawTypeUpdateFunction(instance, value);
+              }
+            } else {
+              const oldProp = oldProps[wrapper.propertyName];
+              if (oldProp !== null
+                && wrapperContainsRawType(wrapper, oldProp)
+                && wrapperContainsRawType(wrapper, value)) {
+                wrapper.rawTypeUpdateFunction(instance, value);
+              }
+            }
+          } else {
+            const oldProp = oldProps[wrapper.propertyName];
+            if (oldProp !== null
+              && wrapperContainsRawType(wrapper, oldProp)
+              && wrapperContainsRawType(wrapper, value)) {
+              wrapper.rawTypeUpdateFunction(instance, value);
+            }
           }
         });
       });
@@ -239,8 +268,8 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
       const updatedElementCache = [...wrapperBase.elementsCache];
       updatedElementCache[elementIndex] = null;
 
-      if ((value != null)) {
-        if ((wrapperContainsRawType(wrapper, value))) {
+      if (value != null) {
+        if (wrapperContainsRawType(wrapper, value)) {
           wrapper.rawTypeUpdateFunction(instance, value);
         } else {
           updatedElementCache[elementIndex] = wrapperBase.wrapElementAndReturn(wrapper.propertyName, value as any);
@@ -250,7 +279,7 @@ Identifiers: [${Object.keys(refWrapperBase.wrappedRefs).join(", ")}]`);
 
       ReactThreeRenderer.render(wrapperBase.elementsCache, containerFunction(instance), () => {
         // TODO check how can value has changed?
-        if ((value != null) && (wrapperContainsRawType(wrapper, value))) {
+        if (value != null && wrapperContainsRawType(wrapper, value)) {
           wrapper.rawTypeUpdateFunction(instance, value);
         }
       });

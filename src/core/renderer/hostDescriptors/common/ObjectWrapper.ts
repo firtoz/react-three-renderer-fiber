@@ -108,6 +108,8 @@ export abstract class WrapperDetails<TProps, TWrapped> {
   }
 
   public wrapObject(objectToWrap: TWrapped) {
+    const wrapper = this.wrapper;
+    const fiber = wrapper[CustomReconcilerConfig.fiberSymbol];
     this.wrappedObject = objectToWrap;
 
     let current = objectToWrap;
@@ -130,6 +132,9 @@ export abstract class WrapperDetails<TProps, TWrapped> {
       current = Object.getPrototypeOf(current);
     } while (current.constructor !== Object && current !== null);
 
+    if (fiber !== undefined && fiber.ref != null) {
+      fiber.ref(this.wrapper);
+    }
   }
 
   public remount(newProps: any) {

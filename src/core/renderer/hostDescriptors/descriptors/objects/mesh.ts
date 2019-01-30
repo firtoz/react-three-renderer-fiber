@@ -62,41 +62,32 @@ class MeshDescriptor extends Object3DDescriptorBase<IMeshProps, Mesh, MeshChildT
   }
 
   public appendInitialChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry || child instanceof BufferGeometry) {
-      instance.geometry = child;
-    } else if ((child as any) instanceof Material) {
-      // Materials can take care of themselves
+    if (child instanceof Geometry || child instanceof BufferGeometry || (child as any) instanceof Material) {
+      // They can take care of themselves
     } else {
       super.appendInitialChild(instance, child);
     }
   }
 
   public appendChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry || child instanceof BufferGeometry) {
-      instance.geometry = child;
-    } else if ((child as any) instanceof Material) {
-      // Materials can take care of themselves
+    if (child instanceof Geometry || child instanceof BufferGeometry || (child as any) instanceof Material) {
+      // They can take care of themselves
     } else {
       super.appendChild(instance, child);
     }
   }
 
   public insertBefore(instance: Mesh, child: MeshChildType, before: any): void {
-
-    if (child instanceof Geometry || child instanceof BufferGeometry) {
-      instance.geometry = child;
-    } else if ((child as any) instanceof Material) {
-      // Materials can take care of themselves
+    if (child instanceof Geometry || child instanceof BufferGeometry || (child as any) instanceof Material) {
+      // They can take care of themselves
     } else {
       super.insertBefore(instance, child, before);
     }
   }
 
   public removeChild(instance: Mesh, child: MeshChildType): void {
-    if (child instanceof Geometry || child instanceof BufferGeometry) {
-      instance.geometry = null as any;
-    } else if ((child as any) instanceof Material) {
-      // Materials can take care of themselves
+    if (child instanceof Geometry || child instanceof BufferGeometry || (child as any) instanceof Material) {
+      // They can take care of themselves
     } else {
       super.removeChild(instance, child);
       // throw new Error('cannot remove ' + (child as any)[r3rFiberSymbol].type + ' as a childInstance from mesh');
