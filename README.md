@@ -1,5 +1,9 @@
 # react-three-renderer-fiber
 
+## PSA:
+This project is advancing at a glacial rate. If you'd like to contribute to the React + Three bridge ecosystems, please take a look at how you can help with the more active https://github.com/drcmda/react-three-fiber project instead.
+
+## Back to regular readme
 [![Build Status](https://travis-ci.org/toxicFork/react-three-renderer-fiber.svg?branch=master)](https://travis-ci.org/toxicFork/react-three-renderer-fiber)
 
 Porting R3R to use [React Fiber](https://github.com/acdlite/react-fiber-architecture).
